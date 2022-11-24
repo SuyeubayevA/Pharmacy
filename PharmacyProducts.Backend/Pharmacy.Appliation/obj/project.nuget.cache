@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "4UMwf4NpO3n9XsEgOApDVEGUqCTsbjON/c8KmM4YMt33+fGuq8Kc3oD5T7dGqAO8iyd6b/t8MpV3jeZCGCkvkA==",
+  "success": true,
+  "projectFilePath": "E:\\SelfLearning\\PDP_Pharmacy\\PharmacyProducts.Backend\\Pharmacy.Appliation\\Pharmacy.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Aidar\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.0.1\\microsoft.aspnetcore.app.ref.3.0.1.nupkg.sha512",
+    "C:\\Users\\Aidar\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\3.0.0\\microsoft.windowsdesktop.app.ref.3.0.0.nupkg.sha512",
+    "C:\\Users\\Aidar\\.nuget\\packages\\microsoft.netcore.app.ref\\3.0.0\\microsoft.netcore.app.ref.3.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
