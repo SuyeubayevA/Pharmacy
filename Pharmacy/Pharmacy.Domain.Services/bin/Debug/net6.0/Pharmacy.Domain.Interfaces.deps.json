@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "Pharmacy.Domain.Interfaces/1.0.0": {
+        "dependencies": {
+          "Pharmacy.Domain.Core": "1.0.0"
+        },
+        "runtime": {
+          "Pharmacy.Domain.Interfaces.dll": {}
+        }
+      },
+      "Pharmacy.Domain.Core/1.0.0": {
+        "runtime": {
+          "Pharmacy.Domain.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Pharmacy.Domain.Interfaces/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Pharmacy.Domain.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

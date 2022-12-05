@@ -1,0 +1,17 @@
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\bin\Debug\net6.0\Pharmacy.Infrastructure.Business.deps.json
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\bin\Debug\net6.0\Pharmacy.Infrastructure.Business.dll
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\bin\Debug\net6.0\Pharmacy.Infrastructure.Business.pdb
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\bin\Debug\net6.0\Pharmacy.Application.Services.Interfaces.dll
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\bin\Debug\net6.0\Pharmacy.Domain.Core.dll
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\bin\Debug\net6.0\Pharmacy.Application.Services.Interfaces.pdb
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\bin\Debug\net6.0\Pharmacy.Domain.Core.pdb
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\Pharmacy.Infrastructure.Business.csproj.AssemblyReference.cache
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\Pharmacy.Infrastructure.Business.GeneratedMSBuildEditorConfig.editorconfig
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\Pharmacy.Infrastructure.Business.AssemblyInfoInputs.cache
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\Pharmacy.Infrastructure.Business.AssemblyInfo.cs
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\Pharmacy.Infrastructure.Business.csproj.CoreCompileInputs.cache
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\Pharmacy.Infrastructure.Business.csproj.CopyComplete
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\Pharmacy.Infrastructure.Business.dll
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\refint\Pharmacy.Infrastructure.Business.dll
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\Pharmacy.Infrastructure.Business.pdb
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Infrastructure.Business\obj\Debug\net6.0\ref\Pharmacy.Infrastructure.Business.dll

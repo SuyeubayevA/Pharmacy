@@ -1,0 +1,211 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Application.Services.Data\\Pharmacy.Application.Services.Data.csproj": {}
+  },
+  "projects": {
+    "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Application.Services.Data\\Pharmacy.Application.Services.Data.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Application.Services.Data\\Pharmacy.Application.Services.Data.csproj",
+        "projectName": "Pharmacy.Application.Services.Data",
+        "projectPath": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Application.Services.Data\\Pharmacy.Application.Services.Data.csproj",
+        "packagesPath": "C:\\Users\\Aidar\\.nuget\\packages\\",
+        "outputPath": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Application.Services.Data\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Aidar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Core\\Pharmacy.Domain.Core.csproj": {
+                "projectPath": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Core\\Pharmacy.Domain.Core.csproj"
+              },
+              "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Services\\Pharmacy.Domain.Interfaces.csproj": {
+                "projectPath": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Services\\Pharmacy.Domain.Interfaces.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Core\\Pharmacy.Domain.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Core\\Pharmacy.Domain.Core.csproj",
+        "projectName": "Pharmacy.Domain.Core",
+        "projectPath": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Core\\Pharmacy.Domain.Core.csproj",
+        "packagesPath": "C:\\Users\\Aidar\\.nuget\\packages\\",
+        "outputPath": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Aidar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Services\\Pharmacy.Domain.Interfaces.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Services\\Pharmacy.Domain.Interfaces.csproj",
+        "projectName": "Pharmacy.Domain.Interfaces",
+        "projectPath": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Services\\Pharmacy.Domain.Interfaces.csproj",
+        "packagesPath": "C:\\Users\\Aidar\\.nuget\\packages\\",
+        "outputPath": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Services\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Aidar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Core\\Pharmacy.Domain.Core.csproj": {
+                "projectPath": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy.Domain.Core\\Pharmacy.Domain.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

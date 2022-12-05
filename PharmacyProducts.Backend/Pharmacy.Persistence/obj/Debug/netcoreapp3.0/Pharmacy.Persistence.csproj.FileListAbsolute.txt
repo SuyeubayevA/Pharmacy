@@ -1,5 +1,0 @@
-E:\SelfLearning\PDP_Pharmacy\PharmacyProducts.Backend\Pharmacy.Persistence\obj\Debug\netcoreapp3.0\Pharmacy.Persistence.csproj.AssemblyReference.cache
-E:\SelfLearning\PDP_Pharmacy\PharmacyProducts.Backend\Pharmacy.Persistence\obj\Debug\netcoreapp3.0\Pharmacy.Persistence.GeneratedMSBuildEditorConfig.editorconfig
-E:\SelfLearning\PDP_Pharmacy\PharmacyProducts.Backend\Pharmacy.Persistence\obj\Debug\netcoreapp3.0\Pharmacy.Persistence.AssemblyInfoInputs.cache
-E:\SelfLearning\PDP_Pharmacy\PharmacyProducts.Backend\Pharmacy.Persistence\obj\Debug\netcoreapp3.0\Pharmacy.Persistence.AssemblyInfo.cs
-E:\SelfLearning\PDP_Pharmacy\PharmacyProducts.Backend\Pharmacy.Persistence\obj\Debug\netcoreapp3.0\Pharmacy.Persistence.csproj.CoreCompileInputs.cache

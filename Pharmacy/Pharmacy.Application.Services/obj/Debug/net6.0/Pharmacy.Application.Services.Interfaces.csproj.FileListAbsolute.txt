@@ -1,0 +1,15 @@
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\bin\Debug\net6.0\Pharmacy.Application.Services.Interfaces.deps.json
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\bin\Debug\net6.0\Pharmacy.Application.Services.Interfaces.dll
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\bin\Debug\net6.0\Pharmacy.Application.Services.Interfaces.pdb
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\bin\Debug\net6.0\Pharmacy.Domain.Core.dll
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\bin\Debug\net6.0\Pharmacy.Domain.Core.pdb
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\Pharmacy.Application.Services.Interfaces.csproj.AssemblyReference.cache
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\Pharmacy.Application.Services.Interfaces.GeneratedMSBuildEditorConfig.editorconfig
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\Pharmacy.Application.Services.Interfaces.AssemblyInfoInputs.cache
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\Pharmacy.Application.Services.Interfaces.AssemblyInfo.cs
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\Pharmacy.Application.Services.Interfaces.csproj.CoreCompileInputs.cache
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\Pharmacy.Application.Services.Interfaces.csproj.CopyComplete
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\Pharmacy.Application.Services.Interfaces.dll
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\refint\Pharmacy.Application.Services.Interfaces.dll
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\Pharmacy.Application.Services.Interfaces.pdb
+E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services\obj\Debug\net6.0\ref\Pharmacy.Application.Services.Interfaces.dll

@@ -1,0 +1,35 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Pharmacy.Infrastructure.Data.ContextConfigurations;
+using Pharmacy.Domain.Core;
+
+namespace Pharmacy.Infrastructure.Data
+{
+    public class PharmacyDBContext : DbContext
+    {
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductType> ProductTypes { get; set; }
+        public DbSet<SalesInfo> SalesInfos { get; set; }
+        public DbSet<ProductAmount> ProductAmounts { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
+
+        public PharmacyDBContext()
+        {
+            Database.EnsureDeleted();
+            Database.EnsureCreated();
+        }
+
+        //public PharmacyDBContext() { }
+        public PharmacyDBContext(DbContextOptions<PharmacyDBContext> options) : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfiguration(new ProductConfiguration());
+            builder.ApplyConfiguration(new ProductAmountConfiguration());
+            builder.ApplyConfiguration(new ProductTypeConfiguration());
+            builder.ApplyConfiguration(new SalesinfoConfiguration());
+            builder.ApplyConfiguration(new WarehouseConfiguration());
+
+            base.OnModelCreating(builder);
+        }
+    }
+}
