@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "lLjXSkJ6oSZb5ghm6emlQ3BuTlglJXwCe/EHF/Ck9hY=",
+  "Hash": "mxYjQED06N9q9jTatRFC8tKpJ0j6rOgy9Nn8PHnLcVc=",
   "Source": "Pharmacy",
   "BasePath": "_content/Pharmacy",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "Pharmacy\\wwwroot",
       "Source": "Pharmacy",
-      "ContentRoot": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy\\wwwroot\\",
+      "ContentRoot": "E:\\SelfLearning\\PDP_Pharmacy\\Pharmacy\\Pharmacy\\wwwroot\\",
       "BasePath": "_content/Pharmacy",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy\\wwwroot\\swagger\\v1\\swagger.yaml",
+      "Identity": "E:\\SelfLearning\\PDP_Pharmacy\\Pharmacy\\Pharmacy\\wwwroot\\swagger\\v1\\swagger.yaml",
       "SourceId": "Pharmacy",
       "SourceType": "Discovered",
-      "ContentRoot": "E:\\SelfLearning\\PDP_Pharmacy_2\\Pharmacy\\wwwroot\\",
+      "ContentRoot": "E:\\SelfLearning\\PDP_Pharmacy\\Pharmacy\\Pharmacy\\wwwroot\\",
       "BasePath": "_content/Pharmacy",
       "RelativePath": "swagger/v1/swagger.yaml",
       "AssetKind": "All",

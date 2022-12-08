@@ -8,4 +8,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Pharmacy.Infrastructure.Data
-build_property.ProjectDir = E:\SelfLearning\PDP_Pharmacy_2\Pharmacy.Application.Services.Data\
+build_property.ProjectDir = E:\SelfLearning\PDP_Pharmacy\Pharmacy\Pharmacy.Application.Services.Data\
