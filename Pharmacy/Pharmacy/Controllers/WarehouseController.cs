@@ -11,13 +11,13 @@ namespace Pharmacy.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class WarehouseController: ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public ProductController(IMediator mediator)
+        public WarehouseController(IMediator mediator)
         {
-            _mediator = mediator;
+            _mediator= mediator;
         }
 
         [HttpGet("GetAll")]
@@ -25,7 +25,7 @@ namespace Pharmacy.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> GetAll()
         {
-            var query = new GetAllProductsQuery();
+            var query = new GetAllWarehousesQuery();
             var result = await _mediator.Send(query);
             return Results.Ok(result);
         }
@@ -36,32 +36,32 @@ namespace Pharmacy.Controllers
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Get(int Id)
         {
-            var query = new GetProductByIdQuery(Id);
+            var query = new GetWarehouseByIdQuery(Id);
             var result = await _mediator.Send(query);
 
             return result!=null ? Results.Ok(result) : Results.NotFound();
         }
 
         [HttpPost]
-        public async Task<IResult> Post( ProductModel model)
+        public async Task<IResult> Post( WarehouseModel model)
         {
-            var command = new CreateProductCommand(model);
+            var command = new CreateWarehouseCommand(model);
             var result = await _mediator.Send(command);
             return result;
         }
 
         [HttpPut]
-        public async Task<IResult> Put(int Id, ProductModel model)
+        public async Task<IResult> Put(WarehouseModel model)
         {
-            var command = new UpdateProductCommand(Id, model);
+            var command = new UpdateWarehouseCommand(model);
             return await _mediator.Send(command);
         }
 
         [HttpDelete]
-        [Route("{productName}")]
-        public async Task<IResult> Delete(string productName)
+        [Route("{warehouseName}")]
+        public async Task<IResult> Delete(string warehouseName)
         {
-            var command = new DeleteProductCommand(productName);
+            var command = new DeleteWarehouseCommand(warehouseName);
             return await _mediator.Send(command);
         }
     }

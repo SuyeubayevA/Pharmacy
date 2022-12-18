@@ -15,11 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2_Services", "2_Services", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pharmacy.Application.Services.Interfaces", "..\Pharmacy.Application.Services\Pharmacy.Application.Services.Interfaces.csproj", "{00BD6029-2AA3-435F-8186-335C0F24D4F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pharmacy.Infrastructure.Data", "..\Pharmacy.Application.Services.Data\Pharmacy.Infrastructure.Data.csproj", "{23AF5EBA-C8E1-473E-91E5-4626F0EA72F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pharmacy.Infrastructure.Data", "..\Pharmacy.Application.Services.Data\Pharmacy.Infrastructure.Data.csproj", "{23AF5EBA-C8E1-473E-91E5-4626F0EA72F7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3_Infrastructure", "3_Infrastructure", "{A9D55369-AFB8-4C44-B32B-634C63419C80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pharmacy.Infrastructure.Business", "..\Pharmacy.Infrastructure.Business\Pharmacy.Infrastructure.Business.csproj", "{34853CF9-F03C-46C7-BBC2-A26906522921}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pharmacy.Infrastructure.Business", "..\Pharmacy.Infrastructure.Business\Pharmacy.Infrastructure.Business.csproj", "{34853CF9-F03C-46C7-BBC2-A26906522921}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

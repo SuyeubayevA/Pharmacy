@@ -1,23 +1,23 @@
-﻿using System;
+﻿using Pharmacy.Domain.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pharmacy.Domain.Core
+namespace Pharmacy.Infrastructure.Data.DTO
 {
-    public class SalesInfo
+    public class SalesInfoDTO
     {
-        //Primary Key
         public int Id { get; set; }
         public int Sales { get; set; }
         public int ProductReminder { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public DateTime? EditDate { get; set; }
 
         //Foreign Key
         public int ProductId { get; set; }
-        //Navigation Property
-        public virtual Product? Product { get; set; }
+
+        public ProductShortDTO? Product { get; set; }
     }
 }

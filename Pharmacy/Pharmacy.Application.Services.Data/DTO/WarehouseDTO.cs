@@ -1,18 +1,14 @@
-﻿using System;
+﻿using Pharmacy.Domain.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pharmacy.Domain.Core
+namespace Pharmacy.Infrastructure.Data.DTO
 {
-    public class Warehouse
+    public class WarehouseDTO
     {
-        public Warehouse()
-        {
-            this.ProductAmounts = new HashSet<ProductAmount>();
-        }
-
         //Primary Key
         public int Id { get; set; }
 
@@ -20,6 +16,6 @@ namespace Pharmacy.Domain.Core
         public string? Address { get; set; }
 
         //Navigation Property
-        public virtual ICollection<ProductAmount> ProductAmounts { get; private set; }
+        public virtual ICollection<ProductAmountDTO>? ProductAmounts { get; private set; }
     }
 }

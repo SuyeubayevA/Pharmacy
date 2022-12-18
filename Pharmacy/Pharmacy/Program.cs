@@ -1,8 +1,11 @@
 using AutoMapper;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Profiles;
+using System.Reflection;
+using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 var mapperConfig = new MapperConfiguration(cfg =>
@@ -34,12 +37,8 @@ builder.Services.AddSwaggerGen(c =>
         Title = "PharmacyAPI_01",
         Version = "v1",
     });
-    c.SwaggerGeneratorOptions.Servers = new List<OpenApiServer>()
-        {
-            // set the urls folks can reach server
-            new() {Url = "https://localhost:5001" }
-        };
 });
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
@@ -55,5 +54,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

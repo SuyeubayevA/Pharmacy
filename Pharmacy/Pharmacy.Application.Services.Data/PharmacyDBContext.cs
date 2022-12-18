@@ -12,11 +12,10 @@ namespace Pharmacy.Infrastructure.Data
         public DbSet<ProductAmount> ProductAmounts { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
 
-        public PharmacyDBContext()
-        {
-            Database.EnsureDeleted();
-            Database.EnsureCreated();
-        }
+        //public PharmacyDBContext()
+        //{
+        //    Database.EnsureCreated();
+        //}
 
         //public PharmacyDBContext() { }
         public PharmacyDBContext(DbContextOptions<PharmacyDBContext> options) : base(options) { }

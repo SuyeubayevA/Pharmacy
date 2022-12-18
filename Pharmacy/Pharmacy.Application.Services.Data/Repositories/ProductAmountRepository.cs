@@ -26,6 +26,14 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return await query.FirstAsync();
         }
 
+        public async Task<ProductAmount> GetAsync(int warehouseId, int ProductId)
+        {
+            IQueryable<ProductAmount> query = db.ProductAmounts.AsQueryable();
+            query = query.Where(x => x.ProductId == ProductId && x.WarehouseId == warehouseId);
+
+            return await query.FirstAsync();
+        }
+
         public async Task<ProductAmount[]> GetAllASync()
         {
             IQueryable<ProductAmount> query = db.ProductAmounts.AsQueryable();

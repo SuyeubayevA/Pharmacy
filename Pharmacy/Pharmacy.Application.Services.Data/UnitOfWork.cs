@@ -1,4 +1,8 @@
-﻿using Pharmacy.Domain.Interfaces;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Options;
+using Pharmacy.Domain.Interfaces;
 using Pharmacy.Infrastructure.Data.Repositories;
 
 
@@ -6,19 +10,26 @@ namespace Pharmacy.Infrastructure.Data
 {
     public class UnitOfWork : IDisposable, IUnitOfWorkMarker
     {
-        private readonly PharmacyDBContext db = new PharmacyDBContext();
+        private readonly PharmacyDBContext db;
+        private readonly IMapper _mapper;
         private ProductRepository productRepository;
         private ProductAmountRepository productAmountRepository;
         private ProductTypeRepository productTypeRepository;
         private SalesInfoRepository salesInfoRepository;
         private WarehouseRepository warehouseRepository;
 
+        public UnitOfWork(PharmacyDBContext options, IMapper mapper)
+        {
+            db = options;
+            _mapper = mapper;
+        }
+
         public ProductRepository Product
         {
             get
             {
                 if (productRepository == null)
-                    productRepository = new ProductRepository(db);
+                    productRepository = new ProductRepository(db, _mapper);
                 return productRepository;
             }
         }
