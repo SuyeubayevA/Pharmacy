@@ -8,71 +8,62 @@ using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductRepository : IPharmRepository<Product>
+    public class ProductRepository : IPharmRepository<Product, ProductDetailDTO, ProductDTO>
     {
         private readonly PharmacyDBContext db;
-        private readonly IMapper _mapper;
 
         public ProductRepository(PharmacyDBContext context, IMapper mapper)
         {
             this.db = context;
-            this._mapper = mapper;
         }
-        public void Create(Product product)
+        public void Create(Product product) 
         {
             db.Add(product);
         }
 
-        public async Task<Product?> GetAsync(int id)
+        public async Task<ProductDetailDTO> GetAsync(int id)
         {
-            IQueryable<Product> query = db.Products.AsQueryable();
+            var query = db.Products
+                .Include(pr => pr.ProductType)
+                .Include(pr => pr.SalesInfo)
+                .Include(pr => pr.ProductAmounts)
+                .AsQueryable();
             query = query.Where(x => x.Id == id);
 
-            return await query.FirstOrDefaultAsync();
+            var product = await query.FirstOrDefaultAsync();
+
+            var productDetailsDto = ObjectMapper.Mapper.Map<ProductDetailDTO>(product);
+
+            return productDetailsDto;
         }
 
-        public async Task<Product?> GetAsync(string name)
+        public async Task<ProductDetailDTO?> GetAsync(string name)
         {
-            IQueryable<Product> query = db.Products.AsQueryable();
+            var query = db.Products
+                .Include(pr => pr.ProductType)
+                .Include(pr => pr.SalesInfo)
+                .Include(pr => pr.ProductAmounts)
+                .AsQueryable();
+
             query = query.Where(x => x.Name == name);
 
-            return await query.FirstOrDefaultAsync();
+            var product = await query.FirstOrDefaultAsync();
+            var productDetailsDto = ObjectMapper.Mapper.Map<ProductDetailDTO>(product);
+
+            return productDetailsDto;
         }
 
-        public async Task<Product[]> GetAllASync()
+        public async Task<ProductDTO?[]> GetAllASync()
         {
-            IQueryable<Product> query = from p in db.Products
-                        select new Product
+            IQueryable<ProductDTO> query = from p in db.Products
+                        select new ProductDTO
                         {
                             Id = p.Id,
                             Name = p.Name,
                             Description = p.Description,
                             Price = p.Price,
                             ProductTypeId = p.ProductTypeId,
-                            SalesInfoId = p.SalesInfoId,
-                            ProductType = new ProductType
-                            {
-                                Id = p.ProductTypeId,
-                                Name = p.ProductType.Name,
-                                Properties = p.ProductType.Properties
-                            }
-                            //,
-                            //SalesInfo = new SalesInfo
-                            //{
-                            //    Id = p.SalesInfo.Id,
-                            //    Sales = p.SalesInfo.Sales,
-                            //    ProductReminder = p.SalesInfo.ProductReminder,
-                            //    CreatedDate = p.SalesInfo.CreatedDate,
-                            //    EditDate = p.SalesInfo.EditDate,
-                            //    ProductId = p.SalesInfo.ProductId
-                            //    ,
-                            //    Product = new Product
-                            //    {
-                            //        Name = p.Name,
-                            //        Description = p.Description,
-                            //        Price = p.Price
-                            //    }
-                            //}
+                            SalesInfoId = p.SalesInfoId
                         };
 
             query = query.OrderByDescending(p => p.Name);
@@ -83,6 +74,46 @@ namespace Pharmacy.Infrastructure.Data.Repositories
         public void Update(Product product)
         {
             db.Update(product);
+        }
+
+        public bool UpdateWarehouseLink(int productId, int warehouseId, int amount = 0, float discount = 0)
+        {
+            var wareHouse = db.Warehouses.Where(x => x.Id== warehouseId).FirstOrDefault();
+            var product = db.Products.FirstOrDefault(p => p.Id== productId);
+
+            //var product = ObjectMapper.Mapper.Map<Product>(productDTO);
+            try
+            {
+                if(wareHouse != null && product != null)
+                {
+                    var productAmount = new ProductAmount
+                    {
+                        Product = product,
+                        Warehouse = wareHouse,
+                        Amount = amount,
+                        Discount = discount
+                    };
+
+                    if(product.ProductAmounts == null)
+                    {
+                        product.ProductAmounts = new List<ProductAmount>
+                        {
+                            productAmount
+                        };
+                    }
+                    else
+                    {
+                        product.ProductAmounts.Add(productAmount);
+                    }
+                    db.Update(product);
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void Delete(int id)

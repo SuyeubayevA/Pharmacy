@@ -82,6 +82,42 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
     }
 
+    public class UpdateProductsWarehouseHandler : IRequestHandler<UpdateProductsWarehouseCommand, IResult>
+    {
+        private readonly UnitOfWork _uow;
+        private readonly IMapper _mapper;
+
+        public UpdateProductsWarehouseHandler(UnitOfWork uow, IMapper mapper)
+        {
+            _uow = uow;
+            _mapper = mapper;
+        }
+        public async Task<IResult> Handle(UpdateProductsWarehouseCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                //var product = await _uow.Product.GetAsync(request._Id);
+
+                //if (product == null) { return Results.NotFound(); }
+
+                var result = _uow.Product.UpdateWarehouseLink(request._Id, request._WarehouseId, request._Amount, request._Discount);
+
+                if (result && await _uow.SaveAsync())
+                {
+                    return Results.Ok();
+                }
+                else
+                {
+                    return Results.StatusCode(500);
+                }
+            }
+            catch(Exception ex)
+            {
+                return Results.StatusCode(500);
+            }
+        }
+    }
+
     public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, IResult>
     {
         private readonly UnitOfWork _uow;

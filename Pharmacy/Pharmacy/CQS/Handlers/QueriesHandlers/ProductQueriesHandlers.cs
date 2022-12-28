@@ -7,7 +7,7 @@ using Pharmacy.Queries;
 
 namespace Pharmacy.Handlers.ProductQueriesHanders
 {
-    public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, Product?>
+    public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, ProductDetailDTO>
     {
         private readonly UnitOfWork _uow;
 
@@ -15,13 +15,13 @@ namespace Pharmacy.Handlers.ProductQueriesHanders
         {
             _uow = uow;
         }
-        public async Task<Product?> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ProductDetailDTO> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
             return await _uow.Product.GetAsync(request._id);
         }
     }
 
-    public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Product[]>
+    public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, ProductDTO[]>
     {
         private readonly UnitOfWork _uow;
 
@@ -29,7 +29,7 @@ namespace Pharmacy.Handlers.ProductQueriesHanders
         {
             _uow = uow;
         }
-        public async Task<Product[]> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+        public async Task<ProductDTO[]> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
             return await _uow.Product.GetAllASync();
         }

@@ -4,7 +4,7 @@ using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Queries
 {
-    public class GetProductByIdQuery : IRequest<Product>
+    public class GetProductByIdQuery : IRequest<ProductDetailDTO>
     {
         public int _id { get; }
 
@@ -14,7 +14,7 @@ namespace Pharmacy.Queries
         }
     }
 
-    public class GetAllProductsQuery : IRequest<Product[]>
+    public class GetAllProductsQuery : IRequest<ProductDTO[]>
     {
 
     }

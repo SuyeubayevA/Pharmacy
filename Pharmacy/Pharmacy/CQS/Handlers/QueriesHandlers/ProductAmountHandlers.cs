@@ -2,11 +2,12 @@
 using MediatR;
 using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Queries;
 
 namespace Pharmacy.Handlers.ProductQueriesHanders
 {
-    public class GetProductAmountByIdHandler : IRequestHandler<GetProductAmountByIdQuery, ProductAmount>
+    public class GetProductAmountByIdHandler : IRequestHandler<GetProductAmountByIdQuery, ProductAmountDetailsDTO>
     {
         private readonly UnitOfWork _uow;
 
@@ -14,13 +15,14 @@ namespace Pharmacy.Handlers.ProductQueriesHanders
         {
             _uow = uow;
         }
-        public async Task<ProductAmount> Handle(GetProductAmountByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ProductAmountDetailsDTO> Handle(GetProductAmountByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _uow.ProductAmount.GetAsync(request._id);
+            var test = await _uow.ProductAmount.GetAsync(request._id);
+            return test;
         }
     }
 
-    public class GetAllProductAmountsHandler : IRequestHandler<GetAllProductAmountsQuery, ProductAmount[]>
+    public class GetAllProductAmountsHandler : IRequestHandler<GetAllProductAmountsQuery, ProductAmountDTO[]>
     {
         private readonly UnitOfWork _uow;
 
@@ -28,7 +30,7 @@ namespace Pharmacy.Handlers.ProductQueriesHanders
         {
             _uow = uow;
         }
-        public async Task<ProductAmount[]> Handle(GetAllProductAmountsQuery request, CancellationToken cancellationToken)
+        public async Task<ProductAmountDTO[]> Handle(GetAllProductAmountsQuery request, CancellationToken cancellationToken)
         {
             return await _uow.ProductAmount.GetAllASync();
         }

@@ -1,9 +1,10 @@
 ﻿using MediatR;
 using Pharmacy.Domain.Core;
+using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Queries
 {
-    public class GetWarehouseByIdQuery : IRequest<Warehouse>
+    public class GetWarehouseByIdQuery : IRequest<WarehouseDetailsDTO>
     {
         public int _id { get; }
 
@@ -13,7 +14,7 @@ namespace Pharmacy.Queries
         }
     }
 
-    public class GetAllWarehousesQuery : IRequest<Warehouse[]>
+    public class GetAllWarehousesQuery : IRequest<WarehouseDTO[]>
     {
 
     }

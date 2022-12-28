@@ -1,15 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductTypeRepository : IPharmRepository<ProductType>
+    public class ProductTypeRepository : IPharmRepository<ProductType, ProductTypeDetailsDTO, ProductTypeDTO>
     {
         private readonly PharmacyDBContext db;
 
@@ -22,25 +18,41 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             db.Add(productType);
         }
 
-        public async Task<ProductType> GetAsync(int id)
+        public async Task<ProductTypeDetailsDTO> GetAsync(int id)
         {
-            IQueryable<ProductType> query = db.ProductTypes.AsQueryable();
+            var query = db.ProductTypes
+                .Include(pt => pt.Products)
+                .AsQueryable();
             query = query.Where(x => x.Id == id);
 
-            return await query.FirstAsync();
+            var productTypes = await query.FirstAsync();
+            var productTypeDetailsDTO = ObjectMapper.Mapper.Map<ProductTypeDetailsDTO>(productTypes);
+
+            return productTypeDetailsDTO;
         }
 
-        public async Task<ProductType> GetAsync(string name)
+        public async Task<ProductTypeDetailsDTO> GetAsync(string name)
         {
-            IQueryable<ProductType> query = db.ProductTypes.AsQueryable();
+            IQueryable<ProductType> query = db.ProductTypes
+                .Include(pt => pt.Products)
+                .AsQueryable();
             query = query.Where(x => x.Name == name);
 
-            return await query.FirstAsync();
+            var productTypes = await query.FirstAsync();
+            var productTypeDetailsDTO = ObjectMapper.Mapper.Map<ProductTypeDetailsDTO>(productTypes);
+
+            return productTypeDetailsDTO;
         }
 
-        public async Task<ProductType[]> GetAllASync()
+        public async Task<ProductTypeDTO[]> GetAllASync()
         {
-            IQueryable<ProductType> query = db.ProductTypes.AsQueryable();
+            IQueryable<ProductTypeDTO> query = from pt in db.ProductTypes
+                                               select new ProductTypeDTO
+                                               {
+                                                   Id = pt.Id,
+                                                   Name = pt.Name,
+                                                   Properties = pt.Properties
+                                               };
             query = query.OrderByDescending(p => p.Name);
 
             return await query.ToArrayAsync();

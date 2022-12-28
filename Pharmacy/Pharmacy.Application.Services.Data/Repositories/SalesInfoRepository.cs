@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
+using Pharmacy.Infrastructure.Data.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class SalesInfoRepository : IPharmRepository<SalesInfo>
+    public class SalesInfoRepository : IPharmRepository<SalesInfo, SalesInfoDetailsDTO, SalesInfoDTO>
     {
         private readonly PharmacyDBContext db;
 
@@ -22,26 +23,44 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             db.Add(productType);
         }
 
-        public async Task<SalesInfo> GetAsync(int id)
+        public async Task<SalesInfoDetailsDTO> GetAsync(int id)
         {
-            IQueryable<SalesInfo> query = db.SalesInfos.AsQueryable();
+            IQueryable<SalesInfo> query = db.SalesInfos
+                .Include(p => p.Product)
+                .AsQueryable();
             query = query.Where(x => x.Id == id);
 
-            return await query.FirstAsync();
+            var sailsInfo = await query.FirstOrDefaultAsync();
+            var sailsInfoDto = ObjectMapper.Mapper.Map<SalesInfoDetailsDTO>(sailsInfo);
+
+            return sailsInfoDto;
         }
 
-        public async Task<SalesInfo> GetAsync(int productId, int id = 0)
+        public async Task<SalesInfoDetailsDTO> GetAsync(int productId, int id = 0)
         {
-            IQueryable<SalesInfo> query = db.SalesInfos.AsQueryable();
+            IQueryable<SalesInfo> query = db.SalesInfos
+                .Include(p => p.Product)
+                .AsQueryable();
             query = query.Where(x => x.ProductId == productId);
 
-            return await query.FirstOrDefaultAsync();
+            var sailsInfo = await query.FirstOrDefaultAsync();
+            var sailsInfoDto = ObjectMapper.Mapper.Map<SalesInfoDetailsDTO>(sailsInfo);
+
+            return sailsInfoDto;
         }
 
-        public async Task<SalesInfo[]> GetAllASync()
+        public async Task<SalesInfoDTO[]> GetAllASync()
         {
-            IQueryable<SalesInfo> query = db.SalesInfos.AsQueryable();
-            query = query.OrderByDescending(p => p.Product.Name);
+            IQueryable<SalesInfoDTO> query = from si in db.SalesInfos
+                                          select new SalesInfoDTO
+                                          {
+                                              Sales = si.Sales,
+                                              ProductReminder = si.ProductReminder,
+                                              CreatedDate = si.CreatedDate,
+                                              EditDate = si.EditDate
+                                          };
+
+            query = query.OrderByDescending(p => p.CreatedDate);
 
             return await query.ToArrayAsync();
         }

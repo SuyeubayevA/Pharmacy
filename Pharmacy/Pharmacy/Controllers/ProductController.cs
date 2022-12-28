@@ -57,6 +57,13 @@ namespace Pharmacy.Controllers
             return await _mediator.Send(command);
         }
 
+        [HttpPut("AddWarehouse")]
+        public async Task<IResult> PutWarehouse(int Id, ProductModel model, int warehouseId, int amount = 0, float discount = 0)
+        {
+            var command = new UpdateProductsWarehouseCommand(Id, model, warehouseId, amount, discount);
+            return await _mediator.Send(command);
+        }
+
         [HttpDelete]
         [Route("{productName}")]
         public async Task<IResult> Delete(string productName)

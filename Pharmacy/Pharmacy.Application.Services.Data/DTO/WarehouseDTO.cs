@@ -12,10 +12,20 @@ namespace Pharmacy.Infrastructure.Data.DTO
         //Primary Key
         public int Id { get; set; }
 
+        public string Name { get; set; }
+        public string Address { get; set; }
+
+    }
+
+    public class WarehouseDetailsDTO
+    {
+        //Primary Key
+        public int Id { get; set; }
+
         public string? Name { get; set; }
         public string? Address { get; set; }
 
         //Navigation Property
-        public virtual ICollection<ProductAmountDTO>? ProductAmounts { get; private set; }
+        public ICollection<ProductAmountDTO>? ProductAmounts { get; private set; }
     }
 }

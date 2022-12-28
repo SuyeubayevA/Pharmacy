@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
+using Pharmacy.Infrastructure.Data.DTO;
 //using System.Data.Entity;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductAmountRepository : IPharmRepository<ProductAmount>
+    public class ProductAmountRepository : IPharmRepository<ProductAmount, ProductAmountDetailsDTO, ProductAmountDTO>
     {
         private readonly PharmacyDBContext db;
 
@@ -18,26 +19,49 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             db.Add(productType);
         }
 
-        public async Task<ProductAmount> GetAsync(int id)
+        public async Task<ProductAmountDetailsDTO> GetAsync(int id)
         {
-            IQueryable<ProductAmount> query = db.ProductAmounts.AsQueryable();
+            IQueryable<ProductAmount> query = db.ProductAmounts
+                .Include(w => w.Warehouse)
+                .Include(p => p.Product)
+                .AsQueryable();
             query = query.Where(x => x.Id == id);
 
-            return await query.FirstAsync();
+            var productAmount = await query.FirstOrDefaultAsync();
+            var productAmountDetailsDTO = ObjectMapper.Mapper.Map<ProductAmountDetailsDTO>(productAmount);
+
+            return productAmountDetailsDTO;
         }
 
-        public async Task<ProductAmount> GetAsync(int warehouseId, int ProductId)
+        public async Task<ProductAmountDetailsDTO> GetAsync(int warehouseId, int ProductId)
         {
-            IQueryable<ProductAmount> query = db.ProductAmounts.AsQueryable();
+            IQueryable<ProductAmount> query = db.ProductAmounts
+                .Include(w => w.Warehouse)
+                .Include(p => p.Product)
+                .AsQueryable();
             query = query.Where(x => x.ProductId == ProductId && x.WarehouseId == warehouseId);
 
-            return await query.FirstAsync();
+            var productAmount = await query.FirstOrDefaultAsync();
+            var productAmountDetailsDTO = ObjectMapper.Mapper.Map<ProductAmountDetailsDTO>(productAmount);
+
+            return productAmountDetailsDTO;
         }
 
-        public async Task<ProductAmount[]> GetAllASync()
+        public async Task<ProductAmountDTO[]> GetAllASync()
         {
-            IQueryable<ProductAmount> query = db.ProductAmounts.AsQueryable();
-            query = query.OrderByDescending(p => p.Product.Name);
+            var query = from pa in db.ProductAmounts
+                        select new ProductAmountDTO
+                        {
+                            Id = pa.Id,
+                            WarehouseId = pa.WarehouseId,
+                            ProductId = pa.ProductId,
+                            Amount = pa.Amount,
+                            Discount = pa.Discount,
+                            ProductName = pa.Product.Name,
+                            WarehouseName = pa.Warehouse.Name
+                        };
+
+            query = query.OrderByDescending(p => p.ProductName);
 
             return await query.ToArrayAsync();
         }

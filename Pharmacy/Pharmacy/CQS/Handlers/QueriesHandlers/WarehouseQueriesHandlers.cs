@@ -2,11 +2,12 @@
 using MediatR;
 using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Queries;
 
 namespace Pharmacy.Handlers.ProductQueriesHanders
 {
-    public class GetWarehouseByIdHandler : IRequestHandler<GetWarehouseByIdQuery, Warehouse>
+    public class GetWarehouseByIdHandler : IRequestHandler<GetWarehouseByIdQuery, WarehouseDetailsDTO>
     {
         private readonly UnitOfWork _uow;
 
@@ -14,13 +15,13 @@ namespace Pharmacy.Handlers.ProductQueriesHanders
         {
             _uow = uow;
         }
-        public async Task<Warehouse> Handle(GetWarehouseByIdQuery request, CancellationToken cancellationToken)
+        public async Task<WarehouseDetailsDTO> Handle(GetWarehouseByIdQuery request, CancellationToken cancellationToken)
         {
             return await _uow.Warehouse.GetAsync(request._id);
         }
     }
 
-    public class GetAllWarehouseHandler : IRequestHandler<GetAllWarehousesQuery, Warehouse[]>
+    public class GetAllWarehouseHandler : IRequestHandler<GetAllWarehousesQuery, WarehouseDTO[]>
     {
         private readonly UnitOfWork _uow;
 
@@ -28,7 +29,7 @@ namespace Pharmacy.Handlers.ProductQueriesHanders
         {
             _uow = uow;
         }
-        public async Task<Warehouse[]> Handle(GetAllWarehousesQuery request, CancellationToken cancellationToken)
+        public async Task<WarehouseDTO[]> Handle(GetAllWarehousesQuery request, CancellationToken cancellationToken)
         {
             return await _uow.Warehouse.GetAllASync();
         }

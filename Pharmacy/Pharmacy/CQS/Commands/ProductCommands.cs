@@ -39,4 +39,29 @@ namespace Pharmacy.Commands
             _Id = Id;
         }
     }
+
+    public class UpdateProductsWarehouseCommand : IRequest<IResult>
+    {
+        [Required]
+        public ProductModel _model { get; set; }
+
+        [Required]
+        public int _Id { get; set; }
+
+        [Required]
+        public int _WarehouseId { get; set; }
+
+        public int _Amount { get; set; }
+
+        public float _Discount { get; set; }
+
+        public UpdateProductsWarehouseCommand(int Id, ProductModel model, int warehouseId, int amount, float discount)
+        {
+            _model = model;
+            _Id = Id;
+            _Amount = amount;
+            _WarehouseId = warehouseId;
+            _Discount = discount;
+        }
+    }
 }

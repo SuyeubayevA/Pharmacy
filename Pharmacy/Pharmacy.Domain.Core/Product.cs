@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pharmacy.Domain.Core
+﻿namespace Pharmacy.Domain.Core
 {
     public class Product
     {
-        //public Product()
-        //{
-        //    this.ProductAmounts = new HashSet<ProductAmount>();
-        //}
+        public Product()
+        {
+            this.ProductAmounts = new HashSet<ProductAmount>();
+        }
         //Primary Key
         public int Id { get; set; }
 
@@ -26,6 +20,6 @@ namespace Pharmacy.Domain.Core
         //Nvigation Property
         public virtual ProductType? ProductType { get; set; }
         public virtual SalesInfo? SalesInfo { get; set; }
-        public virtual ICollection<ProductAmount>? ProductAmounts { get; private set; }
+        public virtual ICollection<ProductAmount> ProductAmounts { get; set; }
     }
 }
