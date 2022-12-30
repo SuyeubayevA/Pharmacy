@@ -4,7 +4,7 @@ using Pharmacy.Models;
 
 namespace Pharmacy.Profiles
 {
-    internal class ProductMappingProfile : Profile
+    public class ProductMappingProfile : Profile
     {
         public ProductMappingProfile() 
         {
