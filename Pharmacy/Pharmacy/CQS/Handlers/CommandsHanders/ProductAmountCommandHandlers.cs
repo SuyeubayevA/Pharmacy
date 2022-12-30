@@ -19,27 +19,20 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(CreateProductAmountCommand request, CancellationToken cancellationToken)
         {
-            try
+            if (await _uow.ProductAmount.GetAsync(request._model.WarehouseId, request._model.ProductId) != null)
             {
-                if (await _uow.ProductAmount.GetAsync(request._model.WarehouseId, request._model.ProductId) != null)
-                {
-                    Results.BadRequest("The object lred exist !");
-                }
-
-                if (request._model is ProductAmountModel)
-                {
-                    var productAmount = _mapper.Map<ProductAmount>(request._model);
-                    _uow.ProductAmount.Create(productAmount);
-
-                    if (await _uow.SaveAsync())
-                    {
-                        return Results.Ok(productAmount);
-                    }
-                }
+                Results.BadRequest("The object already exist !");
             }
-            catch
+
+            if (request._model is ProductAmountModel)
             {
-                return Results.StatusCode(500);
+                var productAmount = _mapper.Map<ProductAmount>(request._model);
+                _uow.ProductAmount.Create(productAmount);
+
+                if (await _uow.SaveAsync())
+                {
+                    return Results.Ok(productAmount);
+                }
             }
 
             return Results.BadRequest(request._model);
@@ -58,24 +51,17 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateProductAmountCommand request, CancellationToken cancellationToken)
         {
-            try
+            var productAmount = await _uow.ProductAmount.GetAsync(request._model.WarehouseId, request._model.ProductId);
+
+            if (productAmount == null) { return Results.NotFound(); }
+
+            _mapper.Map(request._model, productAmount);
+
+            if (await _uow.SaveAsync())
             {
-                var productAmount = await _uow.ProductAmount.GetAsync(request._model.WarehouseId, request._model.ProductId);
-
-                if (productAmount == null) { return Results.NotFound(); }
-
-                _mapper.Map(request._model, productAmount);
-
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(productAmount);
-                }
-                else
-                {
-                    return Results.StatusCode(500);
-                }
+                return Results.Ok(productAmount);
             }
-            catch
+            else
             {
                 return Results.StatusCode(500);
             }
@@ -94,24 +80,17 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(DeleteProductAmountCommand request, CancellationToken cancellationToken)
         {
-            try
+            var productAmount = await _uow.ProductAmount.GetAsync(request._Id);
+
+            if (productAmount == null) { return Results.NotFound(); }
+
+            _uow.ProductAmount.Delete(productAmount.Id);
+
+            if (await _uow.SaveAsync())
             {
-                var productAmount = await _uow.ProductAmount.GetAsync(request._Id);
-
-                if (productAmount == null) { return Results.NotFound(); }
-
-                _uow.ProductAmount.Delete(productAmount.Id);
-
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(productAmount);
-                }
-                else
-                {
-                    return Results.StatusCode(500);
-                }
+                return Results.Ok(productAmount);
             }
-            catch
+            else
             {
                 return Results.StatusCode(500);
             }

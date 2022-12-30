@@ -19,27 +19,20 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(CreateSalesInfoCommand request, CancellationToken cancellationToken)
         {
-            try
+            if (await _uow.SalesInfo.GetAsync(request._model.ProductId, 0) != null)
             {
-                if (await _uow.SalesInfo.GetAsync(request._model.ProductId, 0) != null)
-                {
-                    Results.BadRequest("The object already exist !");
-                }
-
-                if (request._model is SalesInfoModel)
-                {
-                    var salesInfo = _mapper.Map<SalesInfo>(request._model);
-                    _uow.SalesInfo.Create(salesInfo);
-
-                    if (await _uow.SaveAsync())
-                    {
-                        return Results.Ok(salesInfo);
-                    }
-                }
+                Results.BadRequest("The object already exist !");
             }
-            catch
+
+            if (request._model is SalesInfoModel)
             {
-                return Results.StatusCode(500);
+                var salesInfo = _mapper.Map<SalesInfo>(request._model);
+                _uow.SalesInfo.Create(salesInfo);
+
+                if (await _uow.SaveAsync())
+                {
+                    return Results.Ok(salesInfo);
+                }
             }
 
             return Results.BadRequest(request._model);
@@ -58,24 +51,17 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateSalesInfoCommand request, CancellationToken cancellationToken)
         {
-            try
+            var salesInfo = await _uow.SalesInfo.GetAsync(request._model.ProductId);
+
+            if (salesInfo == null) { return Results.NotFound(); }
+
+            _mapper.Map(request._model, salesInfo);
+
+            if (await _uow.SaveAsync())
             {
-                var salesInfo = await _uow.SalesInfo.GetAsync(request._model.ProductId);
-
-                if (salesInfo == null) { return Results.NotFound(); }
-
-                _mapper.Map(request._model, salesInfo);
-
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(salesInfo);
-                }
-                else
-                {
-                    return Results.StatusCode(500);
-                }
+                return Results.Ok(salesInfo);
             }
-            catch
+            else
             {
                 return Results.StatusCode(500);
             }
@@ -94,24 +80,17 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(DeleteSalesInfoCommand request, CancellationToken cancellationToken)
         {
-            try
+            var salesInfo = await _uow.SalesInfo.GetAsync(request._productId, 0);
+
+            if (salesInfo == null) { return Results.NotFound(); }
+
+            _uow.SalesInfo.Delete(salesInfo.Id);
+
+            if (await _uow.SaveAsync())
             {
-                var salesInfo = await _uow.SalesInfo.GetAsync(request._productId, 0);
-
-                if (salesInfo == null) { return Results.NotFound(); }
-
-                _uow.SalesInfo.Delete(salesInfo.Id);
-
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(salesInfo);
-                }
-                else
-                {
-                    return Results.StatusCode(500);
-                }
+                return Results.Ok(salesInfo);
             }
-            catch
+            else
             {
                 return Results.StatusCode(500);
             }

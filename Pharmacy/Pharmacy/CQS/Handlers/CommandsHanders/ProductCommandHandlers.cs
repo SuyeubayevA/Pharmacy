@@ -19,27 +19,20 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            try
+            if (await _uow.Product.GetAsync(request._model.Name) != null)
             {
-                if (await _uow.Product.GetAsync(request._model.Name) != null)
-                {
-                    Results.BadRequest("The object already exist !");
-                }
-
-                if (request._model is ProductModel)
-                {
-                    var product = _mapper.Map<Product>(request._model);
-                    _uow.Product.Create(product);
-
-                    if (await _uow.SaveAsync())
-                    {
-                        return Results.Ok(product);
-                    }
-                }
+                Results.BadRequest("The object already exist !");
             }
-            catch
+
+            if (request._model is ProductModel)
             {
-                return Results.StatusCode(500);
+                var product = _mapper.Map<Product>(request._model);
+                _uow.Product.Create(product);
+
+                if (await _uow.SaveAsync())
+                {
+                    return Results.Ok(product);
+                }
             }
 
             return Results.BadRequest(request._model);
@@ -58,24 +51,17 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            try
+            var product = await _uow.Product.GetAsync(request._Id);
+
+            if (product == null) { return Results.NotFound(); }
+
+            _mapper.Map(request._model, product);
+
+            if (await _uow.SaveAsync())
             {
-                var product = await _uow.Product.GetAsync(request._Id);
-
-                if (product == null) { return Results.NotFound(); }
-
-                _mapper.Map(request._model, product);
-
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(product);
-                }
-                else
-                {
-                    return Results.StatusCode(500);
-                }
+                return Results.Ok(product);
             }
-            catch
+            else
             {
                 return Results.StatusCode(500);
             }
@@ -85,33 +71,20 @@ namespace Pharmacy.Handlers.CommandsHanders
     public class UpdateProductsWarehouseHandler : IRequestHandler<UpdateProductsWarehouseCommand, IResult>
     {
         private readonly UnitOfWork _uow;
-        private readonly IMapper _mapper;
 
-        public UpdateProductsWarehouseHandler(UnitOfWork uow, IMapper mapper)
+        public UpdateProductsWarehouseHandler(UnitOfWork uow)
         {
             _uow = uow;
-            _mapper = mapper;
         }
         public async Task<IResult> Handle(UpdateProductsWarehouseCommand request, CancellationToken cancellationToken)
         {
-            try
+            var result = _uow.Product.UpdateWarehouseLink(request._Id, request._WarehouseId, request._Amount, request._Discount);
+
+            if (result && await _uow.SaveAsync())
             {
-                //var product = await _uow.Product.GetAsync(request._Id);
-
-                //if (product == null) { return Results.NotFound(); }
-
-                var result = _uow.Product.UpdateWarehouseLink(request._Id, request._WarehouseId, request._Amount, request._Discount);
-
-                if (result && await _uow.SaveAsync())
-                {
-                    return Results.Ok();
-                }
-                else
-                {
-                    return Results.StatusCode(500);
-                }
+                return Results.Ok();
             }
-            catch(Exception ex)
+            else
             {
                 return Results.StatusCode(500);
             }
@@ -121,33 +94,24 @@ namespace Pharmacy.Handlers.CommandsHanders
     public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, IResult>
     {
         private readonly UnitOfWork _uow;
-        private readonly IMapper _mapper;
 
-        public DeleteProductHandler(UnitOfWork uow, IMapper mapper)
+        public DeleteProductHandler(UnitOfWork uow)
         {
             _uow = uow;
-            _mapper = mapper;
         }
         public async Task<IResult> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
-            try
+            var product = await _uow.Product.GetAsync(request._productName);
+
+            if (product == null) { return Results.NotFound(); }
+
+            _uow.Product.Delete(product.Id);
+
+            if (await _uow.SaveAsync())
             {
-                var product = await _uow.Product.GetAsync(request._productName);
-
-                if (product == null) { return Results.NotFound(); }
-
-                _uow.Product.Delete(product.Id);
-
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(product);
-                }
-                else
-                {
-                    return Results.StatusCode(500);
-                }
+                return Results.Ok(product);
             }
-            catch
+            else
             {
                 return Results.StatusCode(500);
             }

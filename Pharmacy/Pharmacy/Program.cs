@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Pharmacy.Helpers;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Profiles;
 using System.Reflection;
@@ -18,6 +19,7 @@ var mapper = mapperConfig.CreateMapper();
 IConfiguration configuration = new ConfigurationBuilder()
    .AddJsonFile("appsettings.json", true, true)
    .Build();
+
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -43,6 +45,12 @@ builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseCors(c => c
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    );
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -52,6 +60,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+//Global error handler
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.MapControllers();
 

@@ -19,27 +19,20 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
         {
-            try
+            if (await _uow.Warehouse.GetAsync(request._model.Name) != null)
             {
-                if (await _uow.Warehouse.GetAsync(request._model.Name) != null)
-                {
-                    Results.BadRequest("The object lred exist !");
-                }
-
-                if (request._model is WarehouseModel)
-                {
-                    var warehouse = _mapper.Map<Warehouse>(request._model);
-                    _uow.Warehouse.Create(warehouse);
-
-                    if (await _uow.SaveAsync())
-                    {
-                        return Results.Ok(warehouse);
-                    }
-                }
+                Results.BadRequest("The object lred exist !");
             }
-            catch
+
+            if (request._model is WarehouseModel)
             {
-                return Results.StatusCode(500);
+                var warehouse = _mapper.Map<Warehouse>(request._model);
+                _uow.Warehouse.Create(warehouse);
+
+                if (await _uow.SaveAsync())
+                {
+                    return Results.Ok(warehouse);
+                }
             }
 
             return Results.BadRequest(request._model);
@@ -58,24 +51,17 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateWarehouseCommand request, CancellationToken cancellationToken)
         {
-            try
+            var warehouse = await _uow.Warehouse.GetAsync(request._model.Name);
+
+            if (warehouse == null) { return Results.NotFound(); }
+
+            _mapper.Map(request._model, warehouse);
+
+            if (await _uow.SaveAsync())
             {
-                var warehouse = await _uow.Warehouse.GetAsync(request._model.Name);
-
-                if (warehouse == null) { return Results.NotFound(); }
-
-                _mapper.Map(request._model, warehouse);
-
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(warehouse);
-                }
-                else
-                {
-                    return Results.StatusCode(500);
-                }
+                return Results.Ok(warehouse);
             }
-            catch
+            else
             {
                 return Results.StatusCode(500);
             }
@@ -94,24 +80,17 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(DeleteWarehouseCommand request, CancellationToken cancellationToken)
         {
-            try
+            var warehouse = await _uow.Warehouse.GetAsync(request._warehouseName);
+
+            if (warehouse == null) { return Results.NotFound(); }
+
+            _uow.Warehouse.Delete(warehouse.Id);
+
+            if (await _uow.SaveAsync())
             {
-                var warehouse = await _uow.Warehouse.GetAsync(request._warehouseName);
-
-                if (warehouse == null) { return Results.NotFound(); }
-
-                _uow.Warehouse.Delete(warehouse.Id);
-
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(warehouse);
-                }
-                else
-                {
-                    return Results.StatusCode(500);
-                }
+                return Results.Ok(warehouse);
             }
-            catch
+            else
             {
                 return Results.StatusCode(500);
             }
