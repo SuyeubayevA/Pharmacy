@@ -1,11 +1,13 @@
-﻿namespace Pharmacy.Infrastructure.Data.DTO
+﻿using System.Runtime.CompilerServices;
+
+namespace Pharmacy.Infrastructure.Data.DTO
 {
     public class ProductDTO
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public float Price { get; set; }
 
         //Foreign Key
@@ -17,8 +19,8 @@
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public float Price { get; set; }
 
         //Foreign Key
@@ -26,8 +28,8 @@
         public int? SalesInfoId { get; set; }
 
         //Navigation Property
-        public string ProductTypeName { get; set; }
-        public string ProductTypeProperties { get; set; }
+        public string ProductTypeName { get; set; } = string.Empty;
+        public string ProductTypeProperties { get; set; } = string.Empty;
 
         public int Sales { get; set; }
         public int ProductReminder { get; set; }

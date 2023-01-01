@@ -27,7 +27,14 @@ namespace Pharmacy.Controllers
         {
             var query = new GetAllProductsQuery();
             var result = await _mediator.Send(query);
-            return Results.Ok(result);
+            if(result != null)
+            {
+                return Results.Ok(result);
+            }
+            else
+            {
+                return Results.NotFound("There is no any product");
+            }
         }
 
         [HttpGet("{Id}")]

@@ -53,7 +53,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return productDetailsDto;
         }
 
-        public async Task<ProductDTO?[]> GetAllASync()
+        public async Task<ProductDTO[]> GetAllASync()
         {
             IQueryable<ProductDTO> query = from p in db.Products
                         select new ProductDTO

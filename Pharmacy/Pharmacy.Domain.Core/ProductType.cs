@@ -9,8 +9,8 @@
 
         //Primary Key
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Properties { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Properties { get; set; } = string.Empty;
 
         //Navigation Property
         public virtual ICollection<Product> Products { get; private set; }

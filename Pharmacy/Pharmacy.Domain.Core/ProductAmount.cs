@@ -18,8 +18,8 @@ namespace Pharmacy.Domain.Core
         public int Amount { get; set; }
         public float Discount { get; set; }
 
-        //Nvigation Property
-        public virtual Product Product { get; set; }
-        public virtual Warehouse Warehouse { get; set; }
+        //Navigation Property
+        public virtual Product? Product { get; set; }
+        public virtual Warehouse? Warehouse { get; set; }
     }
 }

@@ -1,7 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Options;
 using Pharmacy.Domain.Interfaces;
 using Pharmacy.Infrastructure.Data.Repositories;
 

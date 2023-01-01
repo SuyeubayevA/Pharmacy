@@ -74,7 +74,8 @@ namespace Pharmacy.Infrastructure.Data.Repositories
         public void Delete(int id)
         {
             var model = db.Find<ProductAmount>(id);
-            db.Remove(model);
+            if (model != null)
+                db.Remove(model);
         }
     }
 }
