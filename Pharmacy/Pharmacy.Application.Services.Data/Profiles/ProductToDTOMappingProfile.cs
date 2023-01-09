@@ -4,7 +4,7 @@ using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Profiles
 {
-    internal class ProductToDTOMappingProfile : Profile
+    public class ProductToDTOMappingProfile : Profile
     {
         public ProductToDTOMappingProfile() 
         {
