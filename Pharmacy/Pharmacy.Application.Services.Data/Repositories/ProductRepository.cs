@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Azure.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
 using Pharmacy.Infrastructure.Data.DTO;
@@ -12,7 +10,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
     {
         private readonly PharmacyDBContext db;
 
-        public ProductRepository(PharmacyDBContext context, IMapper mapper)
+        public ProductRepository(PharmacyDBContext context)
         {
             this.db = context;
         }

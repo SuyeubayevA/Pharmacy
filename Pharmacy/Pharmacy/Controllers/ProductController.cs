@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Pharmacy.Commands;
-using Pharmacy.Domain.Core;
-using Pharmacy.Infrastructure.Data;
 using Pharmacy.Models;
 using Pharmacy.Queries;
 

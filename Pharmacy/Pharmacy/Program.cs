@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Pharmacy.Helpers;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.Repositories;
 using Pharmacy.Profiles;
 using System.Reflection;
 using static System.Net.WebRequestMethods;
@@ -29,6 +30,7 @@ builder.Services.AddDbContext<PharmacyDBContext>(
 
 builder.Services.AddSingleton(mapper);
 builder.Services.AddScoped<UnitOfWork>();
+builder.Services.AddScoped<ProductRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -71,3 +73,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+public partial class Program
+{
+
+}

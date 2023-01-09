@@ -6,7 +6,7 @@ namespace Pharmacy.Infrastructure.Data
 {
     public class PharmacyDBContext : DbContext
     {
-        public DbSet<Product> Products { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
         public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<SalesInfo> SalesInfos { get; set; }
         public DbSet<ProductAmount> ProductAmounts { get; set; }
@@ -17,7 +17,7 @@ namespace Pharmacy.Infrastructure.Data
         //    Database.EnsureCreated();
         //}
 
-        //public PharmacyDBContext() { }
+        public PharmacyDBContext() { }
         public PharmacyDBContext(DbContextOptions<PharmacyDBContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -30,5 +30,10 @@ namespace Pharmacy.Infrastructure.Data
 
             base.OnModelCreating(builder);
         }
+    }
+
+    public interface IPharmDbContext
+    {
+        DbSet<Product> get_Products();
     }
 }

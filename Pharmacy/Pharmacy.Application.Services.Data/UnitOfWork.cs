@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Pharmacy.Domain.Interfaces;
+﻿using Pharmacy.Domain.Interfaces;
 using Pharmacy.Infrastructure.Data.Repositories;
 
 
@@ -8,17 +7,15 @@ namespace Pharmacy.Infrastructure.Data
     public class UnitOfWork : IDisposable, IUnitOfWorkMarker
     {
         private readonly PharmacyDBContext db;
-        private readonly IMapper _mapper;
         private ProductRepository productRepository;
         private ProductAmountRepository productAmountRepository;
         private ProductTypeRepository productTypeRepository;
         private SalesInfoRepository salesInfoRepository;
         private WarehouseRepository warehouseRepository;
 
-        public UnitOfWork(PharmacyDBContext options, IMapper mapper)
+        public UnitOfWork(PharmacyDBContext options)
         {
             db = options;
-            _mapper = mapper;
         }
 
         public ProductRepository Product
@@ -26,7 +23,7 @@ namespace Pharmacy.Infrastructure.Data
             get
             {
                 if (productRepository == null)
-                    productRepository = new ProductRepository(db, _mapper);
+                    productRepository = new ProductRepository(db);
                 return productRepository;
             }
         }

@@ -1,8 +1,10 @@
 
 using MediatR;
 using Pharmacy.Domain.Core;
+using Pharmacy.Domain.Interfaces;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.DTO;
+using Pharmacy.Infrastructure.Data.Repositories;
 using Pharmacy.Queries;
 
 namespace Pharmacy.Handlers.ProductQueriesHanders
@@ -24,7 +26,6 @@ namespace Pharmacy.Handlers.ProductQueriesHanders
     public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, ProductDTO[]>
     {
         private readonly UnitOfWork _uow;
-
         public GetAllProductsHandler(UnitOfWork uow)
         {
             _uow = uow;
