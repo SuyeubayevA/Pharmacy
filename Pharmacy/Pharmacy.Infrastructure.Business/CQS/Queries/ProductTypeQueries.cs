@@ -2,7 +2,7 @@
 using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Data.DTO;
 
-namespace Pharmacy.Queries
+namespace Pharmacy.Infrastructure.Queries
 {
     public class GetProductTypeByIdQuery : IRequest<ProductTypeDetailsDTO>
     {

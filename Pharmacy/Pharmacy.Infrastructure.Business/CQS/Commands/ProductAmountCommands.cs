@@ -2,7 +2,7 @@ using MediatR;
 using Pharmacy.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace Pharmacy.Commands
+namespace Pharmacy.Infrastructure.Commands
 {
     public record CreateProductAmountCommand(ProductAmountModel Model) : IRequest<IResult> { }
 
