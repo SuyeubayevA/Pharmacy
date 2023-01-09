@@ -19,14 +19,14 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(CreateProductAmountCommand request, CancellationToken cancellationToken)
         {
-            if (await _uow.ProductAmount.GetAsync(request._model.WarehouseId, request._model.ProductId) != null)
+            if (await _uow.ProductAmount.GetAsync(request.Model.WarehouseId, request.Model.ProductId) != null)
             {
                 Results.BadRequest("The object already exist !");
             }
 
-            if (request._model is ProductAmountModel)
+            if (request.Model is ProductAmountModel)
             {
-                var productAmount = _mapper.Map<ProductAmount>(request._model);
+                var productAmount = _mapper.Map<ProductAmount>(request.Model);
                 _uow.ProductAmount.Create(productAmount);
 
                 if (await _uow.SaveAsync())
@@ -35,11 +35,11 @@ namespace Pharmacy.Handlers.CommandsHanders
                 }
             }
 
-            return Results.BadRequest(request._model);
+            return Results.BadRequest(request.Model);
         }
     }
 
-    public class UpdateProductAmountHandler : IRequestHandler<UpdateProductAmountCommand, IResult>
+    public class UpdateProductAmountHandler : IRequestHandler< UpdateProductAmountCommand, IResult>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -51,11 +51,11 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateProductAmountCommand request, CancellationToken cancellationToken)
         {
-            var productAmount = await _uow.ProductAmount.GetAsync(request._model.WarehouseId, request._model.ProductId);
+            var productAmount = await _uow.ProductAmount.GetAsync(request.Model.WarehouseId, request.Model.ProductId);
 
             if (productAmount == null) { return Results.NotFound(); }
 
-            _mapper.Map(request._model, productAmount);
+            _mapper.Map(request.Model, productAmount);
 
             if (await _uow.SaveAsync())
             {
@@ -80,7 +80,7 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(DeleteProductAmountCommand request, CancellationToken cancellationToken)
         {
-            var productAmount = await _uow.ProductAmount.GetAsync(request._Id);
+            var productAmount = await _uow.ProductAmount.GetAsync(request.Id);
 
             if (productAmount == null) { return Results.NotFound(); }
 

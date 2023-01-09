@@ -4,35 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Pharmacy.Commands
 {
-    public class CreateWarehouseCommand : IRequest<IResult>
-    {
-        [Required]
-        public WarehouseModel _model { get; set; }
-        public CreateWarehouseCommand(WarehouseModel model)
-        {
-            _model = model;
-        }
-    }
+    public record CreateWarehouseCommand(WarehouseModel Model) : IRequest<IResult> { }
 
-    public class DeleteWarehouseCommand : IRequest<IResult>
-    {
-        [Required]
-        public string _warehouseName { get; set; }
+    public record DeleteWarehouseCommand(string WarehouseName) : IRequest<IResult> { }
 
-        public DeleteWarehouseCommand(string warehouseName)
-        {
-            _warehouseName = warehouseName;
-        }
-    }
-
-    public class UpdateWarehouseCommand : IRequest<IResult>
-    {
-        [Required]
-        public WarehouseModel _model { get; set; }
-
-        public UpdateWarehouseCommand(WarehouseModel model)
-        {
-            _model = model;
-        }
-    }
+    public record UpdateWarehouseCommand(WarehouseModel Model) : IRequest<IResult> { }
 }

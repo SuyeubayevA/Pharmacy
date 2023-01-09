@@ -19,14 +19,14 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(CreateSalesInfoCommand request, CancellationToken cancellationToken)
         {
-            if (await _uow.SalesInfo.GetAsync(request._model.ProductId, 0) != null)
+            if (await _uow.SalesInfo.GetAsync(request.Model.ProductId, 0) != null)
             {
                 Results.BadRequest("The object already exist !");
             }
 
-            if (request._model is SalesInfoModel)
+            if (request.Model is SalesInfoModel)
             {
-                var salesInfo = _mapper.Map<SalesInfo>(request._model);
+                var salesInfo = _mapper.Map<SalesInfo>(request.Model);
                 _uow.SalesInfo.Create(salesInfo);
 
                 if (await _uow.SaveAsync())
@@ -35,7 +35,7 @@ namespace Pharmacy.Handlers.CommandsHanders
                 }
             }
 
-            return Results.BadRequest(request._model);
+            return Results.BadRequest(request.Model);
         }
     }
 
@@ -51,11 +51,11 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateSalesInfoCommand request, CancellationToken cancellationToken)
         {
-            var salesInfo = await _uow.SalesInfo.GetAsync(request._model.ProductId);
+            var salesInfo = await _uow.SalesInfo.GetAsync(request.Model.ProductId);
 
             if (salesInfo == null) { return Results.NotFound(); }
 
-            _mapper.Map(request._model, salesInfo);
+            _mapper.Map(request.Model, salesInfo);
 
             if (await _uow.SaveAsync())
             {
@@ -80,7 +80,7 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(DeleteSalesInfoCommand request, CancellationToken cancellationToken)
         {
-            var salesInfo = await _uow.SalesInfo.GetAsync(request._productId, 0);
+            var salesInfo = await _uow.SalesInfo.GetAsync(request.ProductId, 0);
 
             if (salesInfo == null) { return Results.NotFound(); }
 

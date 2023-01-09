@@ -19,14 +19,14 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(CreateProductTypeCommand request, CancellationToken cancellationToken)
         {
-            if (await _uow.ProductType.GetAsync(request._model.Name) != null)
+            if (await _uow.ProductType.GetAsync(request.Model.Name) != null)
             {
                 Results.BadRequest("The object lred exist !");
             }
 
-            if (request._model is ProductTypeModel)
+            if (request.Model is ProductTypeModel)
             {
-                var productType = _mapper.Map<ProductType>(request._model);
+                var productType = _mapper.Map<ProductType>(request.Model);
                 _uow.ProductType.Create(productType);
 
                 if (await _uow.SaveAsync())
@@ -35,7 +35,7 @@ namespace Pharmacy.Handlers.CommandsHanders
                 }
             }
 
-            return Results.BadRequest(request._model);
+            return Results.BadRequest(request.Model);
         }
     }
 
@@ -51,11 +51,11 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateProductTypeCommand request, CancellationToken cancellationToken)
         {
-            var productType = await _uow.ProductType.GetAsync(request._model.Id);
+            var productType = await _uow.ProductType.GetAsync(request.Model.Id);
 
             if (productType == null) { return Results.NotFound(); }
 
-            _mapper.Map(request._model, productType);
+            _mapper.Map(request.Model, productType);
 
             if (await _uow.SaveAsync())
             {
@@ -80,7 +80,7 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(DeleteProductTypeCommand request, CancellationToken cancellationToken)
         {
-            var productType = await _uow.ProductType.GetAsync(request._Id);
+            var productType = await _uow.ProductType.GetAsync(request.Id);
 
             if (productType == null) { return Results.NotFound(); }
 

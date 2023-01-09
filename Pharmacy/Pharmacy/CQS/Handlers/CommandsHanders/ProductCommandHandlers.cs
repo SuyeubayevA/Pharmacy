@@ -19,14 +19,14 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            if (await _uow.Product.GetAsync(request._model.Name) != null)
+            if (await _uow.Product.GetAsync(request.Model.Name) != null)
             {
                 Results.BadRequest("The object already exist !");
             }
 
-            if (request._model is ProductModel)
+            if (request.Model is not null)
             {
-                var product = _mapper.Map<Product>(request._model);
+                var product = _mapper.Map<Product>(request.Model);
                 _uow.Product.Create(product);
 
                 if (await _uow.SaveAsync())
@@ -35,7 +35,7 @@ namespace Pharmacy.Handlers.CommandsHanders
                 }
             }
 
-            return Results.BadRequest(request._model);
+            return Results.BadRequest(request.Model);
         }
     }
 
@@ -51,11 +51,11 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var product = await _uow.Product.GetAsync(request._Id);
+            var product = await _uow.Product.GetAsync(request.Id);
 
             if (product == null) { return Results.NotFound(); }
 
-            _mapper.Map(request._model, product);
+            _mapper.Map(request.Model, product);
 
             if (await _uow.SaveAsync())
             {
@@ -78,7 +78,7 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateProductsWarehouseCommand request, CancellationToken cancellationToken)
         {
-            var result = _uow.Product.UpdateWarehouseLink(request._Id, request._WarehouseId, request._Amount, request._Discount);
+            var result = _uow.Product.UpdateWarehouseLink(request.Id, request.WarehouseId, request.Amount, request.Discount);
 
             if (result && await _uow.SaveAsync())
             {
@@ -101,7 +101,7 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
-            var product = await _uow.Product.GetAsync(request._productName);
+            var product = await _uow.Product.GetAsync(request.ProductName);
 
             if (product == null) { return Results.NotFound(); }
 

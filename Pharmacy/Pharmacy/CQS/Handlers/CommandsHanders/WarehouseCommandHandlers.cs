@@ -19,14 +19,14 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
         {
-            if (await _uow.Warehouse.GetAsync(request._model.Name) != null)
+            if (await _uow.Warehouse.GetAsync(request.Model.Name) != null)
             {
                 Results.BadRequest("The object lred exist !");
             }
 
-            if (request._model is WarehouseModel)
+            if (request.Model is WarehouseModel)
             {
-                var warehouse = _mapper.Map<Warehouse>(request._model);
+                var warehouse = _mapper.Map<Warehouse>(request.Model);
                 _uow.Warehouse.Create(warehouse);
 
                 if (await _uow.SaveAsync())
@@ -35,7 +35,7 @@ namespace Pharmacy.Handlers.CommandsHanders
                 }
             }
 
-            return Results.BadRequest(request._model);
+            return Results.BadRequest(request.Model);
         }
     }
 
@@ -51,11 +51,11 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(UpdateWarehouseCommand request, CancellationToken cancellationToken)
         {
-            var warehouse = await _uow.Warehouse.GetAsync(request._model.Name);
+            var warehouse = await _uow.Warehouse.GetAsync(request.Model.Name);
 
             if (warehouse == null) { return Results.NotFound(); }
 
-            _mapper.Map(request._model, warehouse);
+            _mapper.Map(request.Model, warehouse);
 
             if (await _uow.SaveAsync())
             {
@@ -80,7 +80,7 @@ namespace Pharmacy.Handlers.CommandsHanders
         }
         public async Task<IResult> Handle(DeleteWarehouseCommand request, CancellationToken cancellationToken)
         {
-            var warehouse = await _uow.Warehouse.GetAsync(request._warehouseName);
+            var warehouse = await _uow.Warehouse.GetAsync(request.WarehouseName);
 
             if (warehouse == null) { return Results.NotFound(); }
 

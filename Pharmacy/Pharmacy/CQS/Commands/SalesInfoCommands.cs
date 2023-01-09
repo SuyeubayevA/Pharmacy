@@ -4,35 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Pharmacy.Commands
 {
-    public class CreateSalesInfoCommand : IRequest<IResult>
-    {
-        [Required]
-        public SalesInfoModel _model { get; set; }
-        public CreateSalesInfoCommand(SalesInfoModel model)
-        {
-            _model = model;
-        }
-    }
+    public record CreateSalesInfoCommand(SalesInfoModel Model) : IRequest<IResult> { }
 
-    public class DeleteSalesInfoCommand : IRequest<IResult>
-    {
-        [Required]
-        public int _productId { get; set; }
+    public record DeleteSalesInfoCommand(int ProductId) : IRequest<IResult> { }
 
-        public DeleteSalesInfoCommand(int productId)
-        {
-            _productId = productId;
-        }
-    }
-
-    public class UpdateSalesInfoCommand : IRequest<IResult>
-    {
-        [Required]
-        public SalesInfoModel _model { get; set; }
-
-        public UpdateSalesInfoCommand(SalesInfoModel model)
-        {
-            _model = model;
-        }
-    }
+    public record UpdateSalesInfoCommand(SalesInfoModel Model) : IRequest<IResult> { }
 }
