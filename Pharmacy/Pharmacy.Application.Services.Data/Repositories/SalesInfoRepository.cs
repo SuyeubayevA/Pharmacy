@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class SalesInfoRepository : IPharmRepository<SalesInfo, SalesInfoDetailsDTO, SalesInfoDTO>
+    public class SalesInfoRepository : IPharmRepository<SalesInfo>
     {
         private readonly PharmacyDBContext db;
 
@@ -23,7 +23,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             db.Add(productType);
         }
 
-        public async Task<SalesInfoDetailsDTO> GetAsync(int id)
+        public async Task<SalesInfo?> GetAsync(int id)
         {
             IQueryable<SalesInfo> query = db.SalesInfos
                 .Include(p => p.Product)
@@ -31,12 +31,11 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             query = query.Where(x => x.Id == id);
 
             var sailsInfo = await query.FirstOrDefaultAsync();
-            var sailsInfoDto = ObjectMapper.Mapper.Map<SalesInfoDetailsDTO>(sailsInfo);
 
-            return sailsInfoDto;
+            return sailsInfo;
         }
 
-        public async Task<SalesInfoDetailsDTO> GetAsync(int productId, int id = 0)
+        public async Task<SalesInfo?> GetAsync(int productId, int id = 0)
         {
             IQueryable<SalesInfo> query = db.SalesInfos
                 .Include(p => p.Product)
@@ -44,25 +43,15 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             query = query.Where(x => x.ProductId == productId);
 
             var sailsInfo = await query.FirstOrDefaultAsync();
-            var sailsInfoDto = ObjectMapper.Mapper.Map<SalesInfoDetailsDTO>(sailsInfo);
 
-            return sailsInfoDto;
+            return sailsInfo;
         }
 
-        public async Task<SalesInfoDTO[]> GetAllASync()
+        public async Task<IList<SalesInfo>?> GetAllASync()
         {
-            IQueryable<SalesInfoDTO> query = from si in db.SalesInfos
-                                          select new SalesInfoDTO
-                                          {
-                                              Sales = si.Sales,
-                                              ProductReminder = si.ProductReminder,
-                                              CreatedDate = si.CreatedDate,
-                                              EditDate = si.EditDate
-                                          };
+            var list = await db.SalesInfos.AsQueryable().ToListAsync();
 
-            query = query.OrderByDescending(p => p.CreatedDate);
-
-            return await query.ToArrayAsync();
+            return list;
         }
 
         public void Update(SalesInfo salesInfo)

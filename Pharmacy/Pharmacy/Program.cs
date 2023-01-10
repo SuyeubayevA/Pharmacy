@@ -7,12 +7,12 @@ using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.Repositories;
 using Pharmacy.Profiles;
 using System.Reflection;
-using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 var mapperConfig = new MapperConfiguration(cfg =>
     {
         cfg.AddProfile(new ProductMappingProfile());
+        cfg.AddProfile(new ProductToDTOMappingProfile());
     }
 );
 var mapper = mapperConfig.CreateMapper();

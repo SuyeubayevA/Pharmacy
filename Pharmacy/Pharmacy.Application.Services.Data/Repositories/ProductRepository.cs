@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
-using Pharmacy.Infrastructure.Data.DTO;
-//using System.Data.Entity;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductRepository : IPharmRepository<Product, ProductDetailDTO, ProductDTO>
+    public class ProductRepository : IPharmRepository<Product>
     {
         private readonly PharmacyDBContext db;
 
@@ -19,7 +17,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             db.Add(product);
         }
 
-        public async Task<ProductDetailDTO> GetAsync(int id)
+        public async Task<Product?> GetAsync(int id)
         {
             var query = db.Products
                 .Include(pr => pr.ProductType)
@@ -28,14 +26,12 @@ namespace Pharmacy.Infrastructure.Data.Repositories
                 .AsQueryable();
             query = query.Where(x => x.Id == id);
 
-            var product = await query.FirstOrDefaultAsync();
+            var product = await query.SingleOrDefaultAsync();
 
-            var productDetailsDto = ObjectMapper.Mapper.Map<ProductDetailDTO>(product);
-
-            return productDetailsDto;
+            return product;
         }
 
-        public async Task<ProductDetailDTO?> GetAsync(string name)
+        public async Task<Product?> GetAsync(string name)
         {
             var query = db.Products
                 .Include(pr => pr.ProductType)
@@ -46,27 +42,15 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             query = query.Where(x => x.Name == name);
 
             var product = await query.FirstOrDefaultAsync();
-            var productDetailsDto = ObjectMapper.Mapper.Map<ProductDetailDTO>(product);
 
-            return productDetailsDto;
+            return product;
         }
 
-        public async Task<ProductDTO[]> GetAllASync()
+        public async Task<IList<Product>?> GetAllASync()
         {
-            IQueryable<ProductDTO> query = from p in db.Products
-                        select new ProductDTO
-                        {
-                            Id = p.Id,
-                            Name = p.Name,
-                            Description = p.Description,
-                            Price = p.Price,
-                            ProductTypeId = p.ProductTypeId,
-                            SalesInfoId = p.SalesInfoId
-                        };
+            var products = await db.Products.AsQueryable().ToListAsync();
 
-            query = query.OrderByDescending(p => p.Name);
-
-            return await query.ToArrayAsync();
+            return products;
         }
 
         public void Update(Product product)
@@ -79,7 +63,6 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             var wareHouse = db.Warehouses.Where(x => x.Id== warehouseId).FirstOrDefault();
             var product = db.Products.FirstOrDefault(p => p.Id== productId);
 
-            //var product = ObjectMapper.Mapper.Map<Product>(productDTO);
             try
             {
                 if(wareHouse != null && product != null)

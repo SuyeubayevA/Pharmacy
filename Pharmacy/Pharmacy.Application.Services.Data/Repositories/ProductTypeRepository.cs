@@ -5,7 +5,7 @@ using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductTypeRepository : IPharmRepository<ProductType, ProductTypeDetailsDTO, ProductTypeDTO>
+    public class ProductTypeRepository : IPharmRepository<ProductType>
     {
         private readonly PharmacyDBContext db;
 
@@ -18,7 +18,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             db.Add(productType);
         }
 
-        public async Task<ProductTypeDetailsDTO> GetAsync(int id)
+        public async Task<ProductType?> GetAsync(int id)
         {
             var query = db.ProductTypes
                 .Include(pt => pt.Products)
@@ -26,12 +26,11 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             query = query.Where(x => x.Id == id);
 
             var productTypes = await query.FirstAsync();
-            var productTypeDetailsDTO = ObjectMapper.Mapper.Map<ProductTypeDetailsDTO>(productTypes);
 
-            return productTypeDetailsDTO;
+            return productTypes;
         }
 
-        public async Task<ProductTypeDetailsDTO> GetAsync(string name)
+        public async Task<ProductType?> GetAsync(string name)
         {
             IQueryable<ProductType> query = db.ProductTypes
                 .Include(pt => pt.Products)
@@ -39,23 +38,15 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             query = query.Where(x => x.Name == name);
 
             var productTypes = await query.FirstAsync();
-            var productTypeDetailsDTO = ObjectMapper.Mapper.Map<ProductTypeDetailsDTO>(productTypes);
 
-            return productTypeDetailsDTO;
+            return productTypes;
         }
 
-        public async Task<ProductTypeDTO[]> GetAllASync()
+        public async Task<IList<ProductType>?> GetAllASync()
         {
-            IQueryable<ProductTypeDTO> query = from pt in db.ProductTypes
-                                               select new ProductTypeDTO
-                                               {
-                                                   Id = pt.Id,
-                                                   Name = pt.Name,
-                                                   Properties = pt.Properties
-                                               };
-            query = query.OrderByDescending(p => p.Name);
-
-            return await query.ToArrayAsync();
+            var query = await db.ProductTypes.AsQueryable().ToListAsync();
+                                               
+            return query;
         }
 
         public void Update(ProductType productType)

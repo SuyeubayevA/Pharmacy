@@ -5,7 +5,7 @@ using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class WarehouseRepository : IPharmRepository<Warehouse, WarehouseDetailsDTO, WarehouseDTO>
+    public class WarehouseRepository : IPharmRepository<Warehouse>
     {
         private readonly PharmacyDBContext db;
 
@@ -18,45 +18,35 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             db.Add(warehouse);
         }
 
-        public async Task<WarehouseDetailsDTO> GetAsync(int id)
+        public async Task<Warehouse?> GetAsync(int id)
         {
             IQueryable<Warehouse> query = db.Warehouses
                 .Include(w => w.ProductAmounts)
                 .AsQueryable();
             query = query.Where(x => x.Id == id);
 
-            var warehouses = await query.FirstOrDefaultAsync();
-            var warehousesDTO = ObjectMapper.Mapper.Map<WarehouseDetailsDTO>(warehouses);
+            var warehouse = await query.SingleOrDefaultAsync();
 
-            return warehousesDTO;
+            return warehouse;
         }
 
-        public async Task<WarehouseDetailsDTO> GetAsync(string name)
+        public async Task<Warehouse> GetAsync(string name)
         {
             IQueryable<Warehouse> query = db.Warehouses
                 .Include(w => w.ProductAmounts)
                 .AsQueryable();
             query = query.Where(x => x.Name == name);
 
-            var warehouse = await query.FirstOrDefaultAsync();
-            var warehouseDTO = ObjectMapper.Mapper.Map<WarehouseDetailsDTO>(warehouse);
+            var warehouse = await query.SingleOrDefaultAsync();
 
-            return warehouseDTO;
+            return warehouse;
         }
 
-        public async Task<WarehouseDTO[]> GetAllASync()
+        public async Task<IList<Warehouse>?> GetAllASync()
         {
-            IQueryable<WarehouseDTO> query = from w in db.Warehouses
-                                          select new WarehouseDTO
-                                          {
-                                              Id = w.Id,
-                                              Name = w.Name,
-                                              Address = w.Address
-                                          };
+            var list = await db.Warehouses.AsQueryable().ToListAsync();
 
-            query = query.OrderByDescending(p => p.Name);
-
-            return await query.ToArrayAsync();
+            return list;
         }
 
         public void Update(Warehouse warehouse)

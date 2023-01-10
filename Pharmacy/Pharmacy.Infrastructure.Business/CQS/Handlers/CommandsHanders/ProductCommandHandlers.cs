@@ -2,10 +2,12 @@ using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Data;
 using MediatR;
+using AutoMapper;
+using Pharmacy.Infrastructure.Business.CQS;
 
 namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
 {
-    public class CreateProductHandler : IRequestHandler<CreateProductCommand, IResult>
+    public class CreateProductHandler : IRequestHandler<CreateProductCommand, CQRSResponse<Product>>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -15,29 +17,35 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<IResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<CQRSResponse<Product>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
+            var result = new CQRSResponse<Product>();
+
             if (await _uow.Product.GetAsync(request.Model.Name) != null)
             {
-                Results.BadRequest("The object already exist !");
+                result.Message = "The object already exist !";
+
+                return result;
             }
 
-            if (request.Model is not null)
+
+            var product = _mapper.Map<Product>(request.Model);
+            _uow.Product.Create(product);
+
+            if (await _uow.SaveAsync())
             {
-                var product = _mapper.Map<Product>(request.Model);
-                _uow.Product.Create(product);
+                result.IsSuccess = true;
+                result.Model = product;
 
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(product);
-                }
+                return result;
             }
 
-            return Results.BadRequest(request.Model);
+            result.Model = product;
+            return result;
         }
     }
 
-    public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, IResult>
+    public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, CQRSResponse<Product>>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -47,26 +55,35 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<IResult> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task<CQRSResponse<Product>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
             var product = await _uow.Product.GetAsync(request.Id);
+            var result = new CQRSResponse<Product>();
 
-            if (product == null) { return Results.NotFound(); }
+            if (product == null) 
+            { 
+                result.Message = "There is no product with suh Id";
+                return result;
+            }
 
             _mapper.Map(request.Model, product);
 
             if (await _uow.SaveAsync())
             {
-                return Results.Ok(product);
+                result.IsSuccess = true;
+                result.Model = product;
+
+                return result;
             }
             else
             {
-                return Results.StatusCode(500);
+                result.Model = product;
+                return result;
             }
         }
     }
 
-    public class UpdateProductsWarehouseHandler : IRequestHandler<UpdateProductsWarehouseCommand, IResult>
+    public class UpdateProductsWarehouseHandler : IRequestHandler<UpdateProductsWarehouseCommand, CQRSResponse<bool>>
     {
         private readonly UnitOfWork _uow;
 
@@ -74,22 +91,26 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
         {
             _uow = uow;
         }
-        public async Task<IResult> Handle(UpdateProductsWarehouseCommand request, CancellationToken cancellationToken)
+        public async Task<CQRSResponse<bool>> Handle(UpdateProductsWarehouseCommand request, CancellationToken cancellationToken)
         {
-            var result = _uow.Product.UpdateWarehouseLink(request.Id, request.WarehouseId, request.Amount, request.Discount);
+            var warehouseLinkUpdated = _uow.Product.UpdateWarehouseLink(request.Id, request.WarehouseId, request.Amount, request.Discount);
+            var result = new CQRSResponse<bool>();
 
-            if (result && await _uow.SaveAsync())
+            if (warehouseLinkUpdated && await _uow.SaveAsync())
             {
-                return Results.Ok();
+                result.Model = warehouseLinkUpdated;
+                result.IsSuccess = true;
+
+                return result;
             }
             else
             {
-                return Results.StatusCode(500);
+                return result;
             }
         }
     }
 
-    public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, IResult>
+    public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, CQRSResponse<Product>>
     {
         private readonly UnitOfWork _uow;
 
@@ -97,21 +118,29 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
         {
             _uow = uow;
         }
-        public async Task<IResult> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<CQRSResponse<Product>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
             var product = await _uow.Product.GetAsync(request.ProductName);
+            var result = new CQRSResponse<Product>();
 
-            if (product == null) { return Results.NotFound(); }
+            if (product == null) 
+            {
+                result.Message = "Didn't find this product";
+                return result;
+            }
 
             _uow.Product.Delete(product.Id);
 
             if (await _uow.SaveAsync())
             {
-                return Results.Ok(product);
+                result.Model = product;
+                result.IsSuccess = true;
+
+                return result;
             }
             else
             {
-                return Results.StatusCode(500);
+                return result;
             }
         }
     }

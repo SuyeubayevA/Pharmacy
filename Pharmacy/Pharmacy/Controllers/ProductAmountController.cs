@@ -1,8 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Pharmacy.Commands;
+using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Models;
-using Pharmacy.Queries;
+using Pharmacy.Infrastructure.Queries;
+using Pharmacy.API.Helpers;
 
 namespace Pharmacy.Controllers
 {
@@ -18,25 +19,20 @@ namespace Pharmacy.Controllers
         }
 
         [HttpGet("GetAll")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> GetAll()
         {
             var query = new GetAllProductAmountsQuery();
             var result = await _mediator.Send(query);
-            return Results.Ok(result);
+            return Helper.GetIResult(result);
         }
 
         [HttpGet("{Id}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Get(int Id)
         {
             var query = new GetProductAmountByIdQuery(Id);
             var result = await _mediator.Send(query);
 
-            return result!=null ? Results.Ok(result) : Results.NotFound();
+            return Helper.GetIResult(result);
         }
 
         [HttpPost]
@@ -44,14 +40,17 @@ namespace Pharmacy.Controllers
         {
             var command = new CreateProductAmountCommand(model);
             var result = await _mediator.Send(command);
-            return result;
+
+            return Helper.GetIResult(result);
         }
 
         [HttpPut]
         public async Task<IResult> Put(int Id, ProductAmountModel model)
         {
             var command = new UpdateProductAmountCommand(model);
-            return await _mediator.Send(command);
+            var result = await _mediator.Send(command);
+
+            return Helper.GetIResult(result);
         }
 
         [HttpDelete]
@@ -59,7 +58,9 @@ namespace Pharmacy.Controllers
         public async Task<IResult> Delete(int id)
         {
             var command = new DeleteProductAmountCommand(id);
-            return await _mediator.Send(command);
+            var result = await _mediator.Send(command);
+
+            return Helper.GetIResult(result); 
         }
     }
 }

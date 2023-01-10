@@ -4,10 +4,11 @@ using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Models;
+using Pharmacy.Infrastructure.Business.CQS;
 
 namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
 {
-    public class CreateWarehouseHandler : IRequestHandler<CreateWarehouseCommand, IResult>
+    public class CreateWarehouseHandler : IRequestHandler<CreateWarehouseCommand, CQRSResponse<Warehouse>>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -17,29 +18,34 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<IResult> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
+        public async Task<CQRSResponse<Warehouse>> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
         {
+            var result = new CQRSResponse<Warehouse>();
+
             if (await _uow.Warehouse.GetAsync(request.Model.Name) != null)
             {
-                Results.BadRequest("The object lred exist !");
+                result.Message = "The object already exist !";
+
+                return result;
             }
 
-            if (request.Model is WarehouseModel)
+            var warehouse = _mapper.Map<Warehouse>(request.Model);
+            _uow.Warehouse.Create(warehouse);
+
+            if (await _uow.SaveAsync())
             {
-                var warehouse = _mapper.Map<Warehouse>(request.Model);
-                _uow.Warehouse.Create(warehouse);
+                result.IsSuccess = true;
+                result.Model = warehouse;
 
-                if (await _uow.SaveAsync())
-                {
-                    return Results.Ok(warehouse);
-                }
+                return result;
             }
 
-            return Results.BadRequest(request.Model);
+            result.Model = warehouse;
+            return result;
         }
     }
 
-    public class UpdateWarehouseHandler : IRequestHandler<UpdateWarehouseCommand, IResult>
+    public class UpdateWarehouseHandler : IRequestHandler<UpdateWarehouseCommand, CQRSResponse<Warehouse>>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -49,26 +55,35 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<IResult> Handle(UpdateWarehouseCommand request, CancellationToken cancellationToken)
+        public async Task<CQRSResponse<Warehouse>> Handle(UpdateWarehouseCommand request, CancellationToken cancellationToken)
         {
             var warehouse = await _uow.Warehouse.GetAsync(request.Model.Name);
+            var result = new CQRSResponse<Warehouse>();
 
-            if (warehouse == null) { return Results.NotFound(); }
+            if (warehouse == null)
+            {
+                result.Message = "There is no Warehouse with such Id";
+                return result;
+            }
 
             _mapper.Map(request.Model, warehouse);
 
             if (await _uow.SaveAsync())
             {
-                return Results.Ok(warehouse);
+                result.IsSuccess = true;
+                result.Model = warehouse;
+
+                return result;
             }
             else
             {
-                return Results.StatusCode(500);
+                result.Model = warehouse;
+                return result;
             }
         }
     }
 
-    public class DeleteWarehouseHandler : IRequestHandler<DeleteWarehouseCommand, IResult>
+    public class DeleteWarehouseHandler : IRequestHandler<DeleteWarehouseCommand, CQRSResponse<Warehouse>>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -78,21 +93,29 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<IResult> Handle(DeleteWarehouseCommand request, CancellationToken cancellationToken)
+        public async Task<CQRSResponse<Warehouse>> Handle(DeleteWarehouseCommand request, CancellationToken cancellationToken)
         {
             var warehouse = await _uow.Warehouse.GetAsync(request.WarehouseName);
+            var result = new CQRSResponse<Warehouse>();
 
-            if (warehouse == null) { return Results.NotFound(); }
+            if (warehouse == null)
+            {
+                result.Message = "Didn't find this Warehouse";
+                return result;
+            }
 
             _uow.Warehouse.Delete(warehouse.Id);
 
             if (await _uow.SaveAsync())
             {
-                return Results.Ok(warehouse);
+                result.Model = warehouse;
+                result.IsSuccess = true;
+
+                return result;
             }
             else
             {
-                return Results.StatusCode(500);
+                return result;
             }
         }
     }

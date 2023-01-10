@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Pharmacy.Commands;
-using Pharmacy.Domain.Core;
-using Pharmacy.Infrastructure.Data;
+using Pharmacy.API.Helpers;
+using Pharmacy.Infrastructure.Commands;
+using Pharmacy.Infrastructure.Queries;
 using Pharmacy.Models;
-using Pharmacy.Queries;
 
 namespace Pharmacy.Controllers
 {
@@ -31,15 +30,12 @@ namespace Pharmacy.Controllers
         }
 
         [HttpGet("{Id}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Get(int Id)
         {
             var query = new GetProductTypeByIdQuery(Id);
             var result = await _mediator.Send(query);
 
-            return result!=null ? Results.Ok(result) : Results.NotFound();
+            return Helper.GetIResult(result);
         }
 
         [HttpPost]
@@ -47,14 +43,17 @@ namespace Pharmacy.Controllers
         {
             var command = new CreateProductTypeCommand(model);
             var result = await _mediator.Send(command);
-            return result;
+
+            return Helper.GetIResult(result);
         }
 
         [HttpPut]
         public async Task<IResult> Put(ProductTypeModel model)
         {
             var command = new UpdateProductTypeCommand(model);
-            return await _mediator.Send(command);
+            var result = await _mediator.Send(command);
+
+            return Helper.GetIResult(result);
         }
 
         [HttpDelete]
@@ -62,7 +61,9 @@ namespace Pharmacy.Controllers
         public async Task<IResult> Delete(int productTypeId)
         {
             var command = new DeleteProductTypeCommand(productTypeId);
-            return await _mediator.Send(command);
+            var result = await _mediator.Send(command);
+
+            return Helper.GetIResult(result);
         }
     }
 }

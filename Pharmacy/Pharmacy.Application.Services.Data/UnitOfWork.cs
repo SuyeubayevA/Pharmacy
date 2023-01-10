@@ -1,7 +1,6 @@
 ﻿using Pharmacy.Domain.Interfaces;
 using Pharmacy.Infrastructure.Data.Repositories;
 
-
 namespace Pharmacy.Infrastructure.Data
 {
     public class UnitOfWork : IDisposable, IUnitOfWorkMarker

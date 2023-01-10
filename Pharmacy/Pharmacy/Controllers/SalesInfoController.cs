@@ -1,8 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Pharmacy.Commands;
+using Pharmacy.API.Helpers;
+using Pharmacy.Infrastructure.Commands;
+using Pharmacy.Infrastructure.Queries;
 using Pharmacy.Models;
-using Pharmacy.Queries;
 
 namespace Pharmacy.Controllers
 {
@@ -18,8 +19,6 @@ namespace Pharmacy.Controllers
         }
 
         [HttpGet("GetAll")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> GetAll()
         {
             var query = new GetAllSalesInfosQuery();
@@ -28,9 +27,6 @@ namespace Pharmacy.Controllers
         }
 
         [HttpGet("{Id}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IResult> Get(int Id)
         {
             var query = new GetSalesInfoByIdQuery(Id);
@@ -44,22 +40,26 @@ namespace Pharmacy.Controllers
         {
             var command = new CreateSalesInfoCommand(model);
             var result = await _mediator.Send(command);
-            return result;
+            return Helper.GetIResult(result);
         }
 
         [HttpPut]
         public async Task<IResult> Put(int Id, SalesInfoModel model)
         {
             var command = new UpdateSalesInfoCommand(model);
-            return await _mediator.Send(command);
-        }
+            var result = await _mediator.Send(command);
+
+            return Helper.GetIResult(result);
+         }
 
         [HttpDelete]
         [Route("{productName}")]
         public async Task<IResult> Delete(int productId)
         {
             var command = new DeleteSalesInfoCommand(productId);
-            return await _mediator.Send(command);
+            var result = await _mediator.Send(command);
+
+            return Helper.GetIResult(result);
         }
     }
 }

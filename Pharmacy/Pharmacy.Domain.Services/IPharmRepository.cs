@@ -1,9 +1,11 @@
-﻿namespace Pharmacy.Domain.Interfaces
+﻿using System.Linq;
+
+namespace Pharmacy.Domain.Interfaces
 {
-    public interface IPharmRepository<T,K,P> where T : class where K: class where P : class
+    public interface IPharmRepository<T> where T : class
     {
-        Task<P[]> GetAllASync();
-        Task<K> GetAsync(int id);
+        Task<IList<T>?> GetAllASync();
+        Task<T?> GetAsync(int id); 
         void Create(T item);
         void Update(T item);
         void Delete(int id);

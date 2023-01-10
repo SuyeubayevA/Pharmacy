@@ -6,7 +6,7 @@ using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductAmountRepository : IPharmRepository<ProductAmount, ProductAmountDetailsDTO, ProductAmountDTO>
+    public class ProductAmountRepository : IPharmRepository<ProductAmount>
     {
         private readonly PharmacyDBContext db;
 
@@ -19,7 +19,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             db.Add(productType);
         }
 
-        public async Task<ProductAmountDetailsDTO> GetAsync(int id)
+        public async Task<ProductAmount?> GetAsync(int id)
         {
             IQueryable<ProductAmount> query = db.ProductAmounts
                 .Include(w => w.Warehouse)
@@ -27,13 +27,12 @@ namespace Pharmacy.Infrastructure.Data.Repositories
                 .AsQueryable();
             query = query.Where(x => x.Id == id);
 
-            var productAmount = await query.FirstOrDefaultAsync();
-            var productAmountDetailsDTO = ObjectMapper.Mapper.Map<ProductAmountDetailsDTO>(productAmount);
+            var productAmount = await query.SingleOrDefaultAsync();
 
-            return productAmountDetailsDTO;
+            return productAmount;
         }
 
-        public async Task<ProductAmountDetailsDTO> GetAsync(int warehouseId, int ProductId)
+        public async Task<ProductAmount?> GetAsync(int warehouseId, int ProductId)
         {
             IQueryable<ProductAmount> query = db.ProductAmounts
                 .Include(w => w.Warehouse)
@@ -42,28 +41,15 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             query = query.Where(x => x.ProductId == ProductId && x.WarehouseId == warehouseId);
 
             var productAmount = await query.FirstOrDefaultAsync();
-            var productAmountDetailsDTO = ObjectMapper.Mapper.Map<ProductAmountDetailsDTO>(productAmount);
 
-            return productAmountDetailsDTO;
+            return productAmount;
         }
 
-        public async Task<ProductAmountDTO[]> GetAllASync()
+        public async Task<IList<ProductAmount>?> GetAllASync()
         {
-            var query = from pa in db.ProductAmounts
-                        select new ProductAmountDTO
-                        {
-                            Id = pa.Id,
-                            WarehouseId = pa.WarehouseId,
-                            ProductId = pa.ProductId,
-                            Amount = pa.Amount,
-                            Discount = pa.Discount,
-                            ProductName = pa.Product.Name,
-                            WarehouseName = pa.Warehouse.Name
-                        };
+            var productAmounts = await db.ProductAmounts.AsQueryable().ToListAsync();
 
-            query = query.OrderByDescending(p => p.ProductName);
-
-            return await query.ToArrayAsync();
+            return productAmounts;
         }
 
         public void Update(ProductAmount productAmount)

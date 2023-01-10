@@ -1,21 +1,10 @@
 ﻿using MediatR;
-using Pharmacy.Domain.Core;
+using Pharmacy.Infrastructure.Business.CQS;
 using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Infrastructure.Queries
 {
-    public class GetProductByIdQuery : IRequest<ProductDetailDTO>
-    {
-        public int _id { get; }
+    public record GetProductByIdQuery(int Id) : IRequest<CQRSResponse<ProductDetailDTO>> { }
 
-        public GetProductByIdQuery(int id)
-        {
-            this._id = id;
-        }
-    }
-
-    public class GetAllProductsQuery : IRequest<ProductDTO[]>
-    {
-
-    }
+    public class GetAllProductsQuery : IRequest<CQRSResponse<List<ProductDTO>>> { }
 }
