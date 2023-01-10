@@ -21,7 +21,7 @@ namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
         }
         public async Task<CQRSResponse<ProductAmountDetailsDTO>> Handle(GetProductAmountByIdQuery request, CancellationToken cancellationToken)
         {
-            var productAmount = await _uow.ProductAmount.GetAsync(request._id);
+            var productAmount = await _uow.ProductAmount.GetAsync(request.Id);
             var response = new CQRSResponse<ProductAmountDetailsDTO>();
 
             if (productAmount == null)

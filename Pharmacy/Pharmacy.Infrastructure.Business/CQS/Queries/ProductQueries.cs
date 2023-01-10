@@ -6,5 +6,5 @@ namespace Pharmacy.Infrastructure.Queries
 {
     public record GetProductByIdQuery(int Id) : IRequest<CQRSResponse<ProductDetailDTO>> { }
 
-    public class GetAllProductsQuery : IRequest<CQRSResponse<List<ProductDTO>>> { }
+    public record GetAllProductsQuery : IRequest<CQRSResponse<List<ProductDTO>>> { }
 }

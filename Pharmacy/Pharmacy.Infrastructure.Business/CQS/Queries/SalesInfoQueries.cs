@@ -5,17 +5,9 @@ using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Infrastructure.Queries
 {
-    public class GetSalesInfoByIdQuery : IRequest<CQRSResponse<SalesInfoDetailsDTO>>
-    {
-        public int _id { get; }
+    public record GetSalesInfoByIdQuery(int Id) : IRequest<CQRSResponse<SalesInfoDetailsDTO>> { }
 
-        public GetSalesInfoByIdQuery(int id)
-        {
-            this._id = id;
-        }
-    }
-
-    public class GetAllSalesInfosQuery : IRequest<CQRSResponse<List<SalesInfoDTO>>>
+    public record GetAllSalesInfosQuery : IRequest<CQRSResponse<List<SalesInfoDTO>>>
     {
 
     }

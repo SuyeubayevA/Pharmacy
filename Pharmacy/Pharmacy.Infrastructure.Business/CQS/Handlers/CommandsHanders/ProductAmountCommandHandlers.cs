@@ -62,7 +62,7 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
 
             if (productAmount == null)
             {
-                result.Message = "There is no product with suh Id";
+                result.Message = "There is no product with such Id";
                 return result;
             }
 

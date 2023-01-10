@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Pharmacy.Helpers;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.Repositories;
+using Pharmacy.Infrastructure.Handlers.ProductQueriesHanders;
 using Pharmacy.Profiles;
 using System.Reflection;
 
@@ -42,7 +43,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
     });
 });
-builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly(), typeof(GetAllProductsHandler).Assembly);
 
 var app = builder.Build();
 

@@ -1,7 +1,6 @@
 
 using AutoMapper;
 using MediatR;
-using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Business.CQS;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.DTO;
@@ -20,7 +19,7 @@ namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
         }
         public async Task<CQRSResponse<WarehouseDetailsDTO>> Handle(GetWarehouseByIdQuery request, CancellationToken cancellationToken)
         {
-            var warehouse = await _uow.Warehouse.GetAsync(request._id);
+            var warehouse = await _uow.Warehouse.GetAsync(request.Id);
             var response = new CQRSResponse<WarehouseDetailsDTO>();
 
             if (warehouse == null)
