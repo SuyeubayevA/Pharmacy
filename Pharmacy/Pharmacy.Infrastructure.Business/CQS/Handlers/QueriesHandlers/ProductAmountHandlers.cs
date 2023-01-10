@@ -31,7 +31,7 @@ namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
             }
             else
             {
-                var productAmountDetailsDTO = ObjectMapper.Mapper.Map<ProductAmountDetailsDTO>(productAmount);
+                var productAmountDetailsDTO = _mapper.Map<ProductAmountDetailsDTO>(productAmount);
 
                 response.IsSuccess = true;
                 response.Model = productAmountDetailsDTO;
