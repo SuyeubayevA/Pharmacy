@@ -30,9 +30,9 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             }
 
             var productAmount = _mapper.Map<ProductAmount>(request.Model);
-            _uow.ProductAmount.Create(productAmount);
+            var isCreated = await _uow.ProductAmount.Create(productAmount);
 
-            if (await _uow.SaveAsync())
+            if (isCreated)
             {
                 result.IsSuccess = true;
                 result.Model = productAmount;

@@ -30,9 +30,9 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             }
 
             var warehouse = _mapper.Map<Warehouse>(request.Model);
-            _uow.Warehouse.Create(warehouse);
+            var isCreated = await _uow.Warehouse.Create(warehouse);
 
-            if (await _uow.SaveAsync())
+            if (isCreated)
             {
                 result.IsSuccess = true;
                 result.Model = warehouse;

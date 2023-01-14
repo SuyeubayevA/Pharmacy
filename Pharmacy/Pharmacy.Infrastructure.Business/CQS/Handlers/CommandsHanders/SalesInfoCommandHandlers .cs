@@ -29,9 +29,9 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             }
 
             var salesInfo = _mapper.Map<SalesInfo>(request.Model);
-            _uow.SalesInfo.Create(salesInfo);
+            var isCreated = await _uow.SalesInfo.Create(salesInfo);
 
-            if (await _uow.SaveAsync())
+            if (isCreated)
             {
                 result.IsSuccess = true;
                 result.Model = salesInfo;
