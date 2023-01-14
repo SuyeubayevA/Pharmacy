@@ -13,9 +13,10 @@ namespace Pharmacy.Infrastructure.Data.Repositories
         {
             this.db = context;
         }
-        public void Create(Warehouse warehouse)
+        public async Task<bool> Create(Warehouse warehouse)
         {
             db.Add(warehouse);
+            return (await db.SaveChangesAsync()) > 0;
         }
 
         public async Task<Warehouse?> GetAsync(int id)
@@ -30,7 +31,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return warehouse;
         }
 
-        public async Task<Warehouse> GetAsync(string name)
+        public async Task<Warehouse?> GetAsync(string name)
         {
             IQueryable<Warehouse> query = db.Warehouses
                 .Include(w => w.ProductAmounts)
@@ -42,22 +43,25 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return warehouse;
         }
 
-        public async Task<IList<Warehouse>?> GetAllASync()
+        public async Task<IEnumerable<Warehouse>?> GetAllASync()
         {
             var list = await db.Warehouses.AsQueryable().ToListAsync();
 
             return list;
         }
 
-        public void Update(Warehouse warehouse)
+        public async Task<bool> Update(Warehouse warehouse)
         {
             db.Update(warehouse);
+            return (await db.SaveChangesAsync()) > 0;
         }
 
-        public void Delete(int id)
+        public async Task<bool> Delete(int id)
         {
             var model = db.Find<Warehouse>(id);
             if (model != null) db.Remove(model);
+
+            return (await db.SaveChangesAsync()) > 0;
         }
     }
 }

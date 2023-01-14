@@ -14,9 +14,10 @@ namespace Pharmacy.Infrastructure.Data.Repositories
         {
             this.db = context;
         }
-        public void Create(ProductAmount productType)
+        public async Task<bool> Create(ProductAmount productAmount)
         {
-            db.Add(productType);
+            db.Add(productAmount);
+            return (await db.SaveChangesAsync()) > 0;
         }
 
         public async Task<ProductAmount?> GetAsync(int id)
@@ -45,23 +46,25 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return productAmount;
         }
 
-        public async Task<IList<ProductAmount>?> GetAllASync()
+        public async Task<IEnumerable<ProductAmount>?> GetAllASync()
         {
             var productAmounts = await db.ProductAmounts.AsQueryable().ToListAsync();
 
             return productAmounts;
         }
 
-        public void Update(ProductAmount productAmount)
+        public async Task<bool> Update(ProductAmount productAmount)
         {
             db.Update(productAmount);
+            return (await db.SaveChangesAsync()) > 0;
         }
 
-        public void Delete(int id)
+        public async Task<bool> Delete(int id)
         {
             var model = db.Find<ProductAmount>(id);
-            if (model != null)
-                db.Remove(model);
+            if (model != null) db.Remove(model);
+
+            return (await db.SaveChangesAsync()) > 0;
         }
     }
 }

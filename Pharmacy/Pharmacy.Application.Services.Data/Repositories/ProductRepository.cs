@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
+//using System.Data.Entity;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
@@ -12,9 +13,10 @@ namespace Pharmacy.Infrastructure.Data.Repositories
         {
             this.db = context;
         }
-        public void Create(Product product) 
+        public async Task<bool> Create(Product product) 
         {
             db.Add(product);
+            return (await db.SaveChangesAsync()) > 0;
         }
 
         public async Task<Product?> GetAsync(int id)
@@ -46,16 +48,17 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return product;
         }
 
-        public async Task<IList<Product>?> GetAllASync()
+        public async Task<IEnumerable<Product>?> GetAllASync()
         {
             var products = await db.Products.AsQueryable().ToListAsync();
 
             return products;
         }
 
-        public void Update(Product product)
+        public async Task<bool> Update(Product product)
         {
             db.Update(product);
+            return (await db.SaveChangesAsync()) > 0;
         }
 
         public bool UpdateWarehouseLink(int productId, int warehouseId, int amount = 0, float discount = 0)
@@ -97,10 +100,12 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             }
         }
 
-        public void Delete(int id)
+        public async Task<bool> Delete(int id)
         {
             var model = db.Find<Product>(id);
             if(model != null) db.Remove(model);
+
+            return (await db.SaveChangesAsync()) > 0;
         }
     }
 }
