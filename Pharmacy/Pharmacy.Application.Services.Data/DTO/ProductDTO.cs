@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Pharmacy.Infrastructure.Data.DTO
+﻿namespace Pharmacy.Infrastructure.Data.DTO
 {
     public class ProductDTO
     {

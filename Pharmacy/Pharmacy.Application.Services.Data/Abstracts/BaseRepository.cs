@@ -1,5 +1,4 @@
-﻿using Pharmacy.Domain.Core;
-using Pharmacy.Domain.Interfaces;
+﻿using Pharmacy.Domain.Interfaces;
 
 namespace Pharmacy.Infrastructure.Data.Abstracts
 {

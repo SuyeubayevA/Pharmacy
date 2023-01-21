@@ -21,7 +21,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
                 .AsQueryable();
             query = query.Where(x => x.Id == id);
 
-            var productTypes = await query.FirstAsync();
+            var productTypes = await query.SingleOrDefaultAsync();
 
             return productTypes;
         }
@@ -33,7 +33,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
                 .AsQueryable();
             query = query.Where(x => x.Name == name);
 
-            var productTypes = await query.FirstAsync();
+            var productTypes = await query.SingleOrDefaultAsync();
 
             return productTypes;
         }

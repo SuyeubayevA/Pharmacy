@@ -3,7 +3,6 @@ using MediatR;
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Data;
-using Pharmacy.Models;
 using Pharmacy.Infrastructure.Business.CQS;
 
 namespace Pharmacy.Infrastructure.Handlers.CommandsHanders

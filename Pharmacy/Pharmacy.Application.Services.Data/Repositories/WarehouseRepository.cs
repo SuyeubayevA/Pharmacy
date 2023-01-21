@@ -2,7 +2,6 @@
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
 using Pharmacy.Infrastructure.Data.Abstracts;
-using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {

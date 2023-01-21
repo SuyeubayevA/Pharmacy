@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Pharmacy.Domain.Interfaces
+﻿namespace Pharmacy.Domain.Interfaces
 {
     public interface IPharmRepository<T> where T : class
     {

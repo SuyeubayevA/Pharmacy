@@ -1,8 +1,5 @@
 using MediatR;
-using Pharmacy.Domain.Core;
-using Pharmacy.Infrastructure.Business.CQS;
 using Pharmacy.Models;
-using System.ComponentModel.DataAnnotations;
 
 namespace Pharmacy.Infrastructure.Commands
 {

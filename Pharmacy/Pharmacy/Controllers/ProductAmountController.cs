@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Models;
 using Pharmacy.Infrastructure.Queries;
-using Pharmacy.API.Helpers;
+using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Controllers
 {
@@ -19,48 +19,39 @@ namespace Pharmacy.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IResult> GetAll()
+        public async Task<IEnumerable<ProductAmountDTO>> GetAll()
         {
             var query = new GetAllProductAmountsQuery();
-            var result = await _mediator.Send(query);
-            return Helper.GetIResult(result);
+            return await _mediator.Send(query);
         }
 
         [HttpGet("{Id}")]
-        public async Task<IResult> Get(int Id)
+        public async Task<ProductAmountDetailsDTO> Get(int Id)
         {
             var query = new GetProductAmountByIdQuery(Id);
-            var result = await _mediator.Send(query);
-
-            return Helper.GetIResult(result);
+            return await _mediator.Send(query);
         }
 
         [HttpPost]
-        public async Task<IResult> Post( ProductAmountModel model)
+        public async Task Post( ProductAmountModel model)
         {
             var command = new CreateProductAmountCommand(model);
-            var result = await _mediator.Send(command);
-
-            return Helper.GetIResult(result);
+            await _mediator.Send(command);
         }
 
         [HttpPut]
-        public async Task<IResult> Put(int Id, ProductAmountModel model)
+        public async Task Put(int Id, ProductAmountModel model)
         {
             var command = new UpdateProductAmountCommand(model);
-            var result = await _mediator.Send(command);
-
-            return Helper.GetIResult(result);
+            await _mediator.Send(command);
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IResult> Delete(int id)
+        public async Task Delete(int id)
         {
             var command = new DeleteProductAmountCommand(id);
-            var result = await _mediator.Send(command);
-
-            return Helper.GetIResult(result); 
+            await _mediator.Send(command);
         }
     }
 }

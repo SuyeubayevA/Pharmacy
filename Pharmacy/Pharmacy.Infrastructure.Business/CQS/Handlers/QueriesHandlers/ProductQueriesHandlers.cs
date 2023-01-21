@@ -1,15 +1,13 @@
 
 using AutoMapper;
 using MediatR;
-using Pharmacy.Domain.Core;
-using Pharmacy.Infrastructure.Business.CQS;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Infrastructure.Queries;
 
 namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
 {
-    public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, CQRSResponse<ProductDetailDTO>>
+    public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, ProductDetailDTO>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -20,28 +18,15 @@ namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
             _mapper = mapper;
         }
 
-        public async Task<CQRSResponse<ProductDetailDTO>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ProductDetailDTO> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
             var product = await _uow.Product.GetAsync(request.Id);
-            var response = new CQRSResponse<ProductDetailDTO>();
 
-            if (product == null)
-            {
-                response.IsSuccess = false;
-                response.Message = "Product did not find.";
-            }
-            else
-            {
-                var productDetailDTO = _mapper.Map<ProductDetailDTO>(product);
-
-                response.IsSuccess = true;
-                response.Model = productDetailDTO;
-            }
-            return response;
+            return _mapper.Map<ProductDetailDTO>(product);
         }
     }
 
-    public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, CQRSResponse<List<ProductDTO>>>
+    public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<ProductDTO>>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -51,26 +36,12 @@ namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<List<ProductDTO>>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductDTO>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
-            var products = await _uow.Product.GetAllASync();
-            var response = new CQRSResponse<List<ProductDTO>>();
+            var products = await _uow.Product.GetAllAsync();
 
-            if(products == null)
-            {
-                response.IsSuccess = false;
-                response.Message = "Products did not find.";
-            }
-            else
-            {
-                var productsDTO = _mapper.Map<List<ProductDTO>>(products);
-                productsDTO.OrderByDescending(p => p.Name);
-
-                response.IsSuccess = true;
-                response.Model = productsDTO;
-            }
-
-            return response;
+            var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(products);
+            return productsDTO.OrderByDescending(p => p.Name);
         }
     }
 }

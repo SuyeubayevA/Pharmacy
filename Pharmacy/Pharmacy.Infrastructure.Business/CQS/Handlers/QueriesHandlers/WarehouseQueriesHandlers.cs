@@ -1,14 +1,13 @@
 
 using AutoMapper;
 using MediatR;
-using Pharmacy.Infrastructure.Business.CQS;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Infrastructure.Queries;
 
 namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
 {
-    public class GetWarehouseByIdHandler : IRequestHandler<GetWarehouseByIdQuery, CQRSResponse<WarehouseDetailsDTO>>
+    public class GetWarehouseByIdHandler : IRequestHandler<GetWarehouseByIdQuery, WarehouseDetailsDTO>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -17,29 +16,15 @@ namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<WarehouseDetailsDTO>> Handle(GetWarehouseByIdQuery request, CancellationToken cancellationToken)
+        public async Task<WarehouseDetailsDTO> Handle(GetWarehouseByIdQuery request, CancellationToken cancellationToken)
         {
             var warehouse = await _uow.Warehouse.GetAsync(request.Id);
-            var response = new CQRSResponse<WarehouseDetailsDTO>();
 
-            if (warehouse == null)
-            {
-                response.IsSuccess = false;
-                response.Message = "Warehouse did not find.";
-            }
-            else
-            {
-                var warehouseDetailDTO = _mapper.Map<WarehouseDetailsDTO>(warehouse);
-
-                response.IsSuccess = true;
-                response.Model = warehouseDetailDTO;
-            }
-
-            return response;
+            return _mapper.Map<WarehouseDetailsDTO>(warehouse);
         }
     }
 
-    public class GetAllWarehouseHandler : IRequestHandler<GetAllWarehousesQuery, CQRSResponse<List<WarehouseDTO>>>
+    public class GetAllWarehouseHandler : IRequestHandler<GetAllWarehousesQuery, IEnumerable<WarehouseDTO>>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -48,26 +33,12 @@ namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<List<WarehouseDTO>>> Handle(GetAllWarehousesQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<WarehouseDTO>> Handle(GetAllWarehousesQuery request, CancellationToken cancellationToken)
         {
-            var warehouses = await _uow.Warehouse.GetAllASync();
-            var response = new CQRSResponse<List<WarehouseDTO>>();
+            var warehouses = await _uow.Warehouse.GetAllAsync();
+            var productsTypesDTO = _mapper.Map<IEnumerable<WarehouseDTO>>(warehouses);
 
-            if (warehouses == null)
-            {
-                response.IsSuccess = false;
-                response.Message = "Warehouses did not find.";
-            }
-            else
-            {
-                var productsTypesDTO = _mapper.Map<List<WarehouseDTO>>(warehouses);
-                productsTypesDTO.OrderByDescending(p => p.Name);
-
-                response.IsSuccess = true;
-                response.Model = productsTypesDTO;
-            }
-
-            return response;
+            return productsTypesDTO.OrderByDescending(p => p.Name);
         }
     }
 }

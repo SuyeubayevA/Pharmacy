@@ -1,6 +1,4 @@
 using MediatR;
-using Pharmacy.Domain.Core;
-using Pharmacy.Infrastructure.Business.CQS;
 using Pharmacy.Models;
 
 namespace Pharmacy.Infrastructure.Commands

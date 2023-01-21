@@ -22,11 +22,12 @@ namespace Pharmacy.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfiguration(new ProductConfiguration());
-            builder.ApplyConfiguration(new ProductAmountConfiguration());
-            builder.ApplyConfiguration(new ProductTypeConfiguration());
-            builder.ApplyConfiguration(new SalesinfoConfiguration());
-            builder.ApplyConfiguration(new WarehouseConfiguration());
+            builder.ApplyConfigurationsFromAssembly(typeof(ProductConfiguration).Assembly);
+            //builder.ApplyConfiguration(new ProductConfiguration());
+            //builder.ApplyConfiguration(new ProductAmountConfiguration());
+            //builder.ApplyConfiguration(new ProductTypeConfiguration());
+            //builder.ApplyConfiguration(new SalesinfoConfiguration());
+            //builder.ApplyConfiguration(new WarehouseConfiguration());
 
             base.OnModelCreating(builder);
         }

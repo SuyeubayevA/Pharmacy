@@ -1,5 +1,4 @@
 ﻿using Pharmacy.Domain.Core;
-using System.Collections.Generic;
 
 namespace Pharmacy.Application.Services
 {

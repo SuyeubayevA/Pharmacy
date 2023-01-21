@@ -3,7 +3,6 @@ using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Data;
 using MediatR;
 using AutoMapper;
-using Pharmacy.Infrastructure.Business.CQS;
 
 namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
 {

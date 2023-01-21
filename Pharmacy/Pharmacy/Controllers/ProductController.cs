@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Pharmacy.API.Helpers;
 using Pharmacy.Infrastructure.Commands;
+using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Infrastructure.Queries;
 using Pharmacy.Models;
 
@@ -19,57 +19,46 @@ namespace Pharmacy.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IResult> GetAll()
+        public async Task<IEnumerable<ProductDTO>> GetAll()
         {
             var query = new GetAllProductsQuery();
-            var result = await _mediator.Send(query);
-
-            return Helper.GetIResult(result);
+            return await _mediator.Send(query);
         }
 
         [HttpGet("{Id}")]
-        public async Task<IResult> Get(int Id)
+        public async Task<ProductDetailDTO> Get(int Id)
         {
             var query = new GetProductByIdQuery(Id);
-            var result = await _mediator.Send(query);
-
-            return Helper.GetIResult(result);
+            return await _mediator.Send(query);
         }
 
         [HttpPost]
-        public async Task<IResult> Post( ProductModel model)
+        public async Task Post( ProductModel model)
         {
             var command = new CreateProductCommand(model);
-            var result = await _mediator.Send(command);
-            return Helper.GetIResult(result);
+            await _mediator.Send(command);
         }
 
         [HttpPut]
-        public async Task<IResult> Put(int Id, ProductModel model)
+        public async Task Put(int Id, ProductModel model)
         {
             var command = new UpdateProductCommand(Id, model);
-            var result = await _mediator.Send(command);
-
-            return Helper.GetIResult(result);
+            await _mediator.Send(command);
         }
 
         [HttpPut("AddWarehouse")]
-        public async Task<IResult> PutWarehouse(int Id, ProductModel model, int warehouseId, int amount = 0, float discount = 0)
+        public async Task PutWarehouse(int Id, ProductModel model, int warehouseId, int amount = 0, float discount = 0)
         {
             var command = new UpdateProductsWarehouseCommand(Id, model, warehouseId, amount, discount);
-            var result = await _mediator.Send(command);
-
-            return Helper.GetIResult(result);
+            await _mediator.Send(command);
         }
 
         [HttpDelete]
         [Route("{productName}")]
-        public async Task<IResult> Delete(string productName)
+        public async Task Delete(string productName)
         {
             var command = new DeleteProductCommand(productName);
-            var result = await _mediator.Send(command);
-
-            return Helper.GetIResult(result);
+            await _mediator.Send(command);
         }
     }
 }

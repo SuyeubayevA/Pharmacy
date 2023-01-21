@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Pharmacy.API.Helpers;
 using Pharmacy.Infrastructure.Commands;
+using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Infrastructure.Queries;
 using Pharmacy.Models;
 
@@ -19,47 +19,39 @@ namespace Pharmacy.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IResult> GetAll()
+        public async Task<IEnumerable<SalesInfoDTO>> GetAll()
         {
             var query = new GetAllSalesInfosQuery();
-            var result = await _mediator.Send(query);
-            return Results.Ok(result);
+            return await _mediator.Send(query);
         }
 
         [HttpGet("{Id}")]
-        public async Task<IResult> Get(int Id)
+        public async Task<SalesInfoDetailsDTO> Get(int Id)
         {
             var query = new GetSalesInfoByIdQuery(Id);
-            var result = await _mediator.Send(query);
-
-            return result!=null ? Results.Ok(result) : Results.NotFound();
+            return await _mediator.Send(query);
         }
 
         [HttpPost]
-        public async Task<IResult> Post( SalesInfoModel model)
+        public async Task Post( SalesInfoModel model)
         {
             var command = new CreateSalesInfoCommand(model);
-            var result = await _mediator.Send(command);
-            return Helper.GetIResult(result);
+            await _mediator.Send(command);
         }
 
         [HttpPut]
-        public async Task<IResult> Put(int Id, SalesInfoModel model)
+        public async Task Put(int Id, SalesInfoModel model)
         {
             var command = new UpdateSalesInfoCommand(model);
-            var result = await _mediator.Send(command);
-
-            return Helper.GetIResult(result);
+            await _mediator.Send(command);
          }
 
         [HttpDelete]
         [Route("{productName}")]
-        public async Task<IResult> Delete(int productId)
+        public async Task Delete(int productId)
         {
             var command = new DeleteSalesInfoCommand(productId);
-            var result = await _mediator.Send(command);
-
-            return Helper.GetIResult(result);
+            await _mediator.Send(command);
         }
     }
 }

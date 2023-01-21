@@ -1,15 +1,13 @@
 
 using AutoMapper;
 using MediatR;
-using Pharmacy.Domain.Core;
-using Pharmacy.Infrastructure.Business.CQS;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Infrastructure.Queries;
 
 namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
 {
-    public class GetProductAmountByIdHandler : IRequestHandler<GetProductAmountByIdQuery, CQRSResponse<ProductAmountDetailsDTO>>
+    public class GetProductAmountByIdHandler : IRequestHandler<GetProductAmountByIdQuery, ProductAmountDetailsDTO>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -19,29 +17,15 @@ namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<ProductAmountDetailsDTO>> Handle(GetProductAmountByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ProductAmountDetailsDTO> Handle(GetProductAmountByIdQuery request, CancellationToken cancellationToken)
         {
             var productAmount = await _uow.ProductAmount.GetAsync(request.Id);
-            var response = new CQRSResponse<ProductAmountDetailsDTO>();
 
-            if (productAmount == null)
-            {
-                response.IsSuccess = false;
-                response.Message = "ProductAmount did not find.";
-            }
-            else
-            {
-                var productAmountDetailsDTO = _mapper.Map<ProductAmountDetailsDTO>(productAmount);
-
-                response.IsSuccess = true;
-                response.Model = productAmountDetailsDTO;
-            }
-
-            return response;
+            return _mapper.Map<ProductAmountDetailsDTO>(productAmount);
         }
     }
 
-    public class GetAllProductAmountsHandler : IRequestHandler<GetAllProductAmountsQuery, CQRSResponse<List<ProductAmountDTO>>>
+    public class GetAllProductAmountsHandler : IRequestHandler<GetAllProductAmountsQuery, IEnumerable<ProductAmountDTO>>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -51,26 +35,12 @@ namespace Pharmacy.Infrastructure.Handlers.ProductQueriesHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<List<ProductAmountDTO>>> Handle(GetAllProductAmountsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductAmountDTO>> Handle(GetAllProductAmountsQuery request, CancellationToken cancellationToken)
         {
-            var productAmounts = await _uow.ProductAmount.GetAllASync();
-            var response = new CQRSResponse<List<ProductAmountDTO>>();
+            var productAmounts = await _uow.ProductAmount.GetAllAsync();
+            var productAmountsDTO = _mapper.Map<List<ProductAmountDTO>>(productAmounts);
 
-            if (productAmounts == null)
-            {
-                response.IsSuccess = false;
-                response.Message = "ProductAmounts did not find.";
-            }
-            else
-            {
-                var productAmountsDTO = _mapper.Map<List<ProductAmountDTO>>(productAmounts);
-                productAmountsDTO.OrderByDescending(p => p.ProductName);
-
-                response.IsSuccess = true;
-                response.Model = productAmountsDTO;
-            }
-
-            return response;
+            return productAmountsDTO.OrderByDescending(p => p.ProductName);
         }
     }
 }
