@@ -7,7 +7,7 @@ using Pharmacy.Infrastructure.Business.CQS;
 
 namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
 {
-    public class CreateProductHandler : IRequestHandler<CreateProductCommand, CQRSResponse<Product>>
+    public class CreateProductHandler : IRequestHandler<CreateProductCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -17,35 +17,23 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<Product>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var result = new CQRSResponse<Product>();
-
             if (await _uow.Product.GetAsync(request.Model.Name) != null)
             {
-                result.Message = "The object already exist !";
-
-                return result;
+                throw new Exception("The object already exist !");
             }
-
 
             var product = _mapper.Map<Product>(request.Model);
-            var isCreated = await _uow.Product.Create(product);
+            _uow.Product.Create(product);
+            await _uow.SaveAsync();
 
-            if (isCreated)
-            {
-                result.IsSuccess = true;
-                result.Model = product;
+            return Unit.Value;
 
-                return result;
-            }
-
-            result.Model = product;
-            return result;
         }
     }
 
-    public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, CQRSResponse<Product>>
+    public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -55,35 +43,18 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<Product>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
             var product = await _uow.Product.GetAsync(request.Id);
-            var result = new CQRSResponse<Product>();
-
-            if (product == null) 
-            { 
-                result.Message = "There is no product with such Id";
-                return result;
-            }
-
             _mapper.Map(request.Model, product);
 
-            if (await _uow.SaveAsync())
-            {
-                result.IsSuccess = true;
-                result.Model = product;
+            await _uow.SaveAsync();
 
-                return result;
-            }
-            else
-            {
-                result.Model = product;
-                return result;
-            }
+            return Unit.Value;
         }
     }
 
-    public class UpdateProductsWarehouseHandler : IRequestHandler<UpdateProductsWarehouseCommand, CQRSResponse<bool>>
+    public class UpdateProductsWarehouseHandler : IRequestHandler<UpdateProductsWarehouseCommand, Unit>
     {
         private readonly UnitOfWork _uow;
 
@@ -91,26 +62,17 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
         {
             _uow = uow;
         }
-        public async Task<CQRSResponse<bool>> Handle(UpdateProductsWarehouseCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateProductsWarehouseCommand request, CancellationToken cancellationToken)
         {
-            var warehouseLinkUpdated = _uow.Product.UpdateWarehouseLink(request.Id, request.WarehouseId, request.Amount, request.Discount);
-            var result = new CQRSResponse<bool>();
+            _uow.Product.UpdateWarehouseLink(request.Id, request.WarehouseId, request.Amount, request.Discount);
 
-            if (warehouseLinkUpdated && await _uow.SaveAsync())
-            {
-                result.Model = warehouseLinkUpdated;
-                result.IsSuccess = true;
+            await _uow.SaveAsync();
 
-                return result;
-            }
-            else
-            {
-                return result;
-            }
+            return Unit.Value;
         }
     }
 
-    public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, CQRSResponse<Product>>
+    public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, Unit>
     {
         private readonly UnitOfWork _uow;
 
@@ -118,30 +80,14 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
         {
             _uow = uow;
         }
-        public async Task<CQRSResponse<Product>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
             var product = await _uow.Product.GetAsync(request.ProductName);
-            var result = new CQRSResponse<Product>();
-
-            if (product == null) 
-            {
-                result.Message = "Didn't find this product";
-                return result;
-            }
 
             _uow.Product.Delete(product.Id);
+            await _uow.SaveAsync();
 
-            if (await _uow.SaveAsync())
-            {
-                result.Model = product;
-                result.IsSuccess = true;
-
-                return result;
-            }
-            else
-            {
-                return result;
-            }
+            return Unit.Value;
         }
     }
 }

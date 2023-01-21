@@ -8,7 +8,7 @@ using Pharmacy.Infrastructure.Business.CQS;
 
 namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
 {
-    public class CreateWarehouseHandler : IRequestHandler<CreateWarehouseCommand, CQRSResponse<Warehouse>>
+    public class CreateWarehouseHandler : IRequestHandler<CreateWarehouseCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -18,34 +18,24 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<Warehouse>> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateWarehouseCommand request, CancellationToken cancellationToken)
         {
-            var result = new CQRSResponse<Warehouse>();
-
             if (await _uow.Warehouse.GetAsync(request.Model.Name) != null)
             {
-                result.Message = "The object already exist !";
-
-                return result;
+                throw new Exception("The object already exist !");
             }
 
             var warehouse = _mapper.Map<Warehouse>(request.Model);
-            var isCreated = await _uow.Warehouse.Create(warehouse);
+            _uow.Warehouse.Create(warehouse);
 
-            if (isCreated)
-            {
-                result.IsSuccess = true;
-                result.Model = warehouse;
+            await _uow.SaveAsync();
 
-                return result;
-            }
 
-            result.Model = warehouse;
-            return result;
+            return Unit.Value;
         }
     }
 
-    public class UpdateWarehouseHandler : IRequestHandler<UpdateWarehouseCommand, CQRSResponse<Warehouse>>
+    public class UpdateWarehouseHandler : IRequestHandler<UpdateWarehouseCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -55,68 +45,35 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<Warehouse>> Handle(UpdateWarehouseCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateWarehouseCommand request, CancellationToken cancellationToken)
         {
             var warehouse = await _uow.Warehouse.GetAsync(request.Model.Name);
-            var result = new CQRSResponse<Warehouse>();
 
-            if (warehouse == null)
-            {
-                result.Message = "There is no Warehouse with such Id";
-                return result;
-            }
+            _uow.Warehouse.Update(warehouse);
 
-            _mapper.Map(request.Model, warehouse);
+            await _uow.SaveAsync();
 
-            if (await _uow.SaveAsync())
-            {
-                result.IsSuccess = true;
-                result.Model = warehouse;
-
-                return result;
-            }
-            else
-            {
-                result.Model = warehouse;
-                return result;
-            }
+            return Unit.Value;
         }
     }
 
-    public class DeleteWarehouseHandler : IRequestHandler<DeleteWarehouseCommand, CQRSResponse<Warehouse>>
+    public class DeleteWarehouseHandler : IRequestHandler<DeleteWarehouseCommand, Unit>
     {
         private readonly UnitOfWork _uow;
-        private readonly IMapper _mapper;
 
-        public DeleteWarehouseHandler(UnitOfWork uow, IMapper mapper)
+        public DeleteWarehouseHandler(UnitOfWork uow)
         {
             _uow = uow;
-            _mapper = mapper;
         }
-        public async Task<CQRSResponse<Warehouse>> Handle(DeleteWarehouseCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteWarehouseCommand request, CancellationToken cancellationToken)
         {
             var warehouse = await _uow.Warehouse.GetAsync(request.WarehouseName);
-            var result = new CQRSResponse<Warehouse>();
-
-            if (warehouse == null)
-            {
-                result.Message = "Didn't find this Warehouse";
-                return result;
-            }
 
             _uow.Warehouse.Delete(warehouse.Id);
 
-            if (await _uow.SaveAsync())
-            {
-                result.Model = warehouse;
-                result.IsSuccess = true;
+            await _uow.SaveAsync();
 
-                return result;
-            }
-            else
-            {
-                return result;
-            }
+            return Unit.Value;
         }
     }
 }

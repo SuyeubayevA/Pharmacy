@@ -8,7 +8,7 @@ using Pharmacy.Infrastructure.Business.CQS;
 
 namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
 {
-    public class CreateProductTypeHandler : IRequestHandler<CreateProductTypeCommand, CQRSResponse<ProductType>>
+    public class CreateProductTypeHandler : IRequestHandler<CreateProductTypeCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -18,34 +18,23 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<ProductType>> Handle(CreateProductTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateProductTypeCommand request, CancellationToken cancellationToken)
         {
-            var result = new CQRSResponse<ProductType>();
-
             if (await _uow.ProductType.GetAsync(request.Model.Name) != null)
             {
-                result.Message = "The object already exist !";
-
-                return result;
+                throw new Exception("The object already exist !");
             }
 
             var productType = _mapper.Map<ProductType>(request.Model);
-            var isCreated = await _uow.ProductType.Create(productType);
+            _uow.ProductType.Create(productType);
 
-            if (isCreated)
-            {
-                result.IsSuccess = true;
-                result.Model = productType;
+            await _uow.SaveAsync();
 
-                return result;
-            }
-
-            result.Model = productType;
-            return result;
+            return Unit.Value;
         }
     }
 
-    public class UpdateProductTypeHandler : IRequestHandler<UpdateProductTypeCommand, CQRSResponse<ProductType>>
+    public class UpdateProductTypeHandler : IRequestHandler<UpdateProductTypeCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -55,68 +44,32 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<ProductType>> Handle(UpdateProductTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateProductTypeCommand request, CancellationToken cancellationToken)
         {
             var productType = await _uow.ProductType.GetAsync(request.Model.Id);
-            var result = new CQRSResponse<ProductType>();
-
-            if (productType == null)
-            {
-                result.Message = "There is no productType with such Id";
-                return result;
-            }
-
             _mapper.Map(request.Model, productType);
 
-            if (await _uow.SaveAsync())
-            {
-                result.IsSuccess = true;
-                result.Model = productType;
+            await _uow.SaveAsync();
 
-                return result;
-            }
-            else
-            {
-                result.Model = productType;
-                return result;
-            }
+            return Unit.Value;
         }
     }
 
-    public class DeleteProductTypeHandler : IRequestHandler<DeleteProductTypeCommand, CQRSResponse<ProductType>>
+    public class DeleteProductTypeHandler : IRequestHandler<DeleteProductTypeCommand, Unit>
     {
         private readonly UnitOfWork _uow;
-        private readonly IMapper _mapper;
 
-        public DeleteProductTypeHandler(UnitOfWork uow, IMapper mapper)
+        public DeleteProductTypeHandler(UnitOfWork uow)
         {
             _uow = uow;
-            _mapper = mapper;
         }
-        public async Task<CQRSResponse<ProductType>> Handle(DeleteProductTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteProductTypeCommand request, CancellationToken cancellationToken)
         {
-            var productType = await _uow.ProductType.GetAsync(request.Id);
-            var result = new CQRSResponse<ProductType>();
+            _uow.ProductType.Delete(request.Id);
 
-            if (productType == null)
-            {
-                result.Message = "Didn't find this productType";
-                return result;
-            }
+            await _uow.SaveAsync();
 
-            _uow.ProductType.Delete(productType.Id);
-
-            if (await _uow.SaveAsync())
-            {
-                result.Model = productType;
-                result.IsSuccess = true;
-
-                return result;
-            }
-            else
-            {
-                return result;
-            }
+            return Unit.Value;
         }
     }
 }

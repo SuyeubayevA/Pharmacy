@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Pharmacy.Infrastructure.Commands
 {
-    public record CreateProductAmountCommand(ProductAmountModel Model) : IRequest<CQRSResponse<ProductAmount>> { }
+    public record CreateProductAmountCommand(ProductAmountModel Model) : IRequest<Unit> { }
 
-    public record DeleteProductAmountCommand(int Id) : IRequest<CQRSResponse<ProductAmount>> { }
+    public record DeleteProductAmountCommand(int Id) : IRequest<Unit> { }
 
-    public record UpdateProductAmountCommand(ProductAmountModel Model) : IRequest<CQRSResponse<ProductAmount>> { }
+    public record UpdateProductAmountCommand(ProductAmountModel Model) : IRequest<Unit> { }
 }

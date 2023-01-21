@@ -13,10 +13,9 @@ namespace Pharmacy.Infrastructure.Data.Repositories
         {
             this.db = context;
         }
-        public async Task<bool> Create(ProductType productType)
+        public void Create(ProductType productType)
         {
             db.Add(productType);
-            return (await db.SaveChangesAsync()) > 0;
         }
 
         public async Task<ProductType?> GetAsync(int id)
@@ -50,18 +49,15 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return query;
         }
 
-        public async Task<bool> Update(ProductType productType)
+        public void Update(ProductType productType)
         {
             db.Update(productType);
-            return (await db.SaveChangesAsync()) > 0;
         }
 
-        public async Task<bool> Delete(int id)
+        public void Delete(int id)
         {
             var model = db.Find<ProductType>(id);
             if (model != null) db.Remove(model);
-
-            return (await db.SaveChangesAsync()) > 0;
         }
     }
 }

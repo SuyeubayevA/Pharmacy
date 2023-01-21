@@ -12,21 +12,20 @@ namespace Pharmacy.Infrastructure.Data.Repositories
 {
     public class SalesInfoRepository : IPharmRepository<SalesInfo>
     {
-        private readonly PharmacyDBContext db;
+        private readonly PharmacyDBContext _db;
 
         public SalesInfoRepository(PharmacyDBContext context)
         {
-            this.db = context;
+            this._db = context;
         }
-        public async Task<bool> Create(SalesInfo salesInfo)
+        public void Create(SalesInfo salesInfo)
         {
-            db.Add(salesInfo);
-            return (await db.SaveChangesAsync()) > 0;
+            _db.Add(salesInfo);
         }
 
         public async Task<SalesInfo?> GetAsync(int id)
         {
-            IQueryable<SalesInfo> query = db.SalesInfos
+            IQueryable<SalesInfo> query = _db.SalesInfos
                 .Include(p => p.Product)
                 .AsQueryable();
             query = query.Where(x => x.Id == id);
@@ -38,7 +37,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
 
         public async Task<SalesInfo?> GetAsync(int productId, int id = 0)
         {
-            IQueryable<SalesInfo> query = db.SalesInfos
+            IQueryable<SalesInfo> query = _db.SalesInfos
                 .Include(p => p.Product)
                 .AsQueryable();
             query = query.Where(x => x.ProductId == productId);
@@ -50,23 +49,20 @@ namespace Pharmacy.Infrastructure.Data.Repositories
 
         public async Task<IEnumerable<SalesInfo>?> GetAllASync()
         {
-            var list = await db.SalesInfos.AsQueryable().ToListAsync();
+            var list = await _db.SalesInfos.AsQueryable().ToListAsync();
 
             return list;
         }
 
-        public async Task<bool> Update(SalesInfo salesInfo)
+        public void Update(SalesInfo salesInfo)
         {
-            db.Update(salesInfo);
-            return (await db.SaveChangesAsync()) > 0;
+            _db.Update(salesInfo);
         }
 
-        public async Task<bool> Delete(int id)
+        public void Delete(int id)
         {
-            var model = db.Find<SalesInfo>(id);
-            if (model != null) db.Remove(model);
-
-            return (await db.SaveChangesAsync()) > 0;
+            var model = _db.Find<SalesInfo>(id);
+            if (model != null) _db.Remove(model);
         }
     }
 }

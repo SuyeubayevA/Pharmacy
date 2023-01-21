@@ -5,9 +5,9 @@ using Pharmacy.Models;
 
 namespace Pharmacy.Infrastructure.Commands
 {
-    public record CreateProductTypeCommand(ProductTypeModel Model) : IRequest<CQRSResponse<ProductType>> { }
+    public record CreateProductTypeCommand(ProductTypeModel Model) : IRequest<Unit> { }
 
-    public record DeleteProductTypeCommand(int Id) : IRequest<CQRSResponse<ProductType>> { }
+    public record DeleteProductTypeCommand(int Id) : IRequest<Unit> { }
 
-    public record UpdateProductTypeCommand(ProductTypeModel Model) : IRequest<CQRSResponse<ProductType>> { }
+    public record UpdateProductTypeCommand(ProductTypeModel Model) : IRequest<Unit> { }
 }

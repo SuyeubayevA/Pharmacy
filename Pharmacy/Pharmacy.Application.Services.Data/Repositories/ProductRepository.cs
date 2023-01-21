@@ -13,10 +13,9 @@ namespace Pharmacy.Infrastructure.Data.Repositories
         {
             this.db = context;
         }
-        public async Task<bool> Create(Product product) 
+        public void Create(Product product) 
         {
             db.Add(product);
-            return (await db.SaveChangesAsync()) > 0;
         }
 
         public async Task<Product?> GetAsync(int id)
@@ -55,57 +54,46 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return products;
         }
 
-        public async Task<bool> Update(Product product)
+        public void Update(Product product)
         {
             db.Update(product);
-            return (await db.SaveChangesAsync()) > 0;
         }
 
-        public bool UpdateWarehouseLink(int productId, int warehouseId, int amount = 0, float discount = 0)
+        public void UpdateWarehouseLink(int productId, int warehouseId, int amount = 0, float discount = 0)
         {
             var wareHouse = db.Warehouses.Where(x => x.Id== warehouseId).FirstOrDefault();
             var product = db.Products.FirstOrDefault(p => p.Id== productId);
 
-            try
+            if(wareHouse != null && product != null)
             {
-                if(wareHouse != null && product != null)
+                var productAmount = new ProductAmount
                 {
-                    var productAmount = new ProductAmount
-                    {
-                        Product = product,
-                        Warehouse = wareHouse,
-                        Amount = amount,
-                        Discount = discount
-                    };
+                    Product = product,
+                    Warehouse = wareHouse,
+                    Amount = amount,
+                    Discount = discount
+                };
 
-                    if(product.ProductAmounts == null)
+                if(product.ProductAmounts == null)
+                {
+                    product.ProductAmounts = new List<ProductAmount>
                     {
-                        product.ProductAmounts = new List<ProductAmount>
-                        {
-                            productAmount
-                        };
-                    }
-                    else
-                    {
-                        product.ProductAmounts.Add(productAmount);
-                    }
-                    db.Update(product);
-                    return true;
+                        productAmount
+                    };
                 }
-                return false;
+                else
+                {
+                    product.ProductAmounts.Add(productAmount);
+                }
+                db.Update(product);
             }
-            catch
-            {
-                return false;
-            }
+
         }
 
-        public async Task<bool> Delete(int id)
+        public void Delete(int id)
         {
             var model = db.Find<Product>(id);
             if(model != null) db.Remove(model);
-
-            return (await db.SaveChangesAsync()) > 0;
         }
     }
 }

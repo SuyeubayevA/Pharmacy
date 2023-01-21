@@ -7,7 +7,7 @@ using Pharmacy.Infrastructure.Business.CQS;
 
 namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
 {
-    public class CreateSalesInfoHandler : IRequestHandler<CreateSalesInfoCommand, CQRSResponse<SalesInfo>>
+    public class CreateSalesInfoHandler : IRequestHandler<CreateSalesInfoCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -17,34 +17,23 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<SalesInfo>> Handle(CreateSalesInfoCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateSalesInfoCommand request, CancellationToken cancellationToken)
         {
-            var result = new CQRSResponse<SalesInfo>();
-
             if (await _uow.SalesInfo.GetAsync(request.Model.ProductId, 0) != null)
             {
-                result.Message = "The object already exist !";
-
-                return result;
+                throw new Exception("The object already exist !");
             }
 
             var salesInfo = _mapper.Map<SalesInfo>(request.Model);
-            var isCreated = await _uow.SalesInfo.Create(salesInfo);
+            _uow.SalesInfo.Create(salesInfo);
 
-            if (isCreated)
-            {
-                result.IsSuccess = true;
-                result.Model = salesInfo;
+            await _uow.SaveAsync();
 
-                return result;
-            }
-
-            result.Model = salesInfo;
-            return result;
+            return Unit.Value;
         }
     }
 
-    public class UpdateSalesInfoHandler : IRequestHandler<UpdateSalesInfoCommand, CQRSResponse<SalesInfo>>
+    public class UpdateSalesInfoHandler : IRequestHandler<UpdateSalesInfoCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -54,68 +43,35 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<SalesInfo>> Handle(UpdateSalesInfoCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateSalesInfoCommand request, CancellationToken cancellationToken)
         {
             var salesInfo = await _uow.SalesInfo.GetAsync(request.Model.ProductId);
-            var result = new CQRSResponse<SalesInfo>();
-
-            if (salesInfo == null)
-            {
-                result.Message = "There is no SalesInfo with such Id";
-                return result;
-            }
 
             _mapper.Map(request.Model, salesInfo);
 
-            if (await _uow.SaveAsync())
-            {
-                result.IsSuccess = true;
-                result.Model = salesInfo;
+            await _uow.SaveAsync();
 
-                return result;
-            }
-            else
-            {
-                result.Model = salesInfo;
-                return result;
-            }
+            return Unit.Value;
         }
     }
 
-    public class DeleteSalesInfoHandler : IRequestHandler<DeleteSalesInfoCommand, CQRSResponse<SalesInfo>>
+    public class DeleteSalesInfoHandler : IRequestHandler<DeleteSalesInfoCommand, Unit>
     {
         private readonly UnitOfWork _uow;
-        private readonly IMapper _mapper;
 
-        public DeleteSalesInfoHandler(UnitOfWork uow, IMapper mapper)
+        public DeleteSalesInfoHandler(UnitOfWork uow)
         {
             _uow = uow;
-            _mapper = mapper;
         }
-        public async Task<CQRSResponse<SalesInfo>> Handle(DeleteSalesInfoCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteSalesInfoCommand request, CancellationToken cancellationToken)
         {
             var salesInfo = await _uow.SalesInfo.GetAsync(request.ProductId, 0);
-            var result = new CQRSResponse<SalesInfo>();
-
-            if (salesInfo == null)
-            {
-                result.Message = "Didn't find this SalesInfo";
-                return result;
-            }
 
             _uow.SalesInfo.Delete(salesInfo.Id);
 
-            if (await _uow.SaveAsync())
-            {
-                result.Model = salesInfo;
-                result.IsSuccess = true;
+            await _uow.SaveAsync();
 
-                return result;
-            }
-            else
-            {
-                return result;
-            }
+            return Unit.Value;
         }
     }
 }

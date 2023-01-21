@@ -8,7 +8,7 @@ using Pharmacy.Infrastructure.Business.CQS;
 
 namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
 {
-    public class CreateProductAmountHandler : IRequestHandler<CreateProductAmountCommand, CQRSResponse<ProductAmount>>
+    public class CreateProductAmountHandler : IRequestHandler<CreateProductAmountCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -18,34 +18,25 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<ProductAmount>> Handle(CreateProductAmountCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateProductAmountCommand request, CancellationToken cancellationToken)
         {
             var result = new CQRSResponse<ProductAmount>();
 
             if (await _uow.ProductAmount.GetAsync(request.Model.WarehouseId, request.Model.ProductId) != null)
             {
-                result.Message = "The object already exist !";
-
-                return result;
+                throw new Exception("The object already exist !");
             }
 
             var productAmount = _mapper.Map<ProductAmount>(request.Model);
-            var isCreated = await _uow.ProductAmount.Create(productAmount);
+            _uow.ProductAmount.Create(productAmount);
 
-            if (isCreated)
-            {
-                result.IsSuccess = true;
-                result.Model = productAmount;
+            await _uow.SaveAsync();
 
-                return result;
-            }
-
-            result.Model = productAmount;
-            return result;
+            return Unit.Value;
         }
     }
 
-    public class UpdateProductAmountHandler : IRequestHandler< UpdateProductAmountCommand, CQRSResponse<ProductAmount>>
+    public class UpdateProductAmountHandler : IRequestHandler< UpdateProductAmountCommand, Unit>
     {
         private readonly UnitOfWork _uow;
         private readonly IMapper _mapper;
@@ -55,68 +46,34 @@ namespace Pharmacy.Infrastructure.Handlers.CommandsHanders
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task<CQRSResponse<ProductAmount>> Handle(UpdateProductAmountCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateProductAmountCommand request, CancellationToken cancellationToken)
         {
             var productAmount = await _uow.ProductAmount.GetAsync(request.Model.WarehouseId, request.Model.ProductId);
-            var result = new CQRSResponse<ProductAmount>();
-
-            if (productAmount == null)
-            {
-                result.Message = "There is no product with such Id";
-                return result;
-            }
 
             _mapper.Map(request.Model, productAmount);
 
-            if (await _uow.SaveAsync())
-            {
-                result.IsSuccess = true;
-                result.Model = productAmount;
-
-                return result;
-            }
-            else
-            {
-                result.Model = productAmount;
-                return result;
-            }
+            await _uow.SaveAsync();
+            
+            return Unit.Value;
         }
     }
 
-    public class DeleteProductAmountHandler : IRequestHandler<DeleteProductAmountCommand, CQRSResponse<ProductAmount>>
+    public class DeleteProductAmountHandler : IRequestHandler<DeleteProductAmountCommand, Unit>
     {
         private readonly UnitOfWork _uow;
-        private readonly IMapper _mapper;
 
-        public DeleteProductAmountHandler(UnitOfWork uow, IMapper mapper)
+        public DeleteProductAmountHandler(UnitOfWork uow)
         {
             _uow = uow;
-            _mapper = mapper;
         }
-        public async Task<CQRSResponse<ProductAmount>> Handle(DeleteProductAmountCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteProductAmountCommand request, CancellationToken cancellationToken)
         {
             var productAmount = await _uow.ProductAmount.GetAsync(request.Id);
-            var result = new CQRSResponse<ProductAmount>();
-
-            if (productAmount == null)
-            {
-                result.Message = "Didn't find this productAmount";
-                return result;
-            }
 
             _uow.ProductAmount.Delete(productAmount.Id);
 
-            if (await _uow.SaveAsync())
-            {
-                result.Model = productAmount;
-                result.IsSuccess = true;
-
-                return result;
-            }
-            else
-            {
-                return result;
-            }
+            await _uow.SaveAsync();
+            return Unit.Value;
         }
     }
 }
