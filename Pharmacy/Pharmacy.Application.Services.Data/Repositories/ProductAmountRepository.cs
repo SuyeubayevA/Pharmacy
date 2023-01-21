@@ -1,25 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
-using Pharmacy.Infrastructure.Data.DTO;
-//using System.Data.Entity;
+using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductAmountRepository : IPharmRepository<ProductAmount>
+    public class ProductAmountRepository : BaseRepository<ProductAmount>, IPharmRepository<ProductAmount>
     {
         private readonly PharmacyDBContext db;
 
-        public ProductAmountRepository(PharmacyDBContext context)
+        public ProductAmountRepository(PharmacyDBContext context): base(context)
         {
             this.db = context;
         }
-        public void Create(ProductAmount productAmount)
-        {
-            db.Add(productAmount);
-        }
-
-        public async Task<ProductAmount?> GetAsync(int id)
+        public override async Task<ProductAmount?> GetAsync(int id)
         {
             IQueryable<ProductAmount> query = db.ProductAmounts
                 .Include(w => w.Warehouse)
@@ -40,27 +34,16 @@ namespace Pharmacy.Infrastructure.Data.Repositories
                 .AsQueryable();
             query = query.Where(x => x.ProductId == ProductId && x.WarehouseId == warehouseId);
 
-            var productAmount = await query.FirstOrDefaultAsync();
+            var productAmount = await query.SingleOrDefaultAsync();
 
             return productAmount;
         }
 
-        public async Task<IEnumerable<ProductAmount>?> GetAllASync()
+        public override async Task<IEnumerable<ProductAmount>?> GetAllAsync()
         {
             var productAmounts = await db.ProductAmounts.AsQueryable().ToListAsync();
 
             return productAmounts;
-        }
-
-        public void Update(ProductAmount productAmount)
-        {
-            db.Update(productAmount);
-        }
-
-        public void Delete(int id)
-        {
-            var model = db.Find<ProductAmount>(id);
-            if (model != null) db.Remove(model);
         }
     }
 }

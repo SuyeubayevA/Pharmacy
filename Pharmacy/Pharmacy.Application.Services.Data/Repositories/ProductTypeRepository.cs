@@ -1,26 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
-using Pharmacy.Infrastructure.Data.DTO;
+using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductTypeRepository : IPharmRepository<ProductType>
+    public class ProductTypeRepository : BaseRepository<ProductType>, IPharmRepository<ProductType>
     {
-        private readonly PharmacyDBContext db;
+        private readonly PharmacyDBContext _db;
 
-        public ProductTypeRepository(PharmacyDBContext context)
+        public ProductTypeRepository(PharmacyDBContext context): base(context)
         {
-            this.db = context;
-        }
-        public void Create(ProductType productType)
-        {
-            db.Add(productType);
+            this._db = context;
         }
 
-        public async Task<ProductType?> GetAsync(int id)
+        public override async Task<ProductType?> GetAsync(int id)
         {
-            var query = db.ProductTypes
+            var query = _db.ProductTypes
                 .Include(pt => pt.Products)
                 .AsQueryable();
             query = query.Where(x => x.Id == id);
@@ -32,7 +28,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
 
         public async Task<ProductType?> GetAsync(string name)
         {
-            IQueryable<ProductType> query = db.ProductTypes
+            IQueryable<ProductType> query = _db.ProductTypes
                 .Include(pt => pt.Products)
                 .AsQueryable();
             query = query.Where(x => x.Name == name);
@@ -42,22 +38,11 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return productTypes;
         }
 
-        public async Task<IEnumerable<ProductType>?> GetAllASync()
+        public override async Task<IEnumerable<ProductType>?> GetAllAsync()
         {
-            var query = await db.ProductTypes.AsQueryable().ToListAsync();
+            var query = await _db.ProductTypes.AsQueryable().ToListAsync();
                                                
             return query;
-        }
-
-        public void Update(ProductType productType)
-        {
-            db.Update(productType);
-        }
-
-        public void Delete(int id)
-        {
-            var model = db.Find<ProductType>(id);
-            if (model != null) db.Remove(model);
         }
     }
 }

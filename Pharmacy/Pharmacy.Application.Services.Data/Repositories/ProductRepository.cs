@@ -1,24 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
+using Pharmacy.Infrastructure.Data.Abstracts;
 //using System.Data.Entity;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductRepository : IPharmRepository<Product>
+    public class ProductRepository : BaseRepository<Product>, IPharmRepository<Product>
     {
         private readonly PharmacyDBContext db;
 
-        public ProductRepository(PharmacyDBContext context)
+        public ProductRepository(PharmacyDBContext context): base(context)
         {
             this.db = context;
         }
-        public void Create(Product product) 
-        {
-            db.Add(product);
-        }
 
-        public async Task<Product?> GetAsync(int id)
+        public override async Task<Product?> GetAsync(int id)
         {
             var query = db.Products
                 .Include(pr => pr.ProductType)
@@ -42,21 +39,16 @@ namespace Pharmacy.Infrastructure.Data.Repositories
 
             query = query.Where(x => x.Name == name);
 
-            var product = await query.FirstOrDefaultAsync();
+            var product = await query.SingleOrDefaultAsync();
 
             return product;
         }
 
-        public async Task<IEnumerable<Product>?> GetAllASync()
+        public override async Task<IEnumerable<Product>?> GetAllAsync()
         {
             var products = await db.Products.AsQueryable().ToListAsync();
 
             return products;
-        }
-
-        public void Update(Product product)
-        {
-            db.Update(product);
         }
 
         public void UpdateWarehouseLink(int productId, int warehouseId, int amount = 0, float discount = 0)
@@ -88,12 +80,6 @@ namespace Pharmacy.Infrastructure.Data.Repositories
                 db.Update(product);
             }
 
-        }
-
-        public void Delete(int id)
-        {
-            var model = db.Find<Product>(id);
-            if(model != null) db.Remove(model);
         }
     }
 }

@@ -1,71 +1,71 @@
-﻿using Pharmacy.Domain.Interfaces;
+﻿using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Data.Repositories;
 
 namespace Pharmacy.Infrastructure.Data
 {
-    public class UnitOfWork : IDisposable, IUnitOfWorkMarker
+    public class UnitOfWork : IDisposable, IUnitOfWork
     {
-        private readonly PharmacyDBContext db;
-        private ProductRepository productRepository;
-        private ProductAmountRepository productAmountRepository;
-        private ProductTypeRepository productTypeRepository;
-        private SalesInfoRepository salesInfoRepository;
-        private WarehouseRepository warehouseRepository;
+        private readonly PharmacyDBContext _db;
+        private ProductRepository _productRepository;
+        private ProductAmountRepository _productAmountRepository;
+        private ProductTypeRepository _productTypeRepository;
+        private SalesInfoRepository _salesInfoRepository;
+        private WarehouseRepository _warehouseRepository;
 
         public UnitOfWork(PharmacyDBContext options)
         {
-            db = options;
+            _db = options;
         }
 
         public ProductRepository Product
         {
             get
             {
-                if (productRepository == null)
-                    productRepository = new ProductRepository(db);
-                return productRepository;
+                if (_productRepository == null)
+                    _productRepository = new ProductRepository(_db);
+                return _productRepository;
             }
         }
         public ProductAmountRepository ProductAmount
         {
             get
             {
-                if (productAmountRepository == null)
-                    productAmountRepository = new ProductAmountRepository(db);
-                return productAmountRepository;
+                if (_productAmountRepository == null)
+                    _productAmountRepository = new ProductAmountRepository(_db);
+                return _productAmountRepository;
             }
         }
         public ProductTypeRepository ProductType
         {
             get
             {
-                if (productTypeRepository == null)
-                    productTypeRepository = new ProductTypeRepository(db);
-                return productTypeRepository;
+                if (_productTypeRepository == null)
+                    _productTypeRepository = new ProductTypeRepository(_db);
+                return _productTypeRepository;
             }
         }
         public SalesInfoRepository SalesInfo
         {
             get
             {
-                if (salesInfoRepository == null)
-                    salesInfoRepository = new SalesInfoRepository(db);
-                return salesInfoRepository;
+                if (_salesInfoRepository == null)
+                    _salesInfoRepository = new SalesInfoRepository(_db);
+                return _salesInfoRepository;
             }
         }
         public WarehouseRepository Warehouse
         {
             get
             {
-                if (warehouseRepository == null)
-                    warehouseRepository = new WarehouseRepository(db);
-                return warehouseRepository;
+                if (_warehouseRepository == null)
+                    _warehouseRepository = new WarehouseRepository(_db);
+                return _warehouseRepository;
             }
         }
 
         public async Task<bool> SaveAsync()
         {
-            return (await db.SaveChangesAsync()) > 0;
+            return (await _db.SaveChangesAsync()) > 0;
         }
 
         private bool disposed = false;
@@ -76,7 +76,7 @@ namespace Pharmacy.Infrastructure.Data
             {
                 if (disposing)
                 {
-                    db.Dispose();
+                    _db.Dispose();
                 }
                 this.disposed = true;
             }

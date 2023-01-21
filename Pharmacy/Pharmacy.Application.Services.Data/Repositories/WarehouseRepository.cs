@@ -1,26 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
+using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class WarehouseRepository : IPharmRepository<Warehouse>
+    public class WarehouseRepository : BaseRepository<Warehouse>, IPharmRepository<Warehouse>
     {
-        private readonly PharmacyDBContext db;
+        private readonly PharmacyDBContext _db;
 
-        public WarehouseRepository(PharmacyDBContext context)
+        public WarehouseRepository(PharmacyDBContext context): base(context)
         {
-            this.db = context;
-        }
-        public void Create(Warehouse warehouse)
-        {
-            db.Add(warehouse);
+            _db = context;
         }
 
-        public async Task<Warehouse?> GetAsync(int id)
+        public override async Task<Warehouse?> GetAsync(int id)
         {
-            IQueryable<Warehouse> query = db.Warehouses
+            IQueryable<Warehouse> query = _db.Warehouses
                 .Include(w => w.ProductAmounts)
                 .AsQueryable();
             query = query.Where(x => x.Id == id);
@@ -30,9 +27,16 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             return warehouse;
         }
 
+        public override async Task<IEnumerable<Warehouse>?> GetAllAsync()
+        {
+            var list = await _db.Warehouses.AsQueryable().ToListAsync();
+
+            return list;
+        }
+
         public async Task<Warehouse?> GetAsync(string name)
         {
-            IQueryable<Warehouse> query = db.Warehouses
+            IQueryable<Warehouse> query = _db.Warehouses
                 .Include(w => w.ProductAmounts)
                 .AsQueryable();
             query = query.Where(x => x.Name == name);
@@ -40,24 +44,6 @@ namespace Pharmacy.Infrastructure.Data.Repositories
             var warehouse = await query.SingleOrDefaultAsync();
 
             return warehouse;
-        }
-
-        public async Task<IEnumerable<Warehouse>?> GetAllASync()
-        {
-            var list = await db.Warehouses.AsQueryable().ToListAsync();
-
-            return list;
-        }
-
-        public void Update(Warehouse warehouse)
-        {
-            db.Update(warehouse);
-        }
-
-        public void Delete(int id)
-        {
-            var model = db.Find<Warehouse>(id);
-            db.Remove(model);
         }
     }
 }
