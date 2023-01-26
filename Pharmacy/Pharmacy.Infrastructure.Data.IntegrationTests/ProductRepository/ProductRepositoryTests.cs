@@ -1,15 +1,17 @@
 ﻿using Azure.Core;
 using Pharmacy.Domain.Core;
+using Pharmacy.Infrastructure.Data.Abstracts;
 using Shouldly;
 
 namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
 {
     public class ProductRepositoryTests: IClassFixture<CustomWebApplicationFactory<Program>>
     {
-        private readonly CustomWebApplicationFactory<Program> _factory;
-        public ProductRepositoryTests(CustomWebApplicationFactory<Program> factory)
+        //private readonly CustomWebApplicationFactory<Program> _factory;
+        private readonly IUnitOfWork _uow;
+        public ProductRepositoryTests(IUnitOfWork uow)
         {
-            _factory = factory;
+            _uow = uow;
         }
 
         private static readonly Product testProduct = new Product
@@ -25,9 +27,7 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
         public async Task CreateProduct()
         {
             //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var prodRepo = _uow.Product;
 
             //Act
             bool isSuccesful;
@@ -38,7 +38,11 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
             }
             else
             {
-                isSuccesful = await prodRepo.Create(testProduct);
+                prodRepo.Create(testProduct);
+
+                await _uow.SaveAsync();
+
+                isSuccesful = true;
             }
 
             //Assert
@@ -50,9 +54,7 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
         public async Task GetProductById(int id)
         {
             //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var prodRepo = _uow.Product;
 
             //Act
             var product = await prodRepo.GetAsync(id);
@@ -68,9 +70,7 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
         public async Task GetProductByName(string name)
         {
             //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var prodRepo = _uow.Product;
 
             //Act
             var product = await prodRepo.GetAsync(name);
@@ -85,12 +85,10 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
         public async Task GetAllProducts()
         {
             //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var prodRepo = _uow.Product;
 
             //Act
-            var product = await prodRepo.GetAllASync();
+            var product = await prodRepo.GetAllAsync();
 
             //Assert
             product?.Count().ShouldBeGreaterThan(0);
@@ -102,15 +100,26 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
         public async Task updatesTestProductAndSetPrice150(int newPrice, string name)
         {
             //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var prodRepo = _uow.Product;
+            bool isUpdated;
 
             //Act
             var product = await prodRepo.GetAsync(name);
-            product.Price = newPrice;
 
-            var isUpdated = await prodRepo.Update(product);
+            if (product != null)
+            {
+                product.Price = newPrice;
+
+                prodRepo.Update(product);
+
+                await _uow.SaveAsync();
+
+                isUpdated = true;
+            } 
+            else 
+            {
+                isUpdated = false;
+            }
 
             //Assert
             isUpdated.ShouldBeTrue();
@@ -121,16 +130,16 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
         public async Task removesTestProduct(string name)
         {
             //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var prodRepo = _uow.Product;
 
             //Act
             var product = await prodRepo.GetAsync(name);
             //Assert
             product.ShouldNotBeNull();
 
-            await prodRepo.Delete(product.Id);
+            prodRepo.Delete(product.Id);
+            await _uow.SaveAsync();
+
             product = await prodRepo.GetAsync(name);
             //Assert
             product.ShouldBeNull();
