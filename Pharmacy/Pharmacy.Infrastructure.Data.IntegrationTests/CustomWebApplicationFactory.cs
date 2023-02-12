@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Pharmacy.Infrastructure.Data.Abstracts;
 using System.Configuration;
 
 namespace Pharmacy.Infrastructure.Data.IntegrationTests
@@ -9,7 +10,12 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests
     public class CustomWebApplicationFactory<TStartup> :
              WebApplicationFactory<TStartup> where TStartup : class
     {
+        public CustomWebApplicationFactory()
+        {
+        }
+
         public PharmacyDBContext DBContext { get; set; }
+        public IUnitOfWork UOW { get; set; }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -37,6 +43,9 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests
 
 
                 DBContext = serviceProvider.GetRequiredService<PharmacyDBContext>();
+                var testUOW = serviceProvider.GetRequiredService<UnitOfWork>();
+
+                UOW = serviceProvider.GetRequiredService<IUnitOfWork>();
             });
         }
     }

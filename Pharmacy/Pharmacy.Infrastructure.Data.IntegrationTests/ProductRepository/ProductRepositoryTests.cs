@@ -1,51 +1,91 @@
-﻿using Azure.Core;
+﻿using Bogus;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Pharmacy.Domain.Core;
+using Pharmacy.Domain.Interfaces;
 using Pharmacy.Infrastructure.Data.Abstracts;
+using Pharmacy.Infrastructure.Data.Repositories;
 using Shouldly;
 
-namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
+namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
 {
-    public class ProductRepositoryTests: IClassFixture<CustomWebApplicationFactory<Program>>
+    public class ProductRepositoryTests
     {
-        //private readonly CustomWebApplicationFactory<Program> _factory;
-        private readonly IUnitOfWork _uow;
-        public ProductRepositoryTests(IUnitOfWork uow)
+        public IUnitOfWork _uow;
+
+        public ProductRepositoryTests()
         {
-            _uow = uow;
+            var services = new ServiceCollection();
+            services.AddDbContext<PharmacyDBContext>(
+             options => options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=PharmacyPDP;Integrated Security=True;")
+            );
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
+            services.AddScoped<IProductAmountRepository, ProductAmountRepository>();
+            services.AddScoped<ISalesInfoRepository, SalesInfoRepository>();
+            services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+            var provider = services.BuildServiceProvider();
+
+            //_factory.CreateClient();
+            _uow = provider.GetService<IUnitOfWork>();
         }
 
-        private static readonly Product testProduct = new Product
-        {
-            Name= "Panacea",
-            Description = "Medicines for all deseases",
-            Price = 1000000.0F,
-            ProductTypeId = 1,
-            SalesInfoId= 1
-        };
+
+        //static string someText = new Randomizer().Chars(count: 200).ToString();
+        //private static readonly Product testProduct = new Faker<Product>()
+        //    .RuleFor(x => x.Name, x => x.Person.FullName)
+        //    .RuleFor(x => x.Description, x => someText)
+        //    .RuleFor(x => x.Price, x => x.Random.Float(0, 10_000))
+        //    .RuleFor(x => x.ProductTypeId, x => 1)
+        //    .RuleFor(x => x.SalesInfoId, x => 1);
+
+        //private static readonly Product testProduct = new Product()
+        //{
+        //    Name= "Panacea",
+        //    Description = "Medicines for all deseases",
+        //    Price = 1000000.0F,
+        //    ProductTypeId = 1,
+        //    SalesInfoId= 1
+        //};
 
         [Fact]
         public async Task CreateProduct()
         {
-            //Arrange
-            var prodRepo = _uow.Product;
+            var productForTesting = generateNewProduct();
+            var productRepository = _uow.Product;
 
-            //Act
-            bool isSuccesful;
+            bool isSuccesful = false;
 
-            if (await prodRepo.GetAsync(testProduct.Name) != null)
+            if (await productRepository.GetAsync(productForTesting.Name) == null)
             {
-                isSuccesful = true;
+                productRepository.Create(productForTesting);
+                try
+                {
+                    await _uow.SaveAsync();
+                    isSuccesful = true;
+                }
+                catch
+                {
+                    isSuccesful = false;
+                }
             }
-            else
-            {
-                prodRepo.Create(testProduct);
 
+            var productForChecking = await productRepository.GetAsync(productForTesting.Name);
+            isSuccesful.ShouldBe(true);
+            productForChecking.ShouldNotBeNull();
+            productForChecking.Name.ShouldBeEquivalentTo(productForTesting.Name, "productForChecking and productForTesting have diff Names");
+
+            productRepository.Delete(productForChecking.Id);
+            try
+            {
                 await _uow.SaveAsync();
-
                 isSuccesful = true;
             }
-
-            //Assert
+            catch
+            {
+                isSuccesful = false;
+            }
             isSuccesful.ShouldBe(true);
         }
 
@@ -62,7 +102,7 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
             //Assert
             product?.Id.ShouldBe(id);
             product?.ProductType?.Id.ShouldBe(1);
-            product?.ProductAmounts.Any(x=>x.WarehouseId == 1).ShouldBeTrue();
+            product?.ProductAmounts.Any(x => x.WarehouseId == 1).ShouldBeTrue();
         }
 
         [Theory]
@@ -84,6 +124,7 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
         [Fact]
         public async Task GetAllProducts()
         {
+
             //Arrange
             var prodRepo = _uow.Product;
 
@@ -92,7 +133,7 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
 
             //Assert
             product?.Count().ShouldBeGreaterThan(0);
-            product?.Any(x => x.Name == "Panacea").ShouldBeTrue();
+            product?.Any(x => x.Name == "test").ShouldBeTrue();
         }
 
         [Theory]
@@ -115,8 +156,8 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
                 await _uow.SaveAsync();
 
                 isUpdated = true;
-            } 
-            else 
+            }
+            else
             {
                 isUpdated = false;
             }
@@ -144,5 +185,16 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
             //Assert
             product.ShouldBeNull();
         }
+
+        private Product generateNewProduct()
+        {
+            string someText = new Randomizer().Chars(count: 200).ToString();
+            return new Faker<Product>()
+            .RuleFor(x => x.Name, x => x.Person.FullName)
+            .RuleFor(x => x.Description, x => someText)
+            .RuleFor(x => x.Price, x => x.Random.Float(0, 10_000))
+            .RuleFor(x => x.ProductTypeId, x => 1)
+            .RuleFor(x => x.SalesInfoId, x => 1);
+    }
     }
 }

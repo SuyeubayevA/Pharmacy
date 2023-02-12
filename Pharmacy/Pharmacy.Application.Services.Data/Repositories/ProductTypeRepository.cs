@@ -5,7 +5,7 @@ using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Data.Repositories
 {
-    public class ProductTypeRepository : BaseRepository<ProductType>, IPharmRepository<ProductType>
+    public class ProductTypeRepository : BaseRepository<ProductType>, IProductTypeRepository
     {
         private readonly PharmacyDBContext _db;
 
