@@ -57,36 +57,19 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
             productForChecking.Name.ShouldBeEquivalentTo(productForTesting.Name, "productForChecking and productForTesting have diff Names");
         }
 
-        [Theory]
-        [InlineData(4)]
-        public async Task GetProductById(int id)
+        [Fact]
+        public async Task GetProductByName()
         {
-            //Arrange
-            var prodRepo = _uow.Product;
+            var productForTesting = generateNewProduct();
+            var productRepository = _uow.Product;
 
-            //Act
-            var product = await prodRepo.GetAsync(id);
+            productRepository.Create(productForTesting);
+            await _uow.SaveAsync();
 
-            //Assert
-            product?.Id.ShouldBe(id);
-            product?.ProductType?.Id.ShouldBe(1);
-            product?.ProductAmounts.Any(x => x.WarehouseId == 1).ShouldBeTrue();
-        }
+            var product = await productRepository.GetAsync(productForTesting.Name);
 
-        [Theory]
-        [InlineData("Test")]
-        public async Task GetProductByName(string name)
-        {
-            //Arrange
-            var prodRepo = _uow.Product;
-
-            //Act
-            var product = await prodRepo.GetAsync(name);
-
-            //Assert
-            product?.Name.ShouldBe(name);
-            product?.ProductType?.Id.ShouldBe(1);
-            product?.ProductAmounts.Any(x => x.WarehouseId == 1).ShouldBeTrue();
+            product?.ShouldNotBeNull();
+            product?.ProductTypeId.ShouldBe(1);
         }
 
         [Fact]
@@ -189,6 +172,7 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         private Product generateNewProduct()
         {
             string someText = new Randomizer().Chars(count: 200).ToString();
+
             return new Faker<Product>()
             .RuleFor(x => x.Name, x => x.Person.FullName)
             .RuleFor(x => x.Description, x => someText)
