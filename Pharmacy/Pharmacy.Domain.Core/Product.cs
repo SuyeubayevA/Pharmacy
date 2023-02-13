@@ -2,10 +2,6 @@
 {
     public class Product
     {
-        public Product()
-        {
-            this.ProductAmounts = new HashSet<ProductAmount>();
-        }
         //Primary Key
         public int Id { get; set; }
 

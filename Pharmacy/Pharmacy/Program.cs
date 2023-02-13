@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Pharmacy.Domain.Interfaces;
 using Pharmacy.Helpers;
+using Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Product;
 using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Data.Repositories;
-using Pharmacy.Infrastructure.Handlers.ProductQueriesHanders;
 using Pharmacy.Profiles;
 using System.Reflection;
 
