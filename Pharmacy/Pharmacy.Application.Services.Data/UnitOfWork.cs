@@ -1,4 +1,6 @@
-﻿using Pharmacy.Infrastructure.Data.Abstracts;
+﻿using Pharmacy.Domain.Core;
+using Pharmacy.Domain.Interfaces;
+using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Data.Repositories;
 
 namespace Pharmacy.Infrastructure.Data
@@ -6,61 +8,27 @@ namespace Pharmacy.Infrastructure.Data
     public class UnitOfWork : IDisposable, IUnitOfWork
     {
         private readonly PharmacyDBContext _db;
-        private ProductRepository _productRepository;
-        private ProductAmountRepository _productAmountRepository;
-        private ProductTypeRepository _productTypeRepository;
-        private SalesInfoRepository _salesInfoRepository;
-        private WarehouseRepository _warehouseRepository;
+        public IProductRepository Product { get; private set; }
+        public IProductAmountRepository ProductAmount { get; private set; }
+        public IProductTypeRepository ProductType { get; private set; }
+        public ISalesInfoRepository SalesInfo { get; private set; }
+        public IWarehouseRepository Warehouse { get; private set; }
 
-        public UnitOfWork(PharmacyDBContext options)
+        public UnitOfWork(
+            PharmacyDBContext options,
+            IProductRepository productRepository,
+            IProductTypeRepository productTypeRepository,
+            IProductAmountRepository productAmountRepository,
+            ISalesInfoRepository salesInfoRepository,
+            IWarehouseRepository WarehouseRepository
+            )
         {
             _db = options;
-        }
-
-        public ProductRepository Product
-        {
-            get
-            {
-                if (_productRepository == null)
-                    _productRepository = new ProductRepository(_db);
-                return _productRepository;
-            }
-        }
-        public ProductAmountRepository ProductAmount
-        {
-            get
-            {
-                if (_productAmountRepository == null)
-                    _productAmountRepository = new ProductAmountRepository(_db);
-                return _productAmountRepository;
-            }
-        }
-        public ProductTypeRepository ProductType
-        {
-            get
-            {
-                if (_productTypeRepository == null)
-                    _productTypeRepository = new ProductTypeRepository(_db);
-                return _productTypeRepository;
-            }
-        }
-        public SalesInfoRepository SalesInfo
-        {
-            get
-            {
-                if (_salesInfoRepository == null)
-                    _salesInfoRepository = new SalesInfoRepository(_db);
-                return _salesInfoRepository;
-            }
-        }
-        public WarehouseRepository Warehouse
-        {
-            get
-            {
-                if (_warehouseRepository == null)
-                    _warehouseRepository = new WarehouseRepository(_db);
-                return _warehouseRepository;
-            }
+            Product = productRepository;
+            ProductAmount = productAmountRepository;
+            ProductType = productTypeRepository;
+            SalesInfo = salesInfoRepository;
+            Warehouse = WarehouseRepository;
         }
 
         public async Task<bool> SaveAsync()

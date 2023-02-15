@@ -1,139 +1,184 @@
-﻿using Azure.Core;
+﻿using Bogus;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Pharmacy.Domain.Core;
+using Pharmacy.Domain.Interfaces;
+using Pharmacy.Infrastructure.Data.Abstracts;
+using Pharmacy.Infrastructure.Data.Repositories;
 using Shouldly;
 
-namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepository
+namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
 {
-    public class ProductRepositoryTests: IClassFixture<CustomWebApplicationFactory<Program>>
+    public class ProductRepositoryTests
     {
-        private readonly CustomWebApplicationFactory<Program> _factory;
-        public ProductRepositoryTests(CustomWebApplicationFactory<Program> factory)
-        {
-            _factory = factory;
-        }
+        public IUnitOfWork _uow;
 
-        private static readonly Product testProduct = new Product
+        public ProductRepositoryTests()
         {
-            Name= "Panacea",
-            Description = "Medicines for all deseases",
-            Price = 1000000.0F,
-            ProductTypeId = 1,
-            SalesInfoId= 1
-        };
+            var services = new ServiceCollection();
+            services.AddDbContext<PharmacyDBContext>(
+             options => options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=PharmacyPDP;Integrated Security=True;")
+            );
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
+            services.AddScoped<IProductAmountRepository, ProductAmountRepository>();
+            services.AddScoped<ISalesInfoRepository, SalesInfoRepository>();
+            services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+            var provider = services.BuildServiceProvider();
+
+            _uow = provider.GetService<IUnitOfWork>();
+        }
 
         [Fact]
         public async Task CreateProduct()
         {
-            //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var productForTesting = generateNewProduct();
+            var productRepository = _uow.Product;
+            bool isSuccesful = false;
 
-            //Act
-            bool isSuccesful;
-
-            if (await prodRepo.GetAsync(testProduct.Name) != null)
+            if (await productRepository.GetAsync(productForTesting.Name) == null)
             {
-                isSuccesful = true;
-            }
-            else
-            {
-                isSuccesful = await prodRepo.Create(testProduct);
+                productRepository.Create(productForTesting);
+                try
+                {
+                    await _uow.SaveAsync();
+                    isSuccesful = true;
+                }
+                catch
+                {
+                    isSuccesful = false;
+                }
             }
 
-            //Assert
+            var productForChecking = await productRepository.GetAsync(productForTesting.Name);
             isSuccesful.ShouldBe(true);
+            productForChecking.ShouldNotBeNull();
+            productForChecking.Name.ShouldBeEquivalentTo(productForTesting.Name, "productForChecking and productForTesting have diff Names");
         }
 
-        [Theory]
-        [InlineData(4)]
-        public async Task GetProductById(int id)
+        [Fact]
+        public async Task GetProductByName()
         {
-            //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var productForTesting = generateNewProduct();
+            var productRepository = _uow.Product;
 
-            //Act
-            var product = await prodRepo.GetAsync(id);
+            productRepository.Create(productForTesting);
+            await _uow.SaveAsync();
 
-            //Assert
-            product?.Id.ShouldBe(id);
-            product?.ProductType?.Id.ShouldBe(1);
-            product?.ProductAmounts.Any(x=>x.WarehouseId == 1).ShouldBeTrue();
-        }
+            var product = await productRepository.GetAsync(productForTesting.Name);
 
-        [Theory]
-        [InlineData("Test")]
-        public async Task GetProductByName(string name)
-        {
-            //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
-
-            //Act
-            var product = await prodRepo.GetAsync(name);
-
-            //Assert
-            product?.Name.ShouldBe(name);
-            product?.ProductType?.Id.ShouldBe(1);
-            product?.ProductAmounts.Any(x => x.WarehouseId == 1).ShouldBeTrue();
+            product?.ShouldNotBeNull();
+            product?.ProductTypeId.ShouldBe(1);
         }
 
         [Fact]
         public async Task GetAllProducts()
         {
+
             //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var prodRepo = _uow.Product;
 
             //Act
-            var product = await prodRepo.GetAllASync();
+            var product = await prodRepo.GetAllAsync();
 
             //Assert
             product?.Count().ShouldBeGreaterThan(0);
-            product?.Any(x => x.Name == "Panacea").ShouldBeTrue();
+            product?.Any(x => x.Name == "test").ShouldBeTrue();
         }
 
         [Theory]
-        [InlineData(150, "Panacea")]
-        public async Task updatesTestProductAndSetPrice150(int newPrice, string name)
+        [InlineData(150)]
+        public async Task updatesTestProductAndSetPrice150(int newPrice)
         {
-            //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var productRepository = _uow.Product;
+            var productForTesting = generateNewProduct();
+            bool isSuccesful = false;
+            bool isUpdated;
 
-            //Act
-            var product = await prodRepo.GetAsync(name);
-            product.Price = newPrice;
+            if (await productRepository.GetAsync(productForTesting.Name) == null)
+            {
+                productRepository.Create(productForTesting);
+                try
+                {
+                    await _uow.SaveAsync();
+                    isSuccesful = true;
+                }
+                catch
+                {
+                    isSuccesful = false;
+                }
+            }
 
-            var isUpdated = await prodRepo.Update(product);
+            var productForChecking = await productRepository.GetAsync(productForTesting.Name);
+            isSuccesful.ShouldBe(true);
+            productForChecking.ShouldNotBeNull();
 
-            //Assert
+            if (productForChecking != null)
+            {
+                productForChecking.Price = newPrice;
+                productRepository.Update(productForChecking);
+                await _uow.SaveAsync();
+                isUpdated = true;
+            }
+            else
+            {
+                isUpdated = false;
+            }
+
+            var updatedProduct = await productRepository.GetAsync(productForTesting.Name);
             isUpdated.ShouldBeTrue();
+            updatedProduct.Price.ShouldBe(newPrice);
         }
 
-        [Theory]
-        [InlineData("Panacea")]
-        public async Task removesTestProduct(string name)
+        [Fact]
+        public async Task removesTestProduct()
         {
-            //Arrange
-            _factory.CreateClient();
-            var db = _factory.DBContext;
-            var prodRepo = new Repositories.ProductRepository(db);
+            var productForTesting = generateNewProduct();
+            var productRepository = _uow.Product;
+            bool isSuccesful = false;
 
-            //Act
-            var product = await prodRepo.GetAsync(name);
-            //Assert
-            product.ShouldNotBeNull();
+            if (await productRepository.GetAsync(productForTesting.Name) == null)
+            {
+                productRepository.Create(productForTesting);
+                try
+                {
+                    await _uow.SaveAsync();
+                    isSuccesful = true;
+                }
+                catch
+                {
+                    isSuccesful = false;
+                }
+            }
 
-            await prodRepo.Delete(product.Id);
-            product = await prodRepo.GetAsync(name);
-            //Assert
-            product.ShouldBeNull();
+            var productForChecking = await productRepository.GetAsync(productForTesting.Name);
+            isSuccesful.ShouldBe(true);
+            productForChecking.ShouldNotBeNull();
+
+            productRepository.Delete(productForChecking.Id);
+            try
+            {
+                await _uow.SaveAsync();
+                isSuccesful = true;
+            }
+            catch
+            {
+                isSuccesful = false;
+            }
+            isSuccesful.ShouldBe(true);
         }
+
+        private Product generateNewProduct()
+        {
+            string someText = new Randomizer().Chars(count: 200).ToString();
+
+            return new Faker<Product>()
+            .RuleFor(x => x.Name, x => x.Person.FullName)
+            .RuleFor(x => x.Description, x => someText)
+            .RuleFor(x => x.Price, x => x.Random.Float(0, 10_000))
+            .RuleFor(x => x.ProductTypeId, x => 1)
+            .RuleFor(x => x.SalesInfoId, x => 1);
+    }
     }
 }

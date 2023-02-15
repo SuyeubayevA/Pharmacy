@@ -1,14 +1,15 @@
-﻿using Pharmacy.Infrastructure.Data.Repositories;
+﻿using Pharmacy.Domain.Interfaces;
+using Pharmacy.Infrastructure.Data.Repositories;
 
 namespace Pharmacy.Infrastructure.Data.Abstracts
 {
     public interface IUnitOfWork
     {
-        ProductRepository Product { get; }
-        ProductAmountRepository ProductAmount { get; }
-        ProductTypeRepository ProductType { get; }
-        SalesInfoRepository SalesInfo { get; }
-        WarehouseRepository Warehouse { get; }
+        IProductRepository Product { get; }
+        IProductAmountRepository ProductAmount { get; }
+        IProductTypeRepository ProductType { get; }
+        ISalesInfoRepository SalesInfo { get; }
+        IWarehouseRepository Warehouse { get; }
         Task<bool> SaveAsync();
     }
 }

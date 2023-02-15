@@ -2,10 +2,12 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Pharmacy.Domain.Interfaces;
 using Pharmacy.Helpers;
+using Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Product;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Data.Repositories;
-using Pharmacy.Infrastructure.Handlers.ProductQueriesHanders;
 using Pharmacy.Profiles;
 using System.Reflection;
 
@@ -30,8 +32,14 @@ builder.Services.AddDbContext<PharmacyDBContext>(
     );
 
 builder.Services.AddSingleton(mapper);
-builder.Services.AddScoped<UnitOfWork>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
+builder.Services.AddScoped<IProductAmountRepository, ProductAmountRepository>();
+builder.Services.AddScoped<ISalesInfoRepository, SalesInfoRepository>();
+builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -75,7 +83,7 @@ app.MapControllerRoute(
 
 app.Run();
 
-public partial class Program
-{
+//public partial class Program
+//{
 
-}
+//}
