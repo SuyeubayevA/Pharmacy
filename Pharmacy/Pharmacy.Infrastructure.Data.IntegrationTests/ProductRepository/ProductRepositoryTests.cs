@@ -31,24 +31,18 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         }
 
         [Fact]
-        public async Task CreateProduct()
+        public async Task Create_New_Product_ShouldReturnProductWithSameNameAsCreatedProduct()
         {
-            var productForTesting = generateNewProduct();
+            var productForTesting = GenerateNewProduct();
             var productRepository = _uow.Product;
             bool isSuccesful = false;
 
             if (await productRepository.GetAsync(productForTesting.Name) == null)
             {
                 productRepository.Create(productForTesting);
-                try
-                {
-                    await _uow.SaveAsync();
-                    isSuccesful = true;
-                }
-                catch
-                {
-                    isSuccesful = false;
-                }
+
+                await _uow.SaveAsync();
+                isSuccesful = true;
             }
 
             var productForChecking = await productRepository.GetAsync(productForTesting.Name);
@@ -58,9 +52,9 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         }
 
         [Fact]
-        public async Task GetProductByName()
+        public async Task Get_Product_By_Name_ShouldReturnProductWithProductTypeIdEqualOne()
         {
-            var productForTesting = generateNewProduct();
+            var productForTesting = GenerateNewProduct();
             var productRepository = _uow.Product;
 
             productRepository.Create(productForTesting);
@@ -73,41 +67,31 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         }
 
         [Fact]
-        public async Task GetAllProducts()
+        public async Task Get_All_Existing_Products_ShouldReturnMoreThanZeroProducts()
         {
+            var productRepository = _uow.Product;
 
-            //Arrange
-            var prodRepo = _uow.Product;
+            var product = await productRepository.GetAllAsync();
 
-            //Act
-            var product = await prodRepo.GetAllAsync();
-
-            //Assert
             product?.Count().ShouldBeGreaterThan(0);
             product?.Any(x => x.Name == "test").ShouldBeTrue();
         }
 
         [Theory]
         [InlineData(150)]
-        public async Task updatesTestProductAndSetPrice150(int newPrice)
+        public async Task Update_Product_Price_To_150_ShouldReturnProductWithPriceEqual150(int newPrice)
         {
             var productRepository = _uow.Product;
-            var productForTesting = generateNewProduct();
+            var productForTesting = GenerateNewProduct();
             bool isSuccesful = false;
             bool isUpdated;
 
             if (await productRepository.GetAsync(productForTesting.Name) == null)
             {
                 productRepository.Create(productForTesting);
-                try
-                {
-                    await _uow.SaveAsync();
-                    isSuccesful = true;
-                }
-                catch
-                {
-                    isSuccesful = false;
-                }
+
+                await _uow.SaveAsync();
+                isSuccesful = true;
             }
 
             var productForChecking = await productRepository.GetAsync(productForTesting.Name);
@@ -132,24 +116,18 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         }
 
         [Fact]
-        public async Task removesTestProduct()
+        public async Task Removes_Product_ShouldDoNotReturnProductByName()
         {
-            var productForTesting = generateNewProduct();
+            var productForTesting = GenerateNewProduct();
             var productRepository = _uow.Product;
             bool isSuccesful = false;
 
             if (await productRepository.GetAsync(productForTesting.Name) == null)
             {
                 productRepository.Create(productForTesting);
-                try
-                {
-                    await _uow.SaveAsync();
-                    isSuccesful = true;
-                }
-                catch
-                {
-                    isSuccesful = false;
-                }
+
+                await _uow.SaveAsync();
+                isSuccesful = true;
             }
 
             var productForChecking = await productRepository.GetAsync(productForTesting.Name);
@@ -157,19 +135,14 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
             productForChecking.ShouldNotBeNull();
 
             productRepository.Delete(productForChecking.Id);
-            try
-            {
-                await _uow.SaveAsync();
-                isSuccesful = true;
-            }
-            catch
-            {
-                isSuccesful = false;
-            }
+
+            await _uow.SaveAsync();
+            isSuccesful = true;
+
             isSuccesful.ShouldBe(true);
         }
 
-        private Product generateNewProduct()
+        private Product GenerateNewProduct()
         {
             string someText = new Randomizer().Chars(count: 200).ToString();
 
