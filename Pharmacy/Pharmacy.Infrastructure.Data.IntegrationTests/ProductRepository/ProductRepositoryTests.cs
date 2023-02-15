@@ -35,18 +35,11 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         {
             var productForTesting = GenerateNewProduct();
             var productRepository = _uow.Product;
-            bool isSuccesful = false;
 
-            if (await productRepository.GetAsync(productForTesting.Name) == null)
-            {
-                productRepository.Create(productForTesting);
-
-                await _uow.SaveAsync();
-                isSuccesful = true;
-            }
+            productRepository.Create(productForTesting);
+            await _uow.SaveAsync();
 
             var productForChecking = await productRepository.GetAsync(productForTesting.Name);
-            isSuccesful.ShouldBe(true);
             productForChecking.ShouldNotBeNull();
             productForChecking.Name.ShouldBeEquivalentTo(productForTesting.Name, "productForChecking and productForTesting have diff Names");
         }
@@ -70,11 +63,15 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         public async Task Get_All_Existing_Products_ShouldReturnMoreThanZeroProducts()
         {
             var productRepository = _uow.Product;
+            var productForTesting = GenerateNewProduct();
+
+            productRepository.Create(productForTesting);
+            await _uow.SaveAsync();
 
             var product = await productRepository.GetAllAsync();
 
             product?.Count().ShouldBeGreaterThan(0);
-            product?.Any(x => x.Name == "test").ShouldBeTrue();
+            product?.Any(x => x.Name == productForTesting.Name).ShouldBeTrue();
         }
 
         [Theory]
@@ -83,35 +80,15 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         {
             var productRepository = _uow.Product;
             var productForTesting = GenerateNewProduct();
-            bool isSuccesful = false;
-            bool isUpdated;
 
-            if (await productRepository.GetAsync(productForTesting.Name) == null)
-            {
-                productRepository.Create(productForTesting);
+            productRepository.Create(productForTesting);
+            await _uow.SaveAsync();
 
-                await _uow.SaveAsync();
-                isSuccesful = true;
-            }
-
-            var productForChecking = await productRepository.GetAsync(productForTesting.Name);
-            isSuccesful.ShouldBe(true);
-            productForChecking.ShouldNotBeNull();
-
-            if (productForChecking != null)
-            {
-                productForChecking.Price = newPrice;
-                productRepository.Update(productForChecking);
-                await _uow.SaveAsync();
-                isUpdated = true;
-            }
-            else
-            {
-                isUpdated = false;
-            }
+            productForTesting.Price = newPrice;
+            productRepository.Update(productForTesting);
+            await _uow.SaveAsync();
 
             var updatedProduct = await productRepository.GetAsync(productForTesting.Name);
-            isUpdated.ShouldBeTrue();
             updatedProduct.Price.ShouldBe(newPrice);
         }
 
@@ -120,26 +97,15 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         {
             var productForTesting = GenerateNewProduct();
             var productRepository = _uow.Product;
-            bool isSuccesful = false;
 
-            if (await productRepository.GetAsync(productForTesting.Name) == null)
-            {
-                productRepository.Create(productForTesting);
-
-                await _uow.SaveAsync();
-                isSuccesful = true;
-            }
-
-            var productForChecking = await productRepository.GetAsync(productForTesting.Name);
-            isSuccesful.ShouldBe(true);
-            productForChecking.ShouldNotBeNull();
-
-            productRepository.Delete(productForChecking.Id);
-
+            productRepository.Create(productForTesting);
             await _uow.SaveAsync();
-            isSuccesful = true;
 
-            isSuccesful.ShouldBe(true);
+            productRepository.Delete(productForTesting.Id);
+            await _uow.SaveAsync();
+
+            var product = await productRepository.GetAsync(productForTesting.Name);
+            product.ShouldBeNull();
         }
 
         private Product GenerateNewProduct()
@@ -147,7 +113,7 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
             string someText = new Randomizer().Chars(count: 200).ToString();
 
             return new Faker<Product>()
-            .RuleFor(x => x.Name, x => x.Person.FullName)
+            .RuleFor(x => x.Name, Guid.NewGuid().ToString)
             .RuleFor(x => x.Description, x => someText)
             .RuleFor(x => x.Price, x => x.Random.Float(0, 10_000))
             .RuleFor(x => x.ProductTypeId, x => 1)
