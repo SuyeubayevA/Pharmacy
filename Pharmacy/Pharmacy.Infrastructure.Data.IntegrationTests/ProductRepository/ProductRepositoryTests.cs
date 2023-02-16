@@ -31,36 +31,23 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         }
 
         [Fact]
-        public async Task CreateProduct()
+        public async Task Create_New_Product_ShouldReturnProductWithSameNameAsCreatedProduct()
         {
-            var productForTesting = generateNewProduct();
+            var productForTesting = GenerateNewProduct();
             var productRepository = _uow.Product;
-            bool isSuccesful = false;
 
-            if (await productRepository.GetAsync(productForTesting.Name) == null)
-            {
-                productRepository.Create(productForTesting);
-                try
-                {
-                    await _uow.SaveAsync();
-                    isSuccesful = true;
-                }
-                catch
-                {
-                    isSuccesful = false;
-                }
-            }
+            productRepository.Create(productForTesting);
+            await _uow.SaveAsync();
 
             var productForChecking = await productRepository.GetAsync(productForTesting.Name);
-            isSuccesful.ShouldBe(true);
             productForChecking.ShouldNotBeNull();
             productForChecking.Name.ShouldBeEquivalentTo(productForTesting.Name, "productForChecking and productForTesting have diff Names");
         }
 
         [Fact]
-        public async Task GetProductByName()
+        public async Task Get_Product_By_Name_ShouldReturnProductWithProductTypeIdEqualOne()
         {
-            var productForTesting = generateNewProduct();
+            var productForTesting = GenerateNewProduct();
             var productRepository = _uow.Product;
 
             productRepository.Create(productForTesting);
@@ -73,108 +60,60 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
         }
 
         [Fact]
-        public async Task GetAllProducts()
+        public async Task Get_All_Existing_Products_ShouldReturnMoreThanZeroProducts()
         {
+            var productRepository = _uow.Product;
+            var productForTesting = GenerateNewProduct();
 
-            //Arrange
-            var prodRepo = _uow.Product;
+            productRepository.Create(productForTesting);
+            await _uow.SaveAsync();
 
-            //Act
-            var product = await prodRepo.GetAllAsync();
+            var product = await productRepository.GetAllAsync();
 
-            //Assert
             product?.Count().ShouldBeGreaterThan(0);
-            product?.Any(x => x.Name == "test").ShouldBeTrue();
+            product?.Any(x => x.Name == productForTesting.Name).ShouldBeTrue();
         }
 
         [Theory]
         [InlineData(150)]
-        public async Task updatesTestProductAndSetPrice150(int newPrice)
+        public async Task Update_Product_Price_To_150_ShouldReturnProductWithPriceEqual150(int newPrice)
         {
             var productRepository = _uow.Product;
-            var productForTesting = generateNewProduct();
-            bool isSuccesful = false;
-            bool isUpdated;
+            var productForTesting = GenerateNewProduct();
 
-            if (await productRepository.GetAsync(productForTesting.Name) == null)
-            {
-                productRepository.Create(productForTesting);
-                try
-                {
-                    await _uow.SaveAsync();
-                    isSuccesful = true;
-                }
-                catch
-                {
-                    isSuccesful = false;
-                }
-            }
+            productRepository.Create(productForTesting);
+            await _uow.SaveAsync();
 
-            var productForChecking = await productRepository.GetAsync(productForTesting.Name);
-            isSuccesful.ShouldBe(true);
-            productForChecking.ShouldNotBeNull();
-
-            if (productForChecking != null)
-            {
-                productForChecking.Price = newPrice;
-                productRepository.Update(productForChecking);
-                await _uow.SaveAsync();
-                isUpdated = true;
-            }
-            else
-            {
-                isUpdated = false;
-            }
+            productForTesting.Price = newPrice;
+            productRepository.Update(productForTesting);
+            await _uow.SaveAsync();
 
             var updatedProduct = await productRepository.GetAsync(productForTesting.Name);
-            isUpdated.ShouldBeTrue();
             updatedProduct.Price.ShouldBe(newPrice);
         }
 
         [Fact]
-        public async Task removesTestProduct()
+        public async Task Removes_Product_ShouldDoNotReturnProductByName()
         {
-            var productForTesting = generateNewProduct();
+            var productForTesting = GenerateNewProduct();
             var productRepository = _uow.Product;
-            bool isSuccesful = false;
 
-            if (await productRepository.GetAsync(productForTesting.Name) == null)
-            {
-                productRepository.Create(productForTesting);
-                try
-                {
-                    await _uow.SaveAsync();
-                    isSuccesful = true;
-                }
-                catch
-                {
-                    isSuccesful = false;
-                }
-            }
+            productRepository.Create(productForTesting);
+            await _uow.SaveAsync();
 
-            var productForChecking = await productRepository.GetAsync(productForTesting.Name);
-            isSuccesful.ShouldBe(true);
-            productForChecking.ShouldNotBeNull();
+            productRepository.Delete(productForTesting.Id);
+            await _uow.SaveAsync();
 
-            productRepository.Delete(productForChecking.Id);
-            try
-            {
-                await _uow.SaveAsync();
-                isSuccesful = true;
-            }
-            catch
-            {
-                isSuccesful = false;
-            }
-            isSuccesful.ShouldBe(true);
+            var product = await productRepository.GetAsync(productForTesting.Name);
+            product.ShouldBeNull();
         }
 
-        private Product generateNewProduct()
+        private Product GenerateNewProduct()
         {
             string someText = new Randomizer().Chars(count: 200).ToString();
 
             return new Faker<Product>()
-            .RuleFor(x => x.Name, x => x.Person.FullName)
+            .RuleFor(x => x.Name, Guid.NewGuid().ToString)
             .RuleFor(x => x.Description, x => someText)
             .RuleFor(x => x.Price, x => x.Random.Float(0, 10_000))
             .RuleFor(x => x.ProductTypeId, x => 1)
