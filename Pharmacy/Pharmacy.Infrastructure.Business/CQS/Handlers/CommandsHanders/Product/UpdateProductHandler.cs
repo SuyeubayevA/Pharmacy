@@ -2,15 +2,16 @@
 using Pharmacy.Infrastructure.Data;
 using MediatR;
 using AutoMapper;
+using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Product
 {
     public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Unit>
     {
-        private readonly UnitOfWork _uow;
+        private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public UpdateProductHandler(UnitOfWork uow, IMapper mapper)
+        public UpdateProductHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

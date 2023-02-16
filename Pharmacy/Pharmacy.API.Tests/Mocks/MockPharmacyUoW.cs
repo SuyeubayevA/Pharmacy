@@ -3,14 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Pharmacy.API.Tests.Helpers;
 using Pharmacy.Domain.Core;
+using Pharmacy.Domain.Interfaces;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.Abstracts;
 using System.Data.Entity.Infrastructure;
 
 namespace Pharmacy.API.Tests.Mocks
 {
-    public class MockPharmacyDBContext
+    public class MockPharmacyUoW
     {
-        public static Mock<PharmacyDBContext> GetProductDBContexts()
+        public static Mock<IUnitOfWork> GetUnitOfWorks()
         {
             var products = new List<Product>
             {
@@ -48,53 +50,102 @@ namespace Pharmacy.API.Tests.Mocks
                 }
             };
 
-            var productsMock = GetQueryableMockDbSet2(products);
-            //var productTypesMock = GetQueryableMockDbSet(productTypes);
-            //var warehousesMock = GetQueryableMockDbSet(warehouses);
+            var mockUoW = new Mock<IUnitOfWork>();
 
-            var dbContext = new Mock<PharmacyDBContext>();
-            dbContext.Setup(c => c.Products).Returns(productsMock);
-            return dbContext;
-        }
+            var mockProdRepo = new Mock<IProductRepository>();
+            mockProdRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(products);
+            mockProdRepo.Setup(r => r.GetAsync(It.IsAny<int>())).ReturnsAsync((int id) =>
+            {
+                return products.SingleOrDefault(p => p.Id == id);
+            });
+            mockProdRepo.Setup(r => r.Create(It.IsAny<Product>())).Callback<Product>(p =>
+            {
+                products.Add(p);
+            });
+            mockProdRepo.Setup(r => r.Update(It.IsAny<Product>())).Callback<Product>(p =>
+            {
+                var productIndex = products.FindIndex(el => el.Name == p.Name);
 
-        private static DbSet<T> GetQueryableMockDbSet<T>(List<T> sourceList) where T : class
-        {
-            var queryableList = sourceList.AsQueryable();
-            var dbSet = new Mock<DbSet<T>>();
+                if(productIndex != -1)
+                {
+                    products[productIndex] = p;
+                }
+            });
+            mockProdRepo.Setup(r => r.Delete(It.IsAny<int>())).Callback<int>(p =>
+            {
+                var productToBeRemoved = products.FirstOrDefault(el => el.Id == p);
 
-            dbSet.As<IDbAsyncEnumerable<T>>()
-            .Setup(m => m.GetAsyncEnumerator())
-                .Returns(new TestDbAsyncEnumerator<T>(queryableList.GetEnumerator()));
+                if(productToBeRemoved != null)
+                {
+                    products.Remove(productToBeRemoved);
+                }
+            });
 
-            dbSet.As<IQueryable<T>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestDbAsyncQueryProvider<T>(queryableList.Provider));
+            var mockProdTypeRepo = new Mock<IProductTypeRepository>();
+            mockProdTypeRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(productTypes);
+            mockProdTypeRepo.Setup(r => r.GetAsync(It.IsAny<int>())).ReturnsAsync((int id) =>
+            {
+                return productTypes.SingleOrDefault(p => p.Id == id);
+            });
+            mockProdTypeRepo.Setup(r => r.Create(It.IsAny<ProductType>())).Callback<ProductType>(pt =>
+            {
+                productTypes.Add(pt);
+            });
+            mockProdTypeRepo.Setup(r => r.Update(It.IsAny<ProductType>())).Callback<ProductType>(pt =>
+            {
+                var productTypeIndex = productTypes.FindIndex(el => el.Name == pt.Name);
 
-            dbSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(queryableList.Expression);
-            dbSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(queryableList.ElementType);
-            dbSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(() => queryableList.GetEnumerator());
+                if (productTypeIndex != -1)
+                {
+                    productTypes[productTypeIndex] = pt;
+                }
+            });
+            mockProdTypeRepo.Setup(r => r.Delete(It.IsAny<int>())).Callback<int>(pt =>
+            {
+                var productTypeToBeRemoved = productTypes.FirstOrDefault(el => el.Id == pt);
 
-            return dbSet.Object;
-        }
+                if (productTypeToBeRemoved != null)
+                {
+                    productTypes.Remove(productTypeToBeRemoved);
+                }
+            });
 
-        private static DbSet<T> GetQueryableMockDbSet2<T>(List<T> sourceList) where T : class
-        {
-            var queryableList = sourceList.AsQueryable();
-            var dbSet = new Mock<DbSet<T>>();
 
-            dbSet.As<IAsyncEnumerable<T>>()
-            .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-                .Returns(new AsyncEnumerator<T>(queryableList.GetEnumerator()));
+            var mockWarehouseRepo = new Mock<IWarehouseRepository>();
+            mockWarehouseRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(warehouses);
+            mockWarehouseRepo.Setup(r => r.GetAsync(It.IsAny<int>())).ReturnsAsync((int id) =>
+            {
+                return warehouses.SingleOrDefault(p => p.Id == id);
+            });
+            mockWarehouseRepo.Setup(r => r.Create(It.IsAny<Warehouse>())).Callback<Warehouse>(w =>
+            {
+                warehouses.Add(w);
+            });
+            mockWarehouseRepo.Setup(r => r.Update(It.IsAny<Warehouse>())).Callback<Warehouse>(w =>
+            {
+                var warehouseIndex = warehouses.FindIndex(el => el.Name == w.Name);
 
-            dbSet.As<IQueryable<T>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestAsyncQueryProvider<T>(queryableList.Provider));
+                if (warehouseIndex != -1)
+                {
+                    warehouses[warehouseIndex] = w;
+                }
+            });
+            mockWarehouseRepo.Setup(r => r.Delete(It.IsAny<int>())).Callback<int>(id =>
+            {
+                var warhouseToBeRemoved = warehouses.FirstOrDefault(el => el.Id == id);
 
-            dbSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(queryableList.Expression);
-            dbSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(queryableList.ElementType);
-            dbSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(() => queryableList.GetEnumerator());
+                if (warhouseToBeRemoved != null)
+                {
+                    warehouses.Remove(warhouseToBeRemoved);
+                }
+            });
 
-            return dbSet.Object;
+            mockUoW.Setup(r => r.Product).Returns(mockProdRepo.Object);
+            mockUoW.Setup(r => r.ProductType).Returns(mockProdTypeRepo.Object);
+            mockUoW.Setup(r => r.Warehouse).Returns(mockWarehouseRepo.Object);
+
+
+            return mockUoW;
         }
     }
 }

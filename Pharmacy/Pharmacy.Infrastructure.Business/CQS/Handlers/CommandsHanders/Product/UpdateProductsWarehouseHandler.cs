@@ -1,14 +1,15 @@
 ﻿using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Infrastructure.Data;
 using MediatR;
+using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Product
 {
     public class UpdateProductsWarehouseHandler : IRequestHandler<UpdateProductsWarehouseCommand, Unit>
     {
-        private readonly UnitOfWork _uow;
+        private readonly IUnitOfWork _uow;
 
-        public UpdateProductsWarehouseHandler(UnitOfWork uow)
+        public UpdateProductsWarehouseHandler(IUnitOfWork uow)
         {
             _uow = uow;
         }

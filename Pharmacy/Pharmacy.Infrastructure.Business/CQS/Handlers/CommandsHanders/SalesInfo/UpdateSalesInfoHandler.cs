@@ -2,15 +2,16 @@
 using MediatR;
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.SalesInfo
 {
     public class UpdateSalesInfoHandler : IRequestHandler<UpdateSalesInfoCommand, Unit>
     {
-        private readonly UnitOfWork _uow;
+        private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public UpdateSalesInfoHandler(UnitOfWork uow, IMapper mapper)
+        public UpdateSalesInfoHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

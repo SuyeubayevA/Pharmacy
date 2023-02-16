@@ -2,15 +2,16 @@
 using MediatR;
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.ProductType
 {
     public class CreateProductTypeHandler : IRequestHandler<CreateProductTypeCommand, Unit>
     {
-        private readonly UnitOfWork _uow;
+        private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public CreateProductTypeHandler(UnitOfWork uow, IMapper mapper)
+        public CreateProductTypeHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

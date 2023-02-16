@@ -1,15 +1,16 @@
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Infrastructure.Data;
 using MediatR;
+using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Product
 {
 
     public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, Unit>
     {
-        private readonly UnitOfWork _uow;
+        private readonly IUnitOfWork _uow;
 
-        public DeleteProductHandler(UnitOfWork uow)
+        public DeleteProductHandler(IUnitOfWork uow)
         {
             _uow = uow;
         }

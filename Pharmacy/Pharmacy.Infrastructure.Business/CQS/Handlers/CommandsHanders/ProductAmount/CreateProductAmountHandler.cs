@@ -3,15 +3,16 @@ using MediatR;
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.ProductAmount
 {
     public class CreateProductAmountHandler : IRequestHandler<CreateProductAmountCommand, Unit>
     {
-        private readonly UnitOfWork _uow;
+        private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public CreateProductAmountHandler(UnitOfWork uow, IMapper mapper)
+        public CreateProductAmountHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

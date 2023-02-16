@@ -1,15 +1,16 @@
 using MediatR;
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Warehouse
 {
 
     public class DeleteWarehouseHandler : IRequestHandler<DeleteWarehouseCommand, Unit>
     {
-        private readonly UnitOfWork _uow;
+        private readonly IUnitOfWork _uow;
 
-        public DeleteWarehouseHandler(UnitOfWork uow)
+        public DeleteWarehouseHandler(IUnitOfWork uow)
         {
             _uow = uow;
         }

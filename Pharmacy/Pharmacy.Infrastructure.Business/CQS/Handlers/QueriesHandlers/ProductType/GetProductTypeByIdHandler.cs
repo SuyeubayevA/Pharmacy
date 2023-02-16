@@ -2,6 +2,7 @@
 using AutoMapper;
 using MediatR;
 using Pharmacy.Infrastructure.Data;
+using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Infrastructure.Queries;
 
@@ -9,10 +10,10 @@ namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.ProductT
 {
     public class GetProductTypeByIdHandler : IRequestHandler<GetProductTypeByIdQuery, ProductTypeDetailsDTO>
     {
-        private readonly UnitOfWork _uow;
+        private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public GetProductTypeByIdHandler(UnitOfWork uow, IMapper mapper)
+        public GetProductTypeByIdHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;
