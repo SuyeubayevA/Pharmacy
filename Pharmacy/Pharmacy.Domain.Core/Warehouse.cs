@@ -1,6 +1,6 @@
 ﻿namespace Pharmacy.Domain.Core
 {
-    public class Warehouse
+    public class Warehouse: IEntity
     {
         public Warehouse()
         {
