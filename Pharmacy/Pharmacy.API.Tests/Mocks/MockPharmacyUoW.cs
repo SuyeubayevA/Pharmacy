@@ -1,12 +1,8 @@
-﻿using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+﻿using Moq;
 using Pharmacy.API.Tests.Helpers;
 using Pharmacy.Domain.Core;
 using Pharmacy.Domain.Interfaces;
-using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.Abstracts;
-using System.Data.Entity.Infrastructure;
 
 namespace Pharmacy.API.Tests.Mocks
 {
@@ -16,38 +12,28 @@ namespace Pharmacy.API.Tests.Mocks
         {
             var products = new List<Product>
             {
-                new Product{ 
-                    Id = 4, 
-                    Name = "Product 1",
-                    Description = "Product 1 Description",
-                    Price = 250,
-                    ProductTypeId= 1,
-                    SalesInfoId = 1
-                },
-                new Product{
-                    Id = 7,
-                    Name = "Product 2",
-                    Description = "Product 2 Description",
-                    Price = 1050,
-                    ProductTypeId= 1,
-                    SalesInfoId = 0
-                }
+                (Product)Factory.CreateItem(EntityType.Product),
+                (Product)Factory.CreateItem(EntityType.Product)
             };
             var productTypes = new List<ProductType>
             {
-                new ProductType{ 
-                    Id = 1, 
-                    Name = "Test",
-                    Properties = "Testt"
-                }
+                (ProductType)Factory.CreateItem(EntityType.ProductType),
+                (ProductType)Factory.CreateItem(EntityType.ProductType)
+            };
+            var productAmounts = new List<ProductAmount>
+            {
+                (ProductAmount)Factory.CreateItem(EntityType.ProductAmount) ,
+                (ProductAmount)Factory.CreateItem(EntityType.ProductAmount)
+            };
+            var salesInfos = new List<SalesInfo>
+            {
+                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo) ,
+                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo)
             };
             var warehouses = new List<Warehouse>
             {
-                new Warehouse{
-                    Id = 1,
-                    Name = "warehouse 1",
-                    Address = "far far away"
-                }
+                (Warehouse)Factory.CreateItem(EntityType.Warehouse) ,
+                (Warehouse)Factory.CreateItem(EntityType.Warehouse)
             };
 
             var mockUoW = new Mock<IUnitOfWork>();
@@ -66,7 +52,7 @@ namespace Pharmacy.API.Tests.Mocks
             {
                 var productIndex = products.FindIndex(el => el.Name == p.Name);
 
-                if(productIndex != -1)
+                if (productIndex != -1)
                 {
                     products[productIndex] = p;
                 }
@@ -75,7 +61,7 @@ namespace Pharmacy.API.Tests.Mocks
             {
                 var productToBeRemoved = products.FirstOrDefault(el => el.Id == p);
 
-                if(productToBeRemoved != null)
+                if (productToBeRemoved != null)
                 {
                     products.Remove(productToBeRemoved);
                 }
@@ -110,6 +96,34 @@ namespace Pharmacy.API.Tests.Mocks
                 }
             });
 
+            var mockProdAmontRepo = new Mock<IProductAmountRepository>();
+            mockProdAmontRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(productAmounts);
+            mockProdAmontRepo.Setup(r => r.GetAsync(It.IsAny<int>())).ReturnsAsync((int id) =>
+            {
+                return productAmounts.SingleOrDefault(p => p.Id == id);
+            });
+            mockProdAmontRepo.Setup(r => r.Create(It.IsAny<ProductAmount>())).Callback<ProductAmount>(pa =>
+            {
+                productAmounts.Add(pa);
+            });
+            mockProdAmontRepo.Setup(r => r.Update(It.IsAny<ProductAmount>())).Callback<ProductAmount>(pa =>
+            {
+                var productAmountIndex = productAmounts.FindIndex(el => el.WarehouseId == pa.WarehouseId && el.ProductId == pa.ProductId);
+
+                if (productAmountIndex != -1)
+                {
+                    productAmounts[productAmountIndex] = pa;
+                }
+            });
+            mockProdAmontRepo.Setup(r => r.Delete(It.IsAny<int>())).Callback<int>(pt =>
+            {
+                var productAmountToBeRemoved = productAmounts.FirstOrDefault(el => el.Id == pt);
+
+                if (productAmountToBeRemoved != null)
+                {
+                    productAmounts.Remove(productAmountToBeRemoved);
+                }
+            });
 
             var mockWarehouseRepo = new Mock<IWarehouseRepository>();
             mockWarehouseRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(warehouses);
@@ -140,10 +154,40 @@ namespace Pharmacy.API.Tests.Mocks
                 }
             });
 
+            var mockSalesInfoRepo = new Mock<ISalesInfoRepository>();
+            mockSalesInfoRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(salesInfos);
+            mockSalesInfoRepo.Setup(r => r.GetAsync(It.IsAny<int>(), 0)).ReturnsAsync((int prodId) =>
+            {
+                return salesInfos.SingleOrDefault(p => p.Id == prodId);
+            });
+            mockSalesInfoRepo.Setup(r => r.Create(It.IsAny<SalesInfo>())).Callback<SalesInfo>(w =>
+            {
+                salesInfos.Add(w);
+            });
+            mockSalesInfoRepo.Setup(r => r.Update(It.IsAny<SalesInfo>())).Callback<SalesInfo>(w =>
+            {
+                var salesInfoIndex = salesInfos.FindIndex(el => el.ProductId == w.ProductId);
+
+                if (salesInfoIndex != -1)
+                {
+                    salesInfos[salesInfoIndex] = w;
+                }
+            });
+            mockSalesInfoRepo.Setup(r => r.Delete(It.IsAny<int>())).Callback<int>(id =>
+            {
+                var salesInfoToBeRemoved = salesInfos.FirstOrDefault(el => el.Id == id);
+
+                if (salesInfoToBeRemoved != null)
+                {
+                    salesInfos.Remove(salesInfoToBeRemoved);
+                }
+            });
+
             mockUoW.Setup(r => r.Product).Returns(mockProdRepo.Object);
             mockUoW.Setup(r => r.ProductType).Returns(mockProdTypeRepo.Object);
+            mockUoW.Setup(r => r.ProductAmount).Returns(mockProdAmontRepo.Object);
             mockUoW.Setup(r => r.Warehouse).Returns(mockWarehouseRepo.Object);
-
+            mockUoW.Setup(r => r.SalesInfo).Returns(mockSalesInfoRepo.Object);
 
             return mockUoW;
         }
