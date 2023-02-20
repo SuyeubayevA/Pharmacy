@@ -1,13 +1,10 @@
 ﻿
 using AutoMapper;
-using Azure.Core;
 using Pharmacy.API.Tests.Helpers;
 using Pharmacy.API.Tests.Mocks;
 using Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Product;
-using Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Product;
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Infrastructure.Data.Abstracts;
-using Pharmacy.Infrastructure.Queries;
 using Pharmacy.Models;
 using Pharmacy.Profiles;
 using Shouldly;
@@ -48,7 +45,7 @@ namespace Pharmacy.API.Tests
         {
             var handler = new DeleteProductHandler(_uow);
             var products = await _uow.Product.GetAllAsync();
-            if(products != null && products.Count() > 0)
+            if (products != null && products.Count() > 0)
             {
                 var productName = products.First().Name;
                 await handler.Handle(new DeleteProductCommand(productName), CancellationToken.None);

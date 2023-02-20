@@ -1,6 +1,5 @@
-using Pharmacy.Infrastructure.Commands;
-using Pharmacy.Infrastructure.Data;
 using MediatR;
+using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Product
