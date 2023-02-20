@@ -18,6 +18,7 @@ namespace Pharmacy.API.Tests.Helpers
         static int ProductTypeId = 0;
         static int SalesInfoId = 0;
         static int WarehouseId = 0;
+
         public static IEntity CreateItem(EntityType type)
         {
             string someText = new Randomizer().Chars(count: 200).ToString();
