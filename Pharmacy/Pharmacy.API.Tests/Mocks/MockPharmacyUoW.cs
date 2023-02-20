@@ -13,27 +13,28 @@ namespace Pharmacy.API.Tests.Mocks
             var products = new List<Product>
             {
                 (Product)Factory.CreateItem(EntityType.Product),
+                (Product)Factory.CreateItem(EntityType.Product),
                 (Product)Factory.CreateItem(EntityType.Product)
             };
-            var productTypes = new List<ProductType>
-            {
+            var productTypes = new List<ProductType>{
+                (ProductType)Factory.CreateItem(EntityType.ProductType),
                 (ProductType)Factory.CreateItem(EntityType.ProductType),
                 (ProductType)Factory.CreateItem(EntityType.ProductType)
             };
-            var productAmounts = new List<ProductAmount>
-            {
-                (ProductAmount)Factory.CreateItem(EntityType.ProductAmount) ,
+            var productAmounts = new List<ProductAmount>{
+                (ProductAmount)Factory.CreateItem(EntityType.ProductAmount),
+                (ProductAmount)Factory.CreateItem(EntityType.ProductAmount),
                 (ProductAmount)Factory.CreateItem(EntityType.ProductAmount)
             };
-            var salesInfos = new List<SalesInfo>
-            {
-                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo) ,
-                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo)
+            var salesInfos = new List<SalesInfo> { 
+                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo), 
+                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo), 
+                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo) 
             };
-            var warehouses = new List<Warehouse>
-            {
-                (Warehouse)Factory.CreateItem(EntityType.Warehouse) ,
-                (Warehouse)Factory.CreateItem(EntityType.Warehouse)
+            var warehouses = new List<Warehouse> { 
+                (Warehouse)Factory.CreateItem(EntityType.Warehouse), 
+                (Warehouse)Factory.CreateItem(EntityType.Warehouse), 
+                (Warehouse)Factory.CreateItem(EntityType.Warehouse) 
             };
 
             var mockUoW = new Mock<IUnitOfWork>();
@@ -43,6 +44,10 @@ namespace Pharmacy.API.Tests.Mocks
             mockProdRepo.Setup(r => r.GetAsync(It.IsAny<int>())).ReturnsAsync((int id) =>
             {
                 return products.SingleOrDefault(p => p.Id == id);
+            });
+            mockProdRepo.Setup(r => r.GetAsync(It.IsAny<string>())).ReturnsAsync((string name) =>
+            {
+                return products.SingleOrDefault(p => p.Name == name);
             });
             mockProdRepo.Setup(r => r.Create(It.IsAny<Product>())).Callback<Product>(p =>
             {
@@ -156,7 +161,7 @@ namespace Pharmacy.API.Tests.Mocks
 
             var mockSalesInfoRepo = new Mock<ISalesInfoRepository>();
             mockSalesInfoRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(salesInfos);
-            mockSalesInfoRepo.Setup(r => r.GetAsync(It.IsAny<int>(), 0)).ReturnsAsync((int prodId) =>
+            mockSalesInfoRepo.Setup(r => r.GetAsync(It.IsAny<int>(), 0)).ReturnsAsync((int prodId, int id) =>
             {
                 return salesInfos.SingleOrDefault(p => p.Id == prodId);
             });

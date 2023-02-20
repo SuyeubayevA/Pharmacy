@@ -36,13 +36,13 @@ namespace Pharmacy.API.Tests
         }
 
         [Theory]
-        [InlineData(4)]
+        [InlineData(1)]
         public async Task GetProductByIdHandlerTest(int id)
         {
             var handler = new GetProductByIdHandler(_uow, _mapper);
             var result = await handler.Handle(new GetProductByIdQuery(id), CancellationToken.None);
 
-            result.Name.ShouldBe("Product 1");
+            result.ProductTypeId.ShouldBe(1);
         }
     }
 }
