@@ -10,34 +10,11 @@ namespace Pharmacy.API.Tests.Mocks
     {
         public static Mock<IUnitOfWork> GetUnitOfWorks()
         {
-            var products = new List<Product>
-            {
-                (Product)Factory.CreateItem(EntityType.Product),
-                (Product)Factory.CreateItem(EntityType.Product),
-                (Product)Factory.CreateItem(EntityType.Product)
-            };
-            var productTypes = new List<ProductType>{
-                (ProductType)Factory.CreateItem(EntityType.ProductType),
-                (ProductType)Factory.CreateItem(EntityType.ProductType),
-                (ProductType)Factory.CreateItem(EntityType.ProductType)
-            };
-            var productAmounts = new List<ProductAmount>{
-                (ProductAmount)Factory.CreateItem(EntityType.ProductAmount),
-                (ProductAmount)Factory.CreateItem(EntityType.ProductAmount),
-                (ProductAmount)Factory.CreateItem(EntityType.ProductAmount)
-            };
-            var salesInfos = new List<SalesInfo> { 
-                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo), 
-                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo), 
-                (SalesInfo)Factory.CreateItem(EntityType.SalesInfo) 
-            };
-            var warehouses = new List<Warehouse> { 
-                (Warehouse)Factory.CreateItem(EntityType.Warehouse), 
-                (Warehouse)Factory.CreateItem(EntityType.Warehouse), 
-                (Warehouse)Factory.CreateItem(EntityType.Warehouse) 
-            };
-
-            var mockUoW = new Mock<IUnitOfWork>();
+            List<Product> products = Helper.GetFaker<Product>().Generate(3);
+            List<ProductType> productTypes = Helper.GetFaker<ProductType>().Generate(3);
+            List<ProductAmount> productAmounts = Helper.GetFaker<ProductAmount>().Generate(3);
+            List<SalesInfo> salesInfos = Helper.GetFaker<SalesInfo>().Generate(3);
+            List<Warehouse> warehouses = Helper.GetFaker<Warehouse>().Generate(3);
 
             var mockProdRepo = new Mock<IProductRepository>();
             mockProdRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(products);
@@ -188,6 +165,7 @@ namespace Pharmacy.API.Tests.Mocks
                 }
             });
 
+            var mockUoW = new Mock<IUnitOfWork>();
             mockUoW.Setup(r => r.Product).Returns(mockProdRepo.Object);
             mockUoW.Setup(r => r.ProductType).Returns(mockProdTypeRepo.Object);
             mockUoW.Setup(r => r.ProductAmount).Returns(mockProdAmontRepo.Object);

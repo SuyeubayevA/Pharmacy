@@ -1,7 +1,6 @@
 ﻿
 using AutoMapper;
 using MediatR;
-using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Infrastructure.Queries;

@@ -11,13 +11,13 @@ namespace Pharmacy.API.Tests.Helpers
         SalesInfo,
         Warehouse
     }
-    public static class Factory
+    public class Factory
     {
-        static int ProductId = 0;
-        static int ProductAmountId = 0;
-        static int ProductTypeId = 0;
-        static int SalesInfoId = 0;
-        static int WarehouseId = 0;
+        public static int ProductId = 0;
+        public static int ProductAmountId = 0;
+        public static int ProductTypeId = 0;
+        public static int SalesInfoId = 0;
+        public static int WarehouseId = 0;
 
         public static IEntity CreateItem(EntityType type)
         {
@@ -60,6 +60,23 @@ namespace Pharmacy.API.Tests.Helpers
                 default:
                     return null;
             }
+        }
+
+        public static Product CreatFakeProduct()
+        {
+            return new Faker<Product>()
+                .RuleForType(typeof(int), faker => 1)
+                .RuleForType(typeof(string), faker => faker.Company.CompanyName())
+                .RuleForType(typeof(Guid), faker => Guid.NewGuid())
+                .RuleForType(typeof(decimal), faker => faker.Random.Decimal())
+                .RuleForType(typeof(double), faker => faker.Random.Double())
+                .RuleForType(typeof(DateTime), faker => faker.Date.Past())
+                .RuleForType(typeof(int?), faker => faker.Random.Int().OrNull(faker, 0f))
+                .RuleForType(typeof(Guid?), faker => Guid.NewGuid().OrNull(faker, 0f))
+                .RuleForType(typeof(decimal?), faker => faker.Random.Decimal().OrNull(faker, 0f))
+                .RuleForType(typeof(double?), faker => faker.Random.Double().OrNull(faker, 0f))
+                .RuleForType(typeof(DateTime?), faker => faker.Date.Past().OrNull(faker, 0f))
+                .Generate();
         }
     }
 }

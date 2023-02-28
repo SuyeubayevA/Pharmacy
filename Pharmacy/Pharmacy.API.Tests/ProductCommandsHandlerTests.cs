@@ -1,7 +1,9 @@
 ﻿
 using AutoMapper;
+using Moq;
 using Pharmacy.API.Tests.Helpers;
 using Pharmacy.API.Tests.Mocks;
+using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Product;
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Infrastructure.Data.Abstracts;
@@ -14,66 +16,62 @@ namespace Pharmacy.API.Tests
     public class ProductCommandsHandlerTests
     {
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _uow;
 
         public ProductCommandsHandlerTests()
         {
             var mapperConfig = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new ProductMappingProfile());
-                cfg.AddProfile(new ProductToDTOMappingProfile());
+                cfg.AddProfile(new PharmacyMappingProfile());
+                cfg.AddProfile(new PharmacyModelsToDTOMappingProfile());
             });
 
             _mapper = mapperConfig.CreateMapper();
-            _uow = MockPharmacyUoW.GetUnitOfWorks().Object;
         }
 
         [Fact]
+
         public async Task CreateProductHandlerTest()
         {
-            var handler = new CreateProductHandler(_uow, _mapper);
-            var newProduct = Factory.CreateItem(EntityType.Product);
-            var newProductModel = _mapper.Map<ProductModel>(newProduct);
+            var fakeProduct = Helper.GetFaker<Product>().Generate(1);
+            var newProductModel = _mapper.Map<ProductModel>(fakeProduct.First());
+            var fakeUOW = MockPharmacyUoW.GetUnitOfWorks().Object;
 
+            var handler = new CreateProductHandler(fakeUOW, _mapper);
             await handler.Handle(new CreateProductCommand(newProductModel), CancellationToken.None);
 
-            await _uow.Product.GetAsync(newProductModel.Id).ShouldNotBeNull();
+            await fakeUOW.Product.GetAsync(fakeProduct.First().Id).ShouldNotBeNull();
         }
 
         [Fact]
         public async Task DeleteProductHandlerTest()
         {
-            var handler = new DeleteProductHandler(_uow);
-            var products = await _uow.Product.GetAllAsync();
-            if (products != null && products.Count() > 0)
-            {
-                var productName = products.First().Name;
-                await handler.Handle(new DeleteProductCommand(productName), CancellationToken.None);
+            var fakeUOW = MockPharmacyUoW.GetUnitOfWorks().Object;
+            var handler = new DeleteProductHandler(fakeUOW);
+            var products = await fakeUOW.Product.GetAllAsync();
+            var productName = products.First().Name;
 
-                var result = await _uow.Product.GetAsync(productName);
+            await handler.Handle(new DeleteProductCommand(products.First().Name), CancellationToken.None);
 
-                result.ShouldBeNull();
-            }
+            var result = await fakeUOW.Product.GetAsync(productName);
+
+            result.ShouldBeNull();
         }
 
         [Theory]
         [InlineData("New Element")]
         public async Task UpdateProductHandlerTest(string newName)
         {
-            var handler = new UpdateProductHandler(_uow, _mapper);
-            var products = await _uow.Product.GetAllAsync();
-            if (products != null && products.Count() > 0)
-            {
-                var productForUpdate = products.First();
-                productForUpdate.Name = newName;
-                var productModel = _mapper.Map<ProductModel>(productForUpdate);
+            var fakeUOW = MockPharmacyUoW.GetUnitOfWorks().Object;
+            var products = await fakeUOW.Product.GetAllAsync();
+            var productForUpdate = products.First();
+            productForUpdate.Name = newName;
+            var handler = new UpdateProductHandler(fakeUOW, _mapper);
+            var productModel = _mapper.Map<ProductModel>(productForUpdate);
 
-                await handler.Handle(new UpdateProductCommand(productForUpdate.Id, productModel), CancellationToken.None);
+            await handler.Handle(new UpdateProductCommand(productForUpdate.Id, productModel), CancellationToken.None);
+            var result = await fakeUOW.Product.GetAsync(productForUpdate.Id);
 
-                var result = await _uow.Product.GetAsync(productForUpdate.Id);
-
-                result.Name.ShouldBe(newName);
-            }
+            result.Name.ShouldBe(newName);
         }
     }
 }

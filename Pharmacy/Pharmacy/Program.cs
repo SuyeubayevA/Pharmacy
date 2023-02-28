@@ -14,8 +14,8 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 var mapperConfig = new MapperConfiguration(cfg =>
     {
-        cfg.AddProfile(new ProductMappingProfile());
-        cfg.AddProfile(new ProductToDTOMappingProfile());
+        cfg.AddProfile(new PharmacyMappingProfile());
+        cfg.AddProfile(new PharmacyModelsToDTOMappingProfile());
     }
 );
 var mapper = mapperConfig.CreateMapper();

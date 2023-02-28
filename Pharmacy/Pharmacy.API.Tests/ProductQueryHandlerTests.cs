@@ -1,48 +1,68 @@
 ﻿
 using AutoMapper;
+using Moq;
 using Pharmacy.API.Tests.Mocks;
 using Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Product;
 using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Queries;
 using Pharmacy.Profiles;
+using Pharmacy.API.Tests.Helpers;
 using Shouldly;
+using Pharmacy.Domain.Core;
+using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.API.Tests
 {
     public class ProductQueryHandlerTests
     {
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _uow;
 
         public ProductQueryHandlerTests()
         {
             var mapperConfig = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new ProductMappingProfile());
-                cfg.AddProfile(new ProductToDTOMappingProfile());
+                cfg.AddProfile(new PharmacyMappingProfile());
+                cfg.AddProfile(new PharmacyModelsToDTOMappingProfile());
             });
 
             _mapper = mapperConfig.CreateMapper();
-            _uow = MockPharmacyUoW.GetUnitOfWorks().Object;
         }
 
         [Fact]
-        public async Task GetAllProductsHandlerTest()
+        public async Task GetAllProductsHandlerTest_GetAllAsync_Run_Once()
         {
-            var handler = new GetAllProductsHandler(_uow, _mapper);
-            var result = await handler.Handle(new GetAllProductsQuery(), CancellationToken.None);
+            var fakeUOW = new Mock<IUnitOfWork>();
+            var fakeGetAllResult = Helper.GetFaker<Product>().Generate(10);
+            fakeUOW.Setup(r => r.Product.GetAllAsync()).ReturnsAsync(fakeGetAllResult);
 
-            result.Count().ShouldBeGreaterThan(0);
+            var handler = new GetAllProductsHandler(fakeUOW.Object, _mapper);
+            await handler.Handle(new GetAllProductsQuery(), CancellationToken.None);
+
+            fakeUOW.Verify(x => x.Product.GetAllAsync(), Times.Once());
         }
 
         [Theory]
-        [InlineData(1)]
-        public async Task GetProductByIdHandlerTest(int id)
+        [InlineData(0)]
+        public async Task GetProductByIdHandler_IdEquals0_ThrowsExseption_Test(int id)
         {
-            var handler = new GetProductByIdHandler(_uow, _mapper);
-            var result = await handler.Handle(new GetProductByIdQuery(id), CancellationToken.None);
+            var fakeUOW = new Mock<IUnitOfWork>();
+            var handler = new GetProductByIdHandler(fakeUOW.Object, _mapper);
 
-            result.ProductTypeId.ShouldBe(1);
+            await Assert.ThrowsAsync<ArgumentException>(async () => await handler.Handle(new GetProductByIdQuery(id), CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task GetProductByIdHandler_VerifyMappedDto_Test()
+        {
+            var fakeUOW = new Mock<IUnitOfWork>();
+            var fakeResult = Helper.GetFaker<Product>().Generate();
+            fakeUOW.Setup(r => r.Product.GetAsync(fakeResult.Id)).ReturnsAsync(fakeResult);
+            var handler = new GetProductByIdHandler(fakeUOW.Object, _mapper);
+
+            var act = await handler.Handle(new GetProductByIdQuery(fakeResult.Id), CancellationToken.None);
+
+            _mapper.Map<Product>(act).Id.ShouldBe(fakeResult.Id);
+
         }
     }
 }

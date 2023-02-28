@@ -4,9 +4,9 @@ using Pharmacy.Models;
 
 namespace Pharmacy.Profiles
 {
-    public class ProductMappingProfile : Profile
+    public class PharmacyMappingProfile : Profile
     {
-        public ProductMappingProfile() 
+        public PharmacyMappingProfile() 
         {
             CreateMap<Product, ProductModel>()
                 .ReverseMap();

@@ -4,9 +4,9 @@ using Pharmacy.Infrastructure.Data.DTO;
 
 namespace Pharmacy.Profiles
 {
-    public class ProductToDTOMappingProfile : Profile
+    public class PharmacyModelsToDTOMappingProfile : Profile
     {
-        public ProductToDTOMappingProfile() 
+        public PharmacyModelsToDTOMappingProfile() 
         {
             CreateMap<Product, ProductDetailDTO>()
                 .ForMember(dest => dest.ProductTypeName, act => act.MapFrom(src => src.ProductType != null ? src.ProductType.Name : null))
