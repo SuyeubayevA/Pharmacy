@@ -7,12 +7,12 @@ using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.SalesInfo
 {
-    public class CreateSalesInfoHandler : IRequestHandler<CreateSalesInfoCommand, Unit>
+    public class CreateSalesInfoCommandHandler : IRequestHandler<CreateSalesInfoCommand, Unit>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public CreateSalesInfoHandler(IUnitOfWork uow, IMapper mapper)
+        public CreateSalesInfoCommandHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

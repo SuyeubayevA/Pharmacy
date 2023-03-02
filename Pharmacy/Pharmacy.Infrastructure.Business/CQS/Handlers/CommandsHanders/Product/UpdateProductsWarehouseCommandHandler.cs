@@ -5,11 +5,11 @@ using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Product
 {
-    public class UpdateProductsWarehouseHandler : IRequestHandler<UpdateProductsWarehouseCommand, Unit>
+    public class UpdateProductsWarehouseCommandHandler : IRequestHandler<UpdateProductsWarehouseCommand, Unit>
     {
         private readonly IUnitOfWork _uow;
 
-        public UpdateProductsWarehouseHandler(IUnitOfWork uow)
+        public UpdateProductsWarehouseCommandHandler(IUnitOfWork uow)
         {
             _uow = uow;
         }

@@ -6,12 +6,12 @@ using Pharmacy.Infrastructure.Data.Abstracts;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.ProductType
 {
-    public class CreateProductTypeHandler : IRequestHandler<CreateProductTypeCommand, Unit>
+    public class CreateProductTypeCommandHandler : IRequestHandler<CreateProductTypeCommand, Unit>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public CreateProductTypeHandler(IUnitOfWork uow, IMapper mapper)
+        public CreateProductTypeCommandHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

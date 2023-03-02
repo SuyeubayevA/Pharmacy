@@ -6,11 +6,11 @@ using Pharmacy.Infrastructure.Data.Abstracts;
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Warehouse
 {
 
-    public class DeleteWarehouseHandler : IRequestHandler<DeleteWarehouseCommand, Unit>
+    public class DeleteWarehouseCommandHandler : IRequestHandler<DeleteWarehouseCommand, Unit>
     {
         private readonly IUnitOfWork _uow;
 
-        public DeleteWarehouseHandler(IUnitOfWork uow)
+        public DeleteWarehouseCommandHandler(IUnitOfWork uow)
         {
             _uow = uow;
         }
