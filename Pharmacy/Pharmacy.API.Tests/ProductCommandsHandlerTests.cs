@@ -7,6 +7,7 @@ using Pharmacy.Domain.Core;
 using Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.Product;
 using Pharmacy.Infrastructure.Commands;
 using Pharmacy.Infrastructure.Data.Abstracts;
+using Pharmacy.Infrastructure.Queries;
 using Pharmacy.Models;
 using Pharmacy.Profiles;
 using Shouldly;
@@ -30,48 +31,83 @@ namespace Pharmacy.API.Tests
 
         [Fact]
 
-        public async Task CreateProductHandlerTest()
+        public async Task CreateProductHandler_AddsNewProduct_CheckExistenceAndSaveChanges()
         {
-            var fakeProduct = Helper.GetFaker<Product>().Generate(1);
-            var newProductModel = _mapper.Map<ProductModel>(fakeProduct.First());
-            var fakeUOW = MockPharmacyUoW.GetUnitOfWorks().Object;
+            var fakeProducts = Helper.GetFaker<Product>().Generate(3);
+            var fakeProduct = Helper.GetFaker<Product>().Generate();
+            var fakeProductModel = _mapper.Map<ProductModel>(fakeProduct);
+            var fakeUOW = new Mock<IUnitOfWork>();
+            Product actual = null;
+            fakeUOW.Setup(r => r.Product.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync((string name) => { return fakeProducts.SingleOrDefault(p => p.Name == name);});
+            fakeUOW.Setup(r => r.Product.Create(It.IsAny<Product>()))
+                .Callback(new InvocationAction(i => actual = (Product)i.Arguments[0]));
 
-            var handler = new CreateProductHandler(fakeUOW, _mapper);
-            await handler.Handle(new CreateProductCommand(newProductModel), CancellationToken.None);
+            var handler = new CreateProductCommandHandler(fakeUOW.Object, _mapper);
 
-            await fakeUOW.Product.GetAsync(fakeProduct.First().Id).ShouldNotBeNull();
+            // Проверяет что GetAsync был вызван с переданным параметром Name
+            await handler.Handle(new CreateProductCommand(fakeProductModel), CancellationToken.None);
+            fakeUOW.Verify(x => x.Product.GetAsync(fakeProduct.Name));
+
+            // Проверяет что метод UOW.Product.Create был вызван с Entity.
+            actual.ShouldBeEquivalentTo(fakeProduct);
+
+            // Проверяет что метод UOW.SaveAsync был вызван.
+            fakeUOW.Verify(x => x.SaveAsync(), Times.Once);
         }
 
         [Fact]
-        public async Task DeleteProductHandlerTest()
+        public async Task CreateProductHandler_RequestWithExistedName_ThrowException()
         {
-            var fakeUOW = MockPharmacyUoW.GetUnitOfWorks().Object;
-            var handler = new DeleteProductHandler(fakeUOW);
-            var products = await fakeUOW.Product.GetAllAsync();
-            var productName = products.First().Name;
+            var fakeProducts = Helper.GetFaker<Product>().Generate(3);
+            var existedProductModel = _mapper.Map<ProductModel>(fakeProducts.First());
+            var fakeUOW = new Mock<IUnitOfWork>();
+            fakeUOW.Setup(r => r.Product.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync((string name) => { return fakeProducts.SingleOrDefault(p => p.Name == name); });
 
-            await handler.Handle(new DeleteProductCommand(products.First().Name), CancellationToken.None);
+            var handler = new CreateProductCommandHandler(fakeUOW.Object, _mapper);
 
-            var result = await fakeUOW.Product.GetAsync(productName);
+            // Проверяет что GetAsync вернул null и вызвал Исключение
+            await Assert.ThrowsAsync<Exception>(async () => 
+                await handler.Handle(new CreateProductCommand(existedProductModel), CancellationToken.None));
+        }
 
-            result.ShouldBeNull();
+        [Fact]
+        public async Task DeleteProductHandler()
+        {
+            var fakeProducts = Helper.GetFaker<Product>().Generate(3);
+            var fakeUOW = new Mock<IUnitOfWork>();
+            int actual = 0;
+            fakeUOW.Setup(r => r.Product.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync((string name) => { return fakeProducts.SingleOrDefault(p => p.Name == name); });
+            fakeUOW.Setup(r => r.Product.Delete(It.IsAny<int>()))
+                .Callback(new InvocationAction(i => actual = (int)i.Arguments[0]));
+            var handler = new DeleteProductCommandHandler(fakeUOW.Object);
+
+            await handler.Handle(new DeleteProductCommand(fakeProducts.First().Name), CancellationToken.None);
+
+            fakeUOW.Verify(x => x.Product.GetAsync(It.Is<string>(s => s == fakeProducts.First().Name)));
+            fakeUOW.Verify(x => x.Product.Delete(It.Is<int>(i => i == fakeProducts.First().Id)));
+            fakeUOW.Verify(x => x.SaveAsync(), Times.Once);
         }
 
         [Theory]
         [InlineData("New Element")]
-        public async Task UpdateProductHandlerTest(string newName)
+        public async Task UpdateProductHandler(string newName)
         {
-            var fakeUOW = MockPharmacyUoW.GetUnitOfWorks().Object;
-            var products = await fakeUOW.Product.GetAllAsync();
-            var productForUpdate = products.First();
+            var fakeUOW = new Mock<IUnitOfWork>();
+            var fakeProducts = Helper.GetFaker<Product>().Generate(3);
+            fakeUOW.Setup(r => r.Product.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync((string name) => { return fakeProducts.SingleOrDefault(p => p.Name == name); });
+            var productForUpdate = fakeProducts.First();
             productForUpdate.Name = newName;
-            var handler = new UpdateProductHandler(fakeUOW, _mapper);
+            var handler = new UpdateProductCommandHandler(fakeUOW.Object, _mapper);
             var productModel = _mapper.Map<ProductModel>(productForUpdate);
 
             await handler.Handle(new UpdateProductCommand(productForUpdate.Id, productModel), CancellationToken.None);
-            var result = await fakeUOW.Product.GetAsync(productForUpdate.Id);
 
-            result.Name.ShouldBe(newName);
+            fakeUOW.Verify(x => x.Product.GetAsync(It.Is<int>(s => s == productForUpdate.Id)));
+            fakeUOW.Verify(x => x.SaveAsync(), Times.Once);
         }
     }
 }

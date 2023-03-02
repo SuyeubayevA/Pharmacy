@@ -35,7 +35,7 @@ namespace Pharmacy.API.Tests
             var fakeGetAllResult = Helper.GetFaker<Product>().Generate(10);
             fakeUOW.Setup(r => r.Product.GetAllAsync()).ReturnsAsync(fakeGetAllResult);
 
-            var handler = new GetAllProductsHandler(fakeUOW.Object, _mapper);
+            var handler = new GetAllProductsQueryHandler(fakeUOW.Object, _mapper);
             await handler.Handle(new GetAllProductsQuery(), CancellationToken.None);
 
             fakeUOW.Verify(x => x.Product.GetAllAsync(), Times.Once());
@@ -43,25 +43,25 @@ namespace Pharmacy.API.Tests
 
         [Theory]
         [InlineData(0)]
-        public async Task GetProductByIdHandler_IdEquals0_ThrowsExseption_Test(int id)
+        public async Task GetProductByIdHandler_IdEquals0_ThrowsExseption(int id)
         {
             var fakeUOW = new Mock<IUnitOfWork>();
-            var handler = new GetProductByIdHandler(fakeUOW.Object, _mapper);
+            var handler = new GetProductByIdQueryHandler(fakeUOW.Object, _mapper);
 
             await Assert.ThrowsAsync<ArgumentException>(async () => await handler.Handle(new GetProductByIdQuery(id), CancellationToken.None));
         }
 
         [Fact]
-        public async Task GetProductByIdHandler_VerifyMappedDto_Test()
+        public async Task GetProductByIdHandler_VerifyMappedDto()
         {
             var fakeUOW = new Mock<IUnitOfWork>();
-            var fakeResult = Helper.GetFaker<Product>().Generate();
-            fakeUOW.Setup(r => r.Product.GetAsync(fakeResult.Id)).ReturnsAsync(fakeResult);
-            var handler = new GetProductByIdHandler(fakeUOW.Object, _mapper);
+            var fakeProduct = Helper.GetFaker<Product>().Generate();
+            fakeUOW.Setup(r => r.Product.GetAsync(fakeProduct.Id)).ReturnsAsync(fakeProduct);
+            var handler = new GetProductByIdQueryHandler(fakeUOW.Object, _mapper);
 
-            var act = await handler.Handle(new GetProductByIdQuery(fakeResult.Id), CancellationToken.None);
+            var act = await handler.Handle(new GetProductByIdQuery(fakeProduct.Id), CancellationToken.None);
 
-            _mapper.Map<Product>(act).Id.ShouldBe(fakeResult.Id);
+            _mapper.Map<ProductDetailDTO>(fakeProduct).ShouldBeEquivalentTo(act);
 
         }
     }
