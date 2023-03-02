@@ -1,18 +1,17 @@
 
 using AutoMapper;
 using MediatR;
-using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Infrastructure.Queries;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.SalesInfo
 {
-    public class GetAllSalesInfoHandler : IRequestHandler<GetAllSalesInfosQuery, IEnumerable<SalesInfoDTO>>
+    public class GetAllSalesInfosQueryHandler : IRequestHandler<GetAllSalesInfosQuery, IEnumerable<SalesInfoDTO>>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-        public GetAllSalesInfoHandler(IUnitOfWork uow, IMapper mapper)
+        public GetAllSalesInfosQueryHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

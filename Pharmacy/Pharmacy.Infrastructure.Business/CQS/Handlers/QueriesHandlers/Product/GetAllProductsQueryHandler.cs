@@ -8,12 +8,12 @@ using Pharmacy.Infrastructure.Queries;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Product
 {
-    public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<ProductDTO>>
+    public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<ProductDTO>>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public GetAllProductsHandler(IUnitOfWork uow, IMapper mapper)
+        public GetAllProductsQueryHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

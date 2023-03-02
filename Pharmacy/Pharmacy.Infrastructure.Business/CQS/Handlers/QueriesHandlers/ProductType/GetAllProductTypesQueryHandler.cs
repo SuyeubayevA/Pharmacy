@@ -7,12 +7,12 @@ using Pharmacy.Infrastructure.Queries;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.ProductType
 {
-    public class GetAllProductTypesHandler : IRequestHandler<GetAllProductTypesQuery, IEnumerable<ProductTypeDTO>>
+    public class GetAllProductTypesQueryHandler : IRequestHandler<GetAllProductTypesQuery, IEnumerable<ProductTypeDTO>>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public GetAllProductTypesHandler(IUnitOfWork uow, IMapper mapper)
+        public GetAllProductTypesQueryHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

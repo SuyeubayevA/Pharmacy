@@ -8,11 +8,11 @@ using Pharmacy.Infrastructure.Queries;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Warehouse
 {
-    public class GetAllWarehouseHandler : IRequestHandler<GetAllWarehousesQuery, IEnumerable<WarehouseDTO>>
+    public class GetAllWarehousesQueryHandler : IRequestHandler<GetAllWarehousesQuery, IEnumerable<WarehouseDTO>>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-        public GetAllWarehouseHandler(IUnitOfWork uow, IMapper mapper)
+        public GetAllWarehousesQueryHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

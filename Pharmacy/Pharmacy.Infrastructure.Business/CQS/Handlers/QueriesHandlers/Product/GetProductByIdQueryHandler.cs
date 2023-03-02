@@ -1,19 +1,18 @@
 ﻿
 using AutoMapper;
 using MediatR;
-using Pharmacy.Infrastructure.Data;
 using Pharmacy.Infrastructure.Data.Abstracts;
 using Pharmacy.Infrastructure.Data.DTO;
 using Pharmacy.Infrastructure.Queries;
 
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Product
 {
-    public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, ProductDetailDTO>
+    public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductDetailDTO>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public GetProductByIdHandler(IUnitOfWork uow, IMapper mapper)
+        public GetProductByIdQueryHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;
@@ -21,7 +20,7 @@ namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Product
 
         public async Task<ProductDetailDTO> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
-            if(request.Id == default)
+            if (request.Id == default)
             {
                 throw new ArgumentException();
             }

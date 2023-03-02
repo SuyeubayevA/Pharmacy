@@ -9,12 +9,12 @@ using Pharmacy.Infrastructure.Queries;
 namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Product
 {
 
-    public class GetAllProductAmountsHandler : IRequestHandler<GetAllProductAmountsQuery, IEnumerable<ProductAmountDTO>>
+    public class GetAllProductAmountsQueryHandler : IRequestHandler<GetAllProductAmountsQuery, IEnumerable<ProductAmountDTO>>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
 
-        public GetAllProductAmountsHandler(IUnitOfWork uow, IMapper mapper)
+        public GetAllProductAmountsQueryHandler(IUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;

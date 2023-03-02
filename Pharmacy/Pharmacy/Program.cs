@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
     });
 });
-builder.Services.AddMediatR(Assembly.GetExecutingAssembly(), typeof(GetAllProductsHandler).Assembly);
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly(), typeof(GetAllProductsQueryHandler).Assembly);
 
 var app = builder.Build();
 
