@@ -12,6 +12,7 @@ namespace Pharmacy.Models
         public string Description { get; set; } = string.Empty;
         [Required]
         public int ProductTypeId { get; set; }
+        public int SalesInfoId { get; set; }
 
         public float Price { get; set; }
     }
