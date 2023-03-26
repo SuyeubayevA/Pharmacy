@@ -1,0 +1,5 @@
+export const PRODUCTS = "PRODUCTS";
+export const WAREHOUSES = "WAREHOUSES";
+export const PRODUCTTYPES = "PRODUCTTYPES";
+export const PRODUCTAMOUNTS = "PRODUCTAMOUNTS";
+export const PRODUCTINFO = "PRODUCTINFO";
