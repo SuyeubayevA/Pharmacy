@@ -1,30 +1,30 @@
 import React from "react";
 import Button from "@mui/material/Button";
-import CreateWarehouseDialog from "./auxilaries/CreateWarehouseForm";
+import CreateSalesInfoDialog from "./auxilaries/CreateSalesInfoForm";
 import { connect } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import PropTypes from "prop-types";
-import * as warehouseActions from "../../redux/actions/warehouseActions";
+import * as salesInfoActions from "../../redux/actions/salesInfoActions";
 import BasicTable from "../common/TableMaker";
 import * as types from "../../entityTypes";
 
-class WarehousePage extends React.Component {
+class SalesInfoPage extends React.Component {
   state = {
     create: {
       shouldBeCreated: false,
     },
-    warehouse: {
-      name: "",
-      address: "",
+    salesInfo: {
+      sales: 0,
+      productReminder: 0,
     },
   };
 
   componentDidMount() {
-    const { actions, warehouses } = this.props;
+    const { actions, salesInfos } = this.props;
 
-    if (warehouses.length === 0) {
-      actions.loadWarehouses().catch((error) => {
-        alert("Load Warehouses failed: " + error);
+    if (salesInfos.length === 0) {
+      actions.loadSalesInfos().catch((error) => {
+        alert("Load SalesInfos failed: " + error);
       });
     }
   }
@@ -42,57 +42,57 @@ class WarehousePage extends React.Component {
   handleOnChange = (event) => {
     const name = event.target.id;
     const value = event.target.value;
-    const warehouse = { ...this.state.warehouse, [name]: value };
-    this.setState({ warehouse });
+    const salesInfo = { ...this.state.salesInfo, [name]: value };
+    this.setState({ salesInfo });
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
-    this.props.actions.createWarehouse(this.state.warehouse);
+    this.props.actions.createSalesInfo(this.state.salesInfo);
     this.handleClose();
   };
 
   render() {
     return (
       <React.Fragment>
-        <h2>Product Type Page</h2>
-        <Button onClick={this.handleOpen}>Add new warehouse</Button>
-        <CreateWarehouseDialog
+        <h2>Sales Info Page</h2>
+        <Button onClick={this.handleOpen}>Add new salesInfo</Button>
+        <CreateSalesInfoDialog
           open={this.state.create.shouldBeCreated}
           handleClose={this.handleClose}
           handleSubmit={this.handleSubmit}
           handleOnChange={this.handleOnChange}
         />
-        <BasicTable rows={this.props.warehouses} type={types.WAREHOUSES} />
+        <BasicTable rows={this.props.salesInfos} type={types.PRODUCTINFO} />
       </React.Fragment>
     );
   }
 }
 
-WarehousePage.propTypes = {
-  warehouses: PropTypes.array.isRequired,
+SalesInfoPage.propTypes = {
+  salesInfos: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
   return {
-    warehouses: state.warehouses,
+    salesInfos: state.salesInfos,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     actions: {
-      createWarehouse: bindActionCreators(
-        warehouseActions.createWarehouse,
+      createSalesInfo: bindActionCreators(
+        salesInfoActions.createSalesInfo,
         dispatch
       ),
-      loadWarehouses: bindActionCreators(
-        warehouseActions.loadWarehouses,
+      loadSalesInfos: bindActionCreators(
+        salesInfoActions.loadSalesInfos,
         dispatch
       ),
     },
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(WarehousePage);
+export default connect(mapStateToProps, mapDispatchToProps)(SalesInfoPage);

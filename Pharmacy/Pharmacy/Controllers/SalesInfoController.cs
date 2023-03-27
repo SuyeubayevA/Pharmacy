@@ -18,7 +18,7 @@ namespace Pharmacy.Controllers
             _mediator= mediator;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet()]
         public async Task<IEnumerable<SalesInfoDTO>> GetAll()
         {
             var query = new GetAllSalesInfosQuery();

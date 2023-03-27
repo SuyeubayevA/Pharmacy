@@ -8,29 +8,25 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import PropTypes from "prop-types";
 
-const ProductTable = ({ rows }) => (
+const SalesInfoTable = ({ rows }) => (
   <TableContainer component={Paper}>
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
         <TableRow>
-          <TableCell>Product Name</TableCell>
-          <TableCell align="right">Description</TableCell>
-          <TableCell align="right">Price</TableCell>
-          <TableCell align="right">Product type (ID)</TableCell>
+          <TableCell>Sold</TableCell>
+          <TableCell align="right">Reminded products</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {rows.map((row) => (
           <TableRow
-            key={row.id}
+            key={row.sales}
             sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
           >
             <TableCell component="th" scope="row">
-              {row.name}
+              {row.sales}
             </TableCell>
-            <TableCell align="right">{row.description}</TableCell>
-            <TableCell align="right">{row.price}</TableCell>
-            <TableCell align="right">{row.productTypeId}</TableCell>
+            <TableCell align="right">{row.productReminder}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -38,8 +34,8 @@ const ProductTable = ({ rows }) => (
   </TableContainer>
 );
 
-ProductTable.propTypes = {
+SalesInfoTable.propTypes = {
   rows: PropTypes.array.isRequired,
 };
 
-export default ProductTable;
+export default SalesInfoTable;

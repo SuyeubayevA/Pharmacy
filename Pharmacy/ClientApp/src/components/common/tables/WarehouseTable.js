@@ -8,15 +8,13 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import PropTypes from "prop-types";
 
-const ProductTable = ({ rows }) => (
+const WarehouseTable = ({ rows }) => (
   <TableContainer component={Paper}>
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
         <TableRow>
-          <TableCell>Product Name</TableCell>
-          <TableCell align="right">Description</TableCell>
-          <TableCell align="right">Price</TableCell>
-          <TableCell align="right">Product type (ID)</TableCell>
+          <TableCell>Warehouse Name</TableCell>
+          <TableCell align="right">Address</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -28,9 +26,7 @@ const ProductTable = ({ rows }) => (
             <TableCell component="th" scope="row">
               {row.name}
             </TableCell>
-            <TableCell align="right">{row.description}</TableCell>
-            <TableCell align="right">{row.price}</TableCell>
-            <TableCell align="right">{row.productTypeId}</TableCell>
+            <TableCell align="right">{row.address}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -38,8 +34,8 @@ const ProductTable = ({ rows }) => (
   </TableContainer>
 );
 
-ProductTable.propTypes = {
+WarehouseTable.propTypes = {
   rows: PropTypes.array.isRequired,
 };
 
-export default ProductTable;
+export default WarehouseTable;
