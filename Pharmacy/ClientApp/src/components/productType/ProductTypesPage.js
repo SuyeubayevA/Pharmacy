@@ -52,6 +52,11 @@ class ProductTypePage extends React.Component {
     this.handleClose();
   };
 
+  handleDelete = (productTypId) => {
+    const { actions } = this.props;
+    actions.deleteProductType(productTypId);
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -63,7 +68,11 @@ class ProductTypePage extends React.Component {
           handleSubmit={this.handleSubmit}
           handleOnChange={this.handleOnChange}
         />
-        <BasicTable rows={this.props.productTypes} type={types.PRODUCTTYPES} />
+        <BasicTable
+          rows={this.props.productTypes}
+          type={types.PRODUCTTYPES}
+          deleteItem={this.handleDelete}
+        />
       </React.Fragment>
     );
   }
@@ -89,6 +98,10 @@ function mapDispatchToProps(dispatch) {
       ),
       loadProductTypes: bindActionCreators(
         productTypeActions.loadProductTypes,
+        dispatch
+      ),
+      deleteProductType: bindActionCreators(
+        productTypeActions.deleteProductType,
         dispatch
       ),
     },

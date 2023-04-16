@@ -6,18 +6,17 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
 
-const ProductTypeTable = ({ rows, deleteItem }) => (
+const DiscountTable = ({ rows }) => (
   <TableContainer component={Paper}>
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
         <TableRow>
-          <TableCell>Product Type Name</TableCell>
-          <TableCell align="right">Properties</TableCell>
-          <TableCell align="right"></TableCell>
+          <TableCell>Amount of Product</TableCell>
+          <TableCell align="right">Discount(%)</TableCell>
+          <TableCell align="right">Warehouse Name</TableCell>
+          <TableCell align="right">Product Name</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -27,19 +26,11 @@ const ProductTypeTable = ({ rows, deleteItem }) => (
             sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
           >
             <TableCell component="th" scope="row">
-              {row.name}
+              {row.amount}
             </TableCell>
-            <TableCell align="right">{row.properties}</TableCell>
-            <TableCell align="right">
-              <IconButton
-                aria-label="delete"
-                onClick={() => {
-                  deleteItem(row.id);
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </TableCell>
+            <TableCell align="right">{row.discount}</TableCell>
+            <TableCell align="right">{row.warehouseName}</TableCell>
+            <TableCell align="right">{row.productName}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -47,8 +38,8 @@ const ProductTypeTable = ({ rows, deleteItem }) => (
   </TableContainer>
 );
 
-ProductTypeTable.propTypes = {
+DiscountTable.propTypes = {
   rows: PropTypes.array.isRequired,
 };
 
-export default ProductTypeTable;
+export default DiscountTable;

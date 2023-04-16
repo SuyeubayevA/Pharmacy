@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
 import CreateProductDialog from "./auxilaries/CreateProductForm";
 import { connect } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
@@ -54,18 +55,35 @@ class ProductPage extends React.Component {
     this.handleClose();
   };
 
+  handleDelete = (productName) => {
+    const { actions } = this.props;
+
+    actions.deleteProduct(productName);
+  };
+
   render() {
     return (
       <React.Fragment>
         <h2>Product Page</h2>
-        <Button onClick={this.handleOpen}>Add new product</Button>
+        {this.props.productTypes.length < 0 ? (
+          <Tooltip title="Should be even one Product Type exist">
+            <Button disabled>Add new product</Button>
+          </Tooltip>
+        ) : (
+          <Button onClick={this.handleOpen}>Add new product</Button>
+        )}
+
         <CreateProductDialog
           open={this.state.create.shouldBeCreated}
           handleClose={this.handleClose}
           handleSubmit={this.handleSubmit}
           handleOnChange={this.handleOnChange}
         />
-        <BasicTable rows={this.props.products} type={types.PRODUCTS} />
+        <BasicTable
+          rows={this.props.products}
+          type={types.PRODUCTS}
+          deleteItem={this.handleDelete}
+        />
       </React.Fragment>
     );
   }
@@ -73,12 +91,14 @@ class ProductPage extends React.Component {
 
 ProductPage.propTypes = {
   products: PropTypes.array.isRequired,
+  productTypes: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
   return {
     products: state.products,
+    productTypes: state.productTypes,
   };
 }
 
@@ -87,6 +107,7 @@ function mapDispatchToProps(dispatch) {
     actions: {
       createProduct: bindActionCreators(productActions.createProduct, dispatch),
       loadProducts: bindActionCreators(productActions.loadProducts, dispatch),
+      deleteProduct: bindActionCreators(productActions.deleteProduct, dispatch),
     },
   };
 }

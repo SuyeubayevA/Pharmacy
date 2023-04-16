@@ -1,8 +1,21 @@
 import * as types from "./actionTypes";
 import * as productTypeApi from "../../api/productTypeApi";
 
-export function createProductType(productType) {
+export function createProductTypeSuccess(productType) {
   return { type: types.CREATE_PRODUCT_TYPE, productType };
+}
+
+export function createProductType(productType) {
+  return function (dispatch) {
+    return productTypeApi
+      .postProductType(productType)
+      .then(() => {
+        dispatch(createProductTypeSuccess(productType));
+      })
+      .catch((error) => {
+        throw error;
+      });
+  };
 }
 
 function loadProductTypesSuccess(productTypes) {
@@ -15,6 +28,24 @@ export function loadProductTypes() {
       .getProductTypes()
       .then((productTypes) => {
         dispatch(loadProductTypesSuccess(productTypes));
+      })
+      .catch((error) => {
+        throw error;
+      });
+  };
+}
+
+function deleteProductTypeSuccess(productTypeId) {
+  return { type: types.DELETE_PRODUCT_TYPE, productTypeId };
+}
+
+export function deleteProductType(productTypeId) {
+  debugger;
+  return function (dispatch) {
+    return productTypeApi
+      .deleteProductType(productTypeId)
+      .then(() => {
+        dispatch(deleteProductTypeSuccess(productTypeId));
       })
       .catch((error) => {
         throw error;

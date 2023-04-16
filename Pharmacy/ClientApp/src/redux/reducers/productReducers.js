@@ -6,6 +6,9 @@ export default function productReducer(state = [], action) {
       return [...state, { ...action.product }];
     case types.LOAD_PRODUCTS_SUCCESS:
       return action.products;
+    case types.DELETE_PRODUCT:
+      const newState = state.filter((p) => p.name !== action.productName);
+      return newState;
     default:
       return state;
   }
