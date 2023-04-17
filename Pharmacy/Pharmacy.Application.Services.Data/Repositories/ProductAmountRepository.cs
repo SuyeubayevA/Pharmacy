@@ -41,7 +41,11 @@ namespace Pharmacy.Infrastructure.Data.Repositories
 
         public override async Task<IEnumerable<ProductAmount>?> GetAllAsync()
         {
-            var productAmounts = await db.ProductAmounts.AsQueryable().ToListAsync();
+            var productAmounts = await db.ProductAmounts
+                .Include(w => w.Warehouse)
+                .Include(p => p.Product)
+                .AsQueryable()
+                .ToListAsync();
 
             return productAmounts;
         }

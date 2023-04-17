@@ -18,7 +18,7 @@ namespace Pharmacy.Controllers
             _mediator= mediator;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet()]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IEnumerable<ProductTypeDTO>> GetAll()

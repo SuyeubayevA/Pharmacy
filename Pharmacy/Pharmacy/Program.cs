@@ -11,6 +11,8 @@ using Pharmacy.Infrastructure.Data.Repositories;
 using Pharmacy.Profiles;
 using System.Reflection;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 var mapperConfig = new MapperConfiguration(cfg =>
     {
@@ -42,6 +44,15 @@ builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000/");
+        });
+});
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -58,8 +69,7 @@ var app = builder.Build();
 app.UseCors(c => c
     .AllowAnyOrigin()
     .AllowAnyMethod()
-    .AllowAnyHeader()
-    );
+    .AllowAnyHeader());
 
 if (app.Environment.IsDevelopment())
 {
