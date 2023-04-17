@@ -52,7 +52,7 @@ namespace Pharmacy.Controllers
         [Route("{productTypeId}")]
         public async Task Delete(int productTypeId)
         {
-            var command = new DeleteProductTypeCommand(productTypeId);
+            var command = new DeleteProductTypeCommand(productTypeId); 
             await _mediator.Send(command);
         }
     }
