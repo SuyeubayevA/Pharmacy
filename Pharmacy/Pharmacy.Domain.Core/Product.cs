@@ -1,6 +1,6 @@
 ﻿namespace Pharmacy.Domain.Core
 {
-    public class Product
+    public class Product: IEntity
     {
         //Primary Key
         public int Id { get; set; }

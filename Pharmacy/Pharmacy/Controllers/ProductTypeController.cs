@@ -18,7 +18,7 @@ namespace Pharmacy.Controllers
             _mediator= mediator;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet()]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IEnumerable<ProductTypeDTO>> GetAll()
@@ -52,7 +52,7 @@ namespace Pharmacy.Controllers
         [Route("{productTypeId}")]
         public async Task Delete(int productTypeId)
         {
-            var command = new DeleteProductTypeCommand(productTypeId);
+            var command = new DeleteProductTypeCommand(productTypeId); 
             await _mediator.Send(command);
         }
     }

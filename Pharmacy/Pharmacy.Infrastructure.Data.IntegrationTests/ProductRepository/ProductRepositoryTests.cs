@@ -118,6 +118,6 @@ namespace Pharmacy.Infrastructure.Data.IntegrationTests.ProductRepositoryTests
             .RuleFor(x => x.Price, x => x.Random.Float(0, 10_000))
             .RuleFor(x => x.ProductTypeId, x => 1)
             .RuleFor(x => x.SalesInfoId, x => 1);
-    }
+        }
     }
 }

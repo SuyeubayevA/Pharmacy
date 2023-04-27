@@ -11,11 +11,13 @@ using Pharmacy.Infrastructure.Data.Repositories;
 using Pharmacy.Profiles;
 using System.Reflection;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 var mapperConfig = new MapperConfiguration(cfg =>
     {
-        cfg.AddProfile(new ProductMappingProfile());
-        cfg.AddProfile(new ProductToDTOMappingProfile());
+        cfg.AddProfile(new PharmacyMappingProfile());
+        cfg.AddProfile(new PharmacyModelsToDTOMappingProfile());
     }
 );
 var mapper = mapperConfig.CreateMapper();
@@ -33,7 +35,6 @@ builder.Services.AddDbContext<PharmacyDBContext>(
 
 builder.Services.AddSingleton(mapper);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
 builder.Services.AddScoped<IProductAmountRepository, ProductAmountRepository>();
@@ -43,6 +44,15 @@ builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000/");
+        });
+});
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -51,7 +61,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
     });
 });
-builder.Services.AddMediatR(Assembly.GetExecutingAssembly(), typeof(GetAllProductsHandler).Assembly);
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly(), typeof(GetAllProductsQueryHandler).Assembly);
 
 var app = builder.Build();
 
@@ -59,8 +69,7 @@ var app = builder.Build();
 app.UseCors(c => c
     .AllowAnyOrigin()
     .AllowAnyMethod()
-    .AllowAnyHeader()
-    );
+    .AllowAnyHeader());
 
 if (app.Environment.IsDevelopment())
 {

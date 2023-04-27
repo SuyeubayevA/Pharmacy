@@ -1,6 +1,6 @@
 ﻿namespace Pharmacy.Domain.Core
 {
-    public class ProductType
+    public class ProductType: IEntity
     {
         public ProductType()
         {
