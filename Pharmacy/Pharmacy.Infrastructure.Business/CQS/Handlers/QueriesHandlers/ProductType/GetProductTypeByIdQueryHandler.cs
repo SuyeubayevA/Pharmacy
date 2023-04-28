@@ -20,6 +20,11 @@ namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.ProductT
         }
         public async Task<ProductTypeDetailsDTO> Handle(GetProductTypeByIdQuery request, CancellationToken cancellationToken)
         {
+            if(request.Id == default)
+            {
+                throw new ArgumentException();
+            }
+
             var productType = await _uow.ProductType.GetAsync(request.Id);
 
             return _mapper.Map<ProductTypeDetailsDTO>(productType);

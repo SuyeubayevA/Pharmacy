@@ -19,6 +19,11 @@ namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Product
         }
         public async Task<ProductAmountDetailsDTO> Handle(GetProductAmountByIdQuery request, CancellationToken cancellationToken)
         {
+            if (request.Id == default)
+            {
+                throw new ArgumentException();
+            }
+
             var productAmount = await _uow.ProductAmount.GetAsync(request.Id);
 
             return _mapper.Map<ProductAmountDetailsDTO>(productAmount);

@@ -18,6 +18,11 @@ namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.SalesInf
         }
         public async Task<SalesInfoDetailsDTO> Handle(GetSalesInfoByIdQuery request, CancellationToken cancellationToken)
         {
+            if(request.Id == default)
+            {
+                throw new ArithmeticException();
+            }
+
             var sailsInfo = await _uow.SalesInfo.GetAsync(request.Id);
 
             return _mapper.Map<SalesInfoDetailsDTO>(sailsInfo);
