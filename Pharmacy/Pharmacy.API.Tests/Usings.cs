@@ -1,3 +1,3 @@
 global using Xunit;
 
-public class Program { }
+//public class Program { }
