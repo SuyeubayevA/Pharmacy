@@ -20,7 +20,7 @@ namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.Warehous
         {
             if(request.Id == default)
             {
-                throw new ArithmeticException();
+                throw new ArgumentException();
             }
 
             var warehouse = await _uow.Warehouse.GetAsync(request.Id);
