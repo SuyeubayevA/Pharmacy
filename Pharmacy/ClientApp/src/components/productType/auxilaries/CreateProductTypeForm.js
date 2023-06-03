@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -9,10 +9,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 function CreateProductTypeDialog(props) {
   const { open, handleClose, handleSubmit, handleOnChange } = props;
-  const [state, setState] = useState({
-    name: "",
-    properties: "",
-  });
+  // const [state, setState] = useState({
+  //   name: "",
+  //   properties: "",
+  // });
 
   return (
     <Dialog open={open} onClose={handleClose}>

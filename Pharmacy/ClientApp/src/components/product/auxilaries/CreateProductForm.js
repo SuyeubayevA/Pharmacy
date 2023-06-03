@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -9,18 +9,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 function CreateProductDialog(props) {
   const { open, handleClose, handleSubmit, handleOnChange } = props;
-  const [state, setState] = useState({
-    name: "",
-    description: "",
-    price: 0.0,
-    productTypeId: 0,
-  });
-
-  // const handleOnChange = (event) => {
-  //   const name = event.target.id;
-  //   const value = event.target.value;
-  //   setState({ ...state, [name]: value });
-  // };
+  // const [state, setState] = useState({
+  //   name: "",
+  //   description: "",
+  //   price: 0.0,
+  //   productTypeId: 0,
+  // });
 
   return (
     <Dialog open={open} onClose={handleClose}>
