@@ -52,6 +52,11 @@ class SalesInfoPage extends React.Component {
     this.handleClose();
   };
 
+  handleDelete = (productId) => {
+    const { actions } = this.props;
+    actions.deleteSalesInfo(productId);
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -63,7 +68,11 @@ class SalesInfoPage extends React.Component {
           handleSubmit={this.handleSubmit}
           handleOnChange={this.handleOnChange}
         />
-        <BasicTable rows={this.props.salesInfos} type={types.PRODUCTINFO} />
+        <BasicTable
+          rows={this.props.salesInfos}
+          type={types.PRODUCTINFO}
+          deleteItem={this.handleDelete}
+        />
       </React.Fragment>
     );
   }
@@ -89,6 +98,10 @@ function mapDispatchToProps(dispatch) {
       ),
       loadSalesInfos: bindActionCreators(
         salesInfoActions.loadSalesInfos,
+        dispatch
+      ),
+      deleteSalesInfo: bindActionCreators(
+        salesInfoActions.deleteSalesInfo,
         dispatch
       ),
     },

@@ -9,10 +9,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 function CreateWarehouseDialog(props) {
   const { open, handleClose, handleSubmit, handleOnChange } = props;
-  // const [state, setState] = useState({
-  //   name: "",
-  //   address: "",
-  // });
 
   return (
     <Dialog open={open} onClose={handleClose}>

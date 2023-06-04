@@ -12,7 +12,7 @@ namespace Pharmacy.Models
         public int ProductReminder { get; set; }
         [Required]
         public DateTime CreatedDate { get; set; }
-
+        [Required]
         public int ProductId { get; set; }
     }
 }

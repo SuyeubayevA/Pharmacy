@@ -52,6 +52,11 @@ class WarehousePage extends React.Component {
     this.handleClose();
   };
 
+  handleDelete = (warehouseName) => {
+    const { actions } = this.props;
+    actions.deleteWarehouse(warehouseName);
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -63,7 +68,11 @@ class WarehousePage extends React.Component {
           handleSubmit={this.handleSubmit}
           handleOnChange={this.handleOnChange}
         />
-        <BasicTable rows={this.props.warehouses} type={types.WAREHOUSES} />
+        <BasicTable
+          rows={this.props.warehouses}
+          type={types.WAREHOUSES}
+          deleteItem={this.handleDelete}
+        />
       </React.Fragment>
     );
   }
@@ -89,6 +98,10 @@ function mapDispatchToProps(dispatch) {
       ),
       loadWarehouses: bindActionCreators(
         warehouseActions.loadWarehouses,
+        dispatch
+      ),
+      deleteWarehouse: bindActionCreators(
+        warehouseActions.deleteWarehouse,
         dispatch
       ),
     },

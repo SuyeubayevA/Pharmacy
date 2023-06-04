@@ -6,6 +6,9 @@ export default function warehouseReducer(state = [], action) {
       return [...state, { ...action.warehouse }];
     case types.LOAD_WAREHOUSES_SUCCESS:
       return action.warehouses;
+    case types.DELETE_WAREHOUSE:
+      const newState = state.filter((p) => p.name !== action.warehouseName);
+      return newState;
     default:
       return state;
   }

@@ -41,9 +41,9 @@ function CreateDiscountDialog(props) {
         <TextField
           autoFocus
           margin="dense"
-          id="warehouseName"
+          id="warehouseId"
           label="WarehouseName"
-          type="text"
+          type="number"
           fullWidth
           variant="standard"
           onChange={handleOnChange}
@@ -51,9 +51,9 @@ function CreateDiscountDialog(props) {
         <TextField
           autoFocus
           margin="dense"
-          id="productName"
+          id="productId"
           label="ProductName"
-          type="text"
+          type="number"
           fullWidth
           variant="standard"
           onChange={handleOnChange}

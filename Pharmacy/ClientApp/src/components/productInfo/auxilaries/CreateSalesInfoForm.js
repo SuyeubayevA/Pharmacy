@@ -42,6 +42,16 @@ function CreateSalesInfoDialog(props) {
           variant="standard"
           onChange={handleOnChange}
         />
+        <TextField
+          autoFocus
+          margin="dense"
+          id="productId"
+          label="Product"
+          type="number"
+          fullWidth
+          variant="standard"
+          onChange={handleOnChange}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>

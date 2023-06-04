@@ -7,7 +7,7 @@ export default function productTypeReducer(state = [], action) {
     case types.LOAD_PRODUCT_TYPES_SUCCESS:
       return action.productTypes;
     case types.DELETE_PRODUCT_TYPE:
-      const newState = state.filter((p) => p.name !== action.productTypeId);
+      const newState = state.filter((p) => p.id !== action.productTypeId);
       return newState;
     default:
       return state;

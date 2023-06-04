@@ -5,10 +5,12 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Paper from "@mui/material/Paper";
 import PropTypes from "prop-types";
 
-const DiscountTable = ({ rows }) => (
+const DiscountTable = ({ rows, deleteItem }) => (
   <TableContainer component={Paper}>
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
@@ -17,6 +19,7 @@ const DiscountTable = ({ rows }) => (
           <TableCell align="right">Discount(%)</TableCell>
           <TableCell align="right">Warehouse Name</TableCell>
           <TableCell align="right">Product Name</TableCell>
+          <TableCell align="right"></TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -31,6 +34,16 @@ const DiscountTable = ({ rows }) => (
             <TableCell align="right">{row.discount}</TableCell>
             <TableCell align="right">{row.warehouseName}</TableCell>
             <TableCell align="right">{row.productName}</TableCell>
+            <TableCell align="right">
+              <IconButton
+                aria-label="delete"
+                onClick={() => {
+                  deleteItem(row.id);
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

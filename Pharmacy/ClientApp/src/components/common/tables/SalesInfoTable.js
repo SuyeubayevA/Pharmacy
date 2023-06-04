@@ -5,16 +5,20 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Paper from "@mui/material/Paper";
 import PropTypes from "prop-types";
 
-const SalesInfoTable = ({ rows }) => (
+const SalesInfoTable = ({ rows, deleteItem }) => (
   <TableContainer component={Paper}>
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
         <TableRow>
           <TableCell>Sold</TableCell>
           <TableCell align="right">Reminded products</TableCell>
+          <TableCell align="right">Product</TableCell>
+          <TableCell align="right"></TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -27,6 +31,17 @@ const SalesInfoTable = ({ rows }) => (
               {row.sales}
             </TableCell>
             <TableCell align="right">{row.productReminder}</TableCell>
+            <TableCell align="right">{row.productId}</TableCell>
+            <TableCell align="right">
+              <IconButton
+                aria-label="delete"
+                onClick={() => {
+                  deleteItem(row.productId);
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

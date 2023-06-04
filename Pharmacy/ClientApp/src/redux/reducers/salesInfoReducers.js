@@ -6,6 +6,9 @@ export default function salesInfoReducer(state = [], action) {
       return [...state, { ...action.salesInfo }];
     case types.LOAD_SALES_INFOS_SUCCESS:
       return action.salesInfos;
+    case types.DELETE_SALES_INFOS:
+      const newState = state.filter((p) => p.productId !== action.productId);
+      return newState;
     default:
       return state;
   }

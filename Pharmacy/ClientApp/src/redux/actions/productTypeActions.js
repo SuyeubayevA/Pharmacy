@@ -40,7 +40,6 @@ function deleteProductTypeSuccess(productTypeId) {
 }
 
 export function deleteProductType(productTypeId) {
-  debugger;
   return function (dispatch) {
     return productTypeApi
       .deleteProductType(productTypeId)

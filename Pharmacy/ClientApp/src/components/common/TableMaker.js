@@ -14,12 +14,12 @@ export default function BasicTable({ rows, type, deleteItem }) {
     return <ProductTypeTable rows={rows} deleteItem={deleteItem} />;
   }
   if (type === types.WAREHOUSES) {
-    return <WarehouseTable rows={rows} />;
+    return <WarehouseTable rows={rows} deleteItem={deleteItem} />;
   }
   if (type === types.PRODUCTINFO) {
-    return <SalesInfoTable rows={rows} />;
+    return <SalesInfoTable rows={rows} deleteItem={deleteItem} />;
   }
   if (type === types.PRODUCTDISCOUNT) {
-    return <DiscountTable rows={rows} />;
+    return <DiscountTable rows={rows} deleteItem={deleteItem} />;
   }
 }

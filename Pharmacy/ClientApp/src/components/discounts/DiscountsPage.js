@@ -16,8 +16,8 @@ class DiscountPage extends React.Component {
     discount: {
       amount: 0,
       discount: 0,
-      warehouseName: "",
-      productName: "",
+      warehouseId: "",
+      productId: "",
     },
   };
 
@@ -54,6 +54,11 @@ class DiscountPage extends React.Component {
     this.handleClose();
   };
 
+  handleDelete = (id) => {
+    const { actions } = this.props;
+    actions.deleteDiscount(id);
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -65,7 +70,11 @@ class DiscountPage extends React.Component {
           handleSubmit={this.handleSubmit}
           handleOnChange={this.handleOnChange}
         />
-        <BasicTable rows={this.props.discounts} type={types.PRODUCTDISCOUNT} />
+        <BasicTable
+          rows={this.props.discounts}
+          type={types.PRODUCTDISCOUNT}
+          deleteItem={this.handleDelete}
+        />
       </React.Fragment>
     );
   }
@@ -91,6 +100,10 @@ function mapDispatchToProps(dispatch) {
       ),
       loadDiscounts: bindActionCreators(
         discountActions.loadDiscounts,
+        dispatch
+      ),
+      deleteDiscount: bindActionCreators(
+        discountActions.deleteDiscount,
         dispatch
       ),
     },
