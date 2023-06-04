@@ -6,6 +6,7 @@
         public int ProductReminder { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? EditDate { get; set; }
+        public int ProductId { get; set; }
     }
 
     public class SalesInfoDetailsDTO

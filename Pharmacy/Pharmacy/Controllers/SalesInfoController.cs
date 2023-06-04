@@ -47,7 +47,7 @@ namespace Pharmacy.Controllers
          }
 
         [HttpDelete]
-        [Route("{productName}")]
+        [Route("{productId}")]
         public async Task Delete(int productId)
         {
             var command = new DeleteSalesInfoCommand(productId);

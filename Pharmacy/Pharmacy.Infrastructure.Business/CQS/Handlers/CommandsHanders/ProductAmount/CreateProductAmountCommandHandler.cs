@@ -24,6 +24,16 @@ namespace Pharmacy.Infrastructure.Business.CQS.Handlers.CommandsHanders.ProductA
                 throw new Exception("The object already exist !");
             }
 
+            if (await _uow.Product.GetAsync(request.Model.ProductId) == null)
+            {
+                throw new Exception("There is no product with such Id !");
+            }
+
+            if (await _uow.Warehouse.GetAsync(request.Model.WarehouseId) == null)
+            {
+                throw new Exception("There is no warehouse with such Id !");
+            }
+
             var productAmount = _mapper.Map<Domain.Core.ProductAmount>(request.Model);
             _uow.ProductAmount.Create(productAmount);
 
