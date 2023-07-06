@@ -20,7 +20,7 @@ namespace Pharmacy.Infrastructure.Business.CQS.Handlers.QueriesHandlers.SalesInf
         {
             if(request.Id == default)
             {
-                throw new ArithmeticException();
+                throw new ArgumentException();
             }
 
             var sailsInfo = await _uow.SalesInfo.GetAsync(request.Id);

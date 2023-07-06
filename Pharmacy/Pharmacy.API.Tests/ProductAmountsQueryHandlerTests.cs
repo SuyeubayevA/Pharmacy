@@ -37,10 +37,10 @@ namespace Pharmacy.API.Tests
             var fakeGetAllResult = Helper.GetFaker<ProductAmount>().Generate(10);
             fakeUOW.Setup(r => r.ProductAmount.GetAllAsync()).ReturnsAsync(fakeGetAllResult);
 
-            var handler = new GetAllProductsQueryHandler(fakeUOW.Object, _mapper);
-            await handler.Handle(new GetAllProductsQuery(), CancellationToken.None);
+            var handler = new GetAllProductAmountsQueryHandler(fakeUOW.Object, _mapper);
+            await handler.Handle(new GetAllProductAmountsQuery(), CancellationToken.None);
 
-            fakeUOW.Verify(x => x.Product.GetAllAsync(), Times.Once());
+            fakeUOW.Verify(x => x.ProductAmount.GetAllAsync(), Times.Once());
         }
 
         [Theory]

@@ -58,8 +58,8 @@ namespace Pharmacy.API.Tests
         public async Task GetProductAmountByIdHandler_VerifyMappedDto()
         {
             var fakeUOW = new Mock<IUnitOfWork>();
-            var fakeSalesInfo = Helper.GetFaker<ProductAmount>().Generate();
-            fakeUOW.Setup(r => r.ProductAmount.GetAsync(fakeSalesInfo.Id)).ReturnsAsync(fakeSalesInfo);
+            var fakeSalesInfo = Helper.GetFaker<SalesInfo>().Generate();
+            fakeUOW.Setup(r => r.SalesInfo.GetAsync(fakeSalesInfo.Id, 0)).ReturnsAsync(fakeSalesInfo);
             var handler = new GetSalesInfoByIdQueryHandler(fakeUOW.Object, _mapper);
 
             var act = await handler.Handle(new GetSalesInfoByIdQuery(fakeSalesInfo.Id), CancellationToken.None);
