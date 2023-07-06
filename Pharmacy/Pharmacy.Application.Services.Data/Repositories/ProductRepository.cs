@@ -48,7 +48,7 @@ namespace Pharmacy.Infrastructure.Data.Repositories
         {
             var products = await db.Products.AsQueryable().ToListAsync();
 
-            return products;
+            return products ?? new List<Product>();
         }
 
         public void UpdateWarehouseLink(int productId, int warehouseId, int amount = 0, float discount = 0)
